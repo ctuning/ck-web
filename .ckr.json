@@ -1,0 +1,11 @@
+{
+  "data_uid": "215d441c19db1fed", 
+  "data_name": "CK web", 
+  "dict": {
+    "url": "https://github.com/ctuning/ck-web.git", 
+    "shared": "git", 
+    "sync": "yes"
+  }, 
+  "data_alias": "ck-web", 
+  "data_uoa": "ck-web"
+}
