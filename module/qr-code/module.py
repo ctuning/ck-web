@@ -56,6 +56,8 @@ def generate(i):
             }
     """
 
+    o=i.get('con','')
+
     s=i.get('string','')
     if s=='': return {'return':1, 'error':'string is not defined'}
 
@@ -84,7 +86,7 @@ def generate(i):
     # Check how to output
     rr={'return':0}
 
-    if web=='yes':
+    if web=='yes' or o=='json' or o=='json_out':
        # Generate tmp file
        import tempfile
        fd, fn=tempfile.mkstemp(suffix='.tmp', prefix='ck-')
@@ -101,7 +103,7 @@ def generate(i):
        return {'return':1, 'error':'problem writing image ('+format(e)+')'}
 
     # Finish web
-    if web=='yes':
+    if web=='yes' or o=='json' or o=='json_out':
        r=ck.convert_file_to_upload_string({'filename':fn})
        if r['return']>0: return r
 

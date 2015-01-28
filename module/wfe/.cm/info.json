@@ -10,5 +10,7 @@
     "user_name": "cTuning foundation", 
     "iso_datetime": "2014-11-13T15:16:14.195000"
   }, 
-  "data_name": "wfe"
+  "backup_module_uoa": "module", 
+  "data_name": "wfe", 
+  "backup_module_uid": "e9a4bb5e10b91e40"
 }

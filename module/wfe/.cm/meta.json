@@ -1,12 +1,12 @@
 {
-  "license": "See CK LICENSE.txt for licensing details", 
-  "desc": "CK web front-end", 
-  "copyright": "See CK Copyright.txt for copyright details", 
   "actions": {
     "index": {
       "for_web": "yes", 
       "desc": "index"
     }
   }, 
+  "desc": "CK web front-end", 
+  "copyright": "See CK Copyright.txt for copyright details", 
+  "license": "See CK LICENSE.txt for licensing details", 
   "developer": "cTuning foundation"
 }

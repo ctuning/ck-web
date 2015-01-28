@@ -10,5 +10,7 @@
     "user_name": "cTuning foundation", 
     "iso_datetime": "2014-11-13T15:48:10.452000"
   }, 
-  "data_name": "qr-code"
+  "backup_module_uoa": "module", 
+  "data_name": "qr-code", 
+  "backup_module_uid": "e9a4bb5e10b91e40"
 }
