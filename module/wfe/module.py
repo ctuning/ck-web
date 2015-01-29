@@ -36,7 +36,9 @@ def init(i):
 def index(i):
     """
 
-    Input:  {}
+    Input:  {
+              (template) - use different template uoa
+            }
 
     Output: {
               return       - return code =  0, if successful
@@ -46,16 +48,35 @@ def index(i):
 
     """
 
-    h='<B>TBD: CK web front-end</B><BR><BR>'
+    import os
 
-    r=ck.access({'action':'load',
-                 'module_uoa':'test',
-                 'data_uoa':'unicode'})
+    # Check host URL prefix and default module/action
+    host=ck.cfg.get('wfe_url_prefix','')
+    action=i.get('action','')
+    muoa=i.get('module_uoa','')
+
+    template=i.get('template','')
+    if template=='': template=ck.cfg.get('wfe_template','')
+
+    # Load template
+    ii={'action':'load',
+        'module_uoa':work['self_module_uoa'],
+        'data_uoa':template}
+    r=ck.access(ii)
+    if r['return']>0: return r
+    d=r['dict']
+    p=r['path']
+
+    px=os.path.join(p, 'template.html')
+    if not os.path.isfile(px):
+       return {'return':1, 'error':'template file not found'}
+
+    r=ck.load_text_file({'text_file':px})
     if r['return']>0: return r
 
-    d=r['dict']
+    h=r['string']
 
-    for q in d['languages']:
-        h+=q+'<BR>'
+
+
 
     return {'return':0, 'html':h}
