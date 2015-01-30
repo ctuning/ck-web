@@ -1,20 +1,40 @@
 <!DOCTYPE html>
 <html lang="en" class="">
-  <head>
-    <meta charset='utf-8'>
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <title>Collective Knowledge Browser</title>
-  </head>
+  <link type="text/css" rel="stylesheet" media="all" href="$#ck_url_template_pull#$css/layout-fixed.css">
 
-  <body>
+  <title>$#title#$</title>
+
+ </head>
+
+ <body>
+  <div id="ck_top">
+   Collective Knowledge Browser
+  </div>
 
 
+  $#template_top#$
 
-   <hr>
+  <center> 
+   <table class="ck_round_table" width="99%">
+   $#template_middle#$
+   </table>
+
+   $#template_middle_finish#$
+   <br>
+
+  </center>
+
+  <div id="ck_bottom">
    <center>
     <small>
-     Powered by <a href="http://github.com/ctuning/ck">Collective Knowledge Framework</a>
+     <img src="$#ck_url_template_pull#$images/ck-logo.png"><br>
+     Powered by <a href="http://github.com/ctuning/ck/wiki" target="_blank">Collective Knowledge Engine</a>
     </small>
    </center>
-  </body>
+  </div>
+
+ </body>
 </html>
