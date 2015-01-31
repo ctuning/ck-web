@@ -124,7 +124,8 @@ def index(i):
     else: ln=str(lnstep)
 
     # Check host URL prefix and default module/action
-    url=ck.cfg.get('wfe_url_prefix','')
+    url0=ck.cfg.get('wfe_url_prefix','')
+    url=url0
     action=i.get('action','')
     muoa=i.get('module_uoa','')
 
@@ -254,7 +255,7 @@ def index(i):
     ht+=hreset+'&nbsp;'+hsubmit+'\n'
 
     if ck.cfg.get('use_indexing','')=='no':
-       ht+='<br><br><b><i><small>Warning: Elastic Search indexing is off - search by string/tags can be slow ...</small></i></b><br>'
+       ht+='<br><br><b><i><small>Warning: Elastic Search indexing is off - search by string/tags/date can be slow ...</small></i></b><br>'
 
     ht+='</div>\n'
 
@@ -282,23 +283,43 @@ def index(i):
 
     lst=r['lst']
 
-    hp=''
-    iq=0
-    bg=False
-    for q in lst:
-        iq+=1
-        siq=str(iq)
+    if len(lst)==0:
+       hp='<div id="ck_entries">\n'
+       hp+='no entries'
+       hp+='</div>\n'
+    elif len(lst)==1:
+       hp='<div id="ck_entries">\n'
+       hp+='View'
+       hp+='</div>\n'
+    else:
+       lst1=sorted(lst, key=lambda k: k.get('info',{}).get('data_name','').lower())
 
-        xbg=''
-        if bg: xbg=' bgcolor="#E4E5E6"'
+       hp=''
+       iq=0
+       for q in lst1:
+           iq+=1
+           siq=str(iq)
 
-        hp+='<tr'+xbg+'>\n'
-        hp+=' <td>'+siq+'</td>\n'
-        hp+=' <td>'+q['data_uoa']+'</td>\n'
-        hp+='</tr>\n'
+           muid=q['module_uid']
+           ruid=q['repo_uid']
+ 
+           duoa=q['data_uoa']
+           duid=q['data_uid']
 
-        if not bg: bg=True
-        else: bg=False
+           dn=q.get('info',{}).get('data_name','')
+           if dn=='': dn=duoa
+
+           hp+='<div id="ck_entries">\n'
+           hp+=siq+' '+dn+'<br>\n'
+
+           xcid=ruid+':'+muid+':'+duid
+           url2=url1+'&cid='+xcid
+
+           url3=url0+'&action=pull&archive=yes&all=yes&cid='+xcid
+
+           hp+='<a href="'+url3+'">Download</a>\n'
+           hp+='<a href="'+url2+'">View</a>\n'
+           hp+='</div>\n'
 
     # Prepare middle
     h=h.replace('$#template_middle#$',hp)

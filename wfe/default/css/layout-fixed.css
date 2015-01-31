@@ -35,6 +35,26 @@ html, body
  font-size:35px;
 }
 
+#ck_entries
+{
+ width:98%; 
+ background-color:#E4E5E6;
+ color:#00009F;
+ text-align:left;
+ padding:6px;
+ margin:6px;
+
+ border: 1px solid #7F7F7F;
+ -moz-border-radius: 4px;
+ -webkit-border-radius: 4px;
+ border-radius: 4px;
+ background-color: #FFFFFF;
+ border-spacing: 0px;
+
+    -webkit-box-shadow: 2px 2px 4px 1px #bbb;
+    box-shadow: 2px 2px 4px 1px #bbb;
+}
+
 #ck_prune
 {
  width:100%; 
