@@ -25,6 +25,8 @@ html, body
  font-size:90%;
 }
 
+a {text-decoration: none}
+
 #ck_top
 {
  background-color:#E4E5E6; 
@@ -33,6 +35,13 @@ html, body
  color:#2f4f8f;
  text-align:center;
  font-size:35px;
+}
+
+#ck_go_back
+{
+ width:98%; 
+ text-align:center;
+ padding:6px;
 }
 
 #ck_entries
@@ -51,16 +60,84 @@ html, body
  background-color: #FFFFFF;
  border-spacing: 0px;
 
-    -webkit-box-shadow: 2px 2px 4px 1px #bbb;
-    box-shadow: 2px 2px 4px 1px #bbb;
+ -webkit-box-shadow: 2px 2px 4px 1px #bbb;
+ box-shadow: 2px 2px 4px 1px #bbb;
+}
+
+#ck_entries1
+{
+ color:#000000;
+ text-align:left;
+ padding:0px;
+ margin:0px;
+ font-family:arial;
+ font-size:125%;
+}
+
+#ck_entries1a
+{
+ color:#00004F;
+ text-align:left;
+ padding:0px;
+ margin:0px;
+ font-family:arial;
+ font-size:25px;
+}
+
+#ck_text51
+{
+ font-size:100%;
+ color:#000000;
+}
+
+#ck_text55
+{
+ color:#000000;
+ font-size:100%;
+ margin:15px;
+}
+
+#ck_entries_space4
+{
+ padding:4px 0px 0px 0px;
+}
+
+#ck_entries_space8
+{
+ padding:8px 0px 0px 0px;
+}
+
+#ck_entries2
+{
+ color:#000000;
+ text-align:left;
+ font-family:arial;
+ margin:10px;
+ font-size:90%;
+}
+
+#ck_entries3
+{
+ color:#00000F;
+ text-align:left;
+ font-family:arial;
+ margin:20px;
+ font-size:100%;
+}
+
+#ck_downloads
+{
+ color:#000000;
+ text-align:right;
+ font-size:100%;
 }
 
 #ck_prune
 {
- width:100%; 
+ width:98%; 
  color:#00009F;
  text-align:center;
- padding:6px;
+ padding:5px;
 }
 
 #ck_bottom
@@ -86,5 +163,14 @@ table.ck_round_table td
 {
  spacing:0px;
  padding:4px;
+}
+
+.ck_hr
+{
+ border:none; 
+ border: 0px; 
+ background-color:#00009F; 
+ color:#00009F; 
+ height:1px;
 }
  

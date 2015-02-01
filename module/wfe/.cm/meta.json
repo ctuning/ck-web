@@ -1,14 +1,14 @@
 {
   "actions": {
     "convert_ck_list_to_select_data": {}, 
+    "create_button": {
+      "desc": "create button"
+    }, 
     "create_input": {
       "desc": "create search"
     }, 
     "create_selector": {
       "desc": "create HTML selector"
-    }, 
-    "create_button": {
-      "desc": "create button"
     }, 
     "index": {
       "desc": "index", 
