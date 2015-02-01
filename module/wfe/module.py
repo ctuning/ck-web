@@ -391,8 +391,8 @@ def index(i):
 
        hp+='<div id="ck_entries_space4"></div>\n'
        if au!='':
-          hp+='<span id="ck_entries2"><b>Author:</b> <i>'+au+'</i></span><br>\n'
-       hp+='<span id="ck_entries2"><b>Created:</b> <i>'+iso_datetime+'</i></span><br>\n'
+          hp+='<span id="ck_entries2"><b>Added by:</b> <i>'+au+'</i></span><br>\n'
+       hp+='<span id="ck_entries2"><b>Date:</b> <i>'+iso_datetime+'</i></span><br>\n'
 
        hp+='<div id="ck_entries_space4"></div>\n'
        hp+='<span id="ck_entries2"><b>Module:</b> <i>'+muoa+'</i></span><br>\n'
