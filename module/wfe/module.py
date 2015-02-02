@@ -572,11 +572,12 @@ def index(i):
 
     # Check if visits
     px=os.path.join(p, 'visits.html')
+    htx=''
     if os.path.isfile(px):
        r=ck.load_text_file({'text_file':px})
        if r['return']>0: return r
        htx=r['string']
-       h=h.replace('$#template_end#$',htx)
+    h=h.replace('$#template_end#$',htx)
 
     # Substitute specials
     h=h.replace('$#title#$', 'CK Browser')
