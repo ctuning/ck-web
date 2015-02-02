@@ -361,7 +361,7 @@ def index(i):
        if url5!='':
           url5+='_'+muid+'_'+duid
 
-       urlself1=url0+'action=index&module_uoa=wfe&cid='+muid+':'+duid
+       urlself1=url0+'cid='+muid+':'+duid
        urlself=url0+'action=index%26module_uoa=wfe%26cid='+muid+':'+duid
 
        url6=url0+'action=generate&module_uoa=qr-code&qr_level=6&image_size=170&string='+urlself
@@ -398,7 +398,7 @@ def index(i):
        hp+='<span id="ck_entries2"><b>Module:</b> <i>'+muoa+'</i></span><br>\n'
        hp+='<span id="ck_entries2"><b>Repo:</b> <i>'+ruoa+'</i></span><br>\n'
        hp+='<div id="ck_entries_space4"></div>\n'
-       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+url0+'">'+muid+':'+duid+'</a></i></span><br>\n'
+       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+muid+':'+duid+'</a></i></span><br>\n'
 
        if desc!='':
           hp+='<div id="ck_entries_space8"></div>\n'
