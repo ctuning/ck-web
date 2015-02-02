@@ -398,7 +398,7 @@ def index(i):
        hp+='<span id="ck_entries2"><b>Module:</b> <i>'+muoa+'</i></span><br>\n'
        hp+='<span id="ck_entries2"><b>Repo:</b> <i>'+ruoa+'</i></span><br>\n'
        hp+='<div id="ck_entries_space4"></div>\n'
-       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+muid+':'+duid+'</a></i></span><br>\n'
+       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+url0+'">'+muid+':'+duid+'</a></i></span><br>\n'
 
        if desc!='':
           hp+='<div id="ck_entries_space8"></div>\n'
