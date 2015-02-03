@@ -153,6 +153,9 @@ def index(i):
     if fmore_button_name in i: ln=str(int(ln)+lnstep)
     else: ln=str(lnstep)
 
+    if i.get('nolimit','')=='yes':
+       ln=''
+
     if ln!='': url+='&limit='+ln
 
     # Check dates
@@ -244,7 +247,7 @@ def index(i):
        hdb=r['html']
 
        # Prepare reset
-       hreset='<a href="'+url1+'">Reset form</a>'
+       hreset='<a href="'+url1+'">[Reset form]</a>'
 
        # Prepare submit
        r=create_button({'name': fsubmit_name, 'value':'Prune'})
@@ -554,7 +557,7 @@ def index(i):
 
            hp+='<div id="ck_entries">\n'
 
-           hp+='<span id="ck_entries1"><a href="'+url2+'">'+dn+' ('+muoa+')</a></span><br>\n'
+           hp+='<small>'+str(iq)+') </small><span id="ck_entries1"><a href="'+url2+'">'+dn+' ('+muoa+')</a></span><br>\n'
            if au!='':
               hp+='<div id="ck_entries_space4"></div>\n'
               hp+='<span id="ck_entries2"><i>'+au+'</i></span><br>\n'
