@@ -72,7 +72,7 @@ def index(i):
     fmore_button_name='ck_top_more'
 
     # Check filters
-    cid=i.get('cid','')
+    cid=i.get('wcid','')
     cduoa=''
     cmuoa=''
     cruoa=''
@@ -95,16 +95,21 @@ def index(i):
        cmuoa=r['module_uoa']
        cruoa=r.get('repo_uoa','')
 
+    if i.get('wrepo_uoa','')!='':
+       cruoa=i['wrepo_uoa']
+
     if not find_cid and fdata_name in i: cduoa=i[fdata_name]
     if not find_cid and fmodule_name in i: cmuoa=i[fmodule_name]
     if not find_cid and frepo_name in i: cruoa=i[frepo_name]
 
     cid=''
+    cidx=''
     if cruoa!='' or cmuoa!='' or cduoa!='':
        if cduoa!='': cid=cduoa
        cid=':'+cid
        if cmuoa!='': cid=cmuoa+cid
        cid=':'+cid
+       cidx=cid
        if cruoa!='': cid=cruoa+cid
 
     # Check host URL prefix and default module/action
@@ -116,7 +121,7 @@ def index(i):
     template=i.get('template','')
     if template=='': template=ck.cfg.get('wfe_template','')
 
-    url_template_pull=url+'action=pull&cid=wfe:'+template+'&filename='
+    url_template_pull=url+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
 
     # Load template
     ii={'action':'load',
@@ -184,11 +189,12 @@ def index(i):
        # Get list of repos
        r=ck.access({'action':'list',
                     'module_uoa':ck.cfg["repo_name"],
-                    'add_info':'yes'})
+                    'add_info':'yes',
+                    'add_meta':'yes'})
        if r['return']>0: return r
        lm=r['lst']
 
-       r=convert_ck_list_to_select_data({'lst':lm, 'add_empty':'yes', 'sort':'yes', 'value_uoa':cruoa})
+       r=convert_ck_list_to_select_data({'lst':lm, 'add_empty':'yes', 'sort':'yes', 'value_uoa':cruoa, 'ignore_remote':'yes'})
        if r['return']>0: return r
        dlm=r['data']
        if r.get('value_uid','')!='': cruoa=r['value_uid']
@@ -351,18 +357,20 @@ def index(i):
        dn=info.get('data_name','')
        if dn=='': dn=duoa
 
-       xcid=ruid+':'+muid+':'+duid
-       url2=url1+'&cid='+xcid
+       xcid=muid+':'+duid
+       url2=url1+'&wcid='+xcid
 
-       url3=url0+'&action=pull&archive=yes&all=yes&cid='+xcid
+       url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
        url4=url0+'&action=load&out=json&cid='+xcid
 
        url5=ck.cfg.get('wiki_data_web','')
        if url5!='':
           url5+='_'+muid+'_'+duid
 
-       urlself1=url0+'cid='+muid+':'+duid
-       urlself=url0+'action=index%26module_uoa=wfe%26cid='+muid+':'+duid
+       urlself1=url0+'wcid='+xcid
+#       urlself=url0+'action=index%26module_uoa=wfe%26wcid='+xcid
+       urlself=url0+'wcid='+xcid
+
 
        url6=url0+'action=generate&module_uoa=qr-code&qr_level=6&image_size=170&string='+urlself
 
@@ -395,10 +403,12 @@ def index(i):
        hp+='<span id="ck_entries2"><b>Date:</b> <i>'+iso_datetime+'</i></span><br>\n'
 
        hp+='<div id="ck_entries_space4"></div>\n'
+
        hp+='<span id="ck_entries2"><b>Module:</b> <i>'+muoa+'</i></span><br>\n'
        hp+='<span id="ck_entries2"><b>Repo:</b> <i>'+ruoa+'</i></span><br>\n'
+
        hp+='<div id="ck_entries_space4"></div>\n'
-       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+muid+':'+duid+'</a></i></span><br>\n'
+       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+xcid+'</a></i></span><br>\n'
 
        if desc!='':
           hp+='<div id="ck_entries_space8"></div>\n'
@@ -412,6 +422,16 @@ def index(i):
 
        hp+=' </table>\n'
 
+       # Show tags
+       tags=dd.get('tags', [])
+       if len(tags)>0:
+          stags=''
+          for q in tags:
+              if stags!='': stags+=','
+              stags+=q
+
+          hp+='<b>Tags:</b> <i>'+stags+'</i>\n'
+
        hp+='<div id="ck_downloads">\n'
        if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
        hp+='<a href="'+url3+'">[Download entry as archive]</a>\n'
@@ -420,9 +440,9 @@ def index(i):
        # Check files
        rx=ck.list_all_files({'path':pp, 'limit':100})
        if rx['return']==0:
-          ll=rx['list']
+          ll=sorted(rx['list'])
           if len(ll)>0:
-             utp=url0+'action=pull&cid='+cid+'&filename='
+             utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
 
              hp+='<hr class="ck_hr">\n'
              hp+='<span id="ck_text51"><b>Files:</b></span>\n'
@@ -436,6 +456,15 @@ def index(i):
              hp+='<div id="ck_downloads">\n'
              hp+='<a href="'+url3+'">[Download archive]</a>\n'
              hp+='</div>\n'
+
+       # Show dependencies
+       hp+=' <hr class="ck_hr">\n'
+
+       hp+=' <span id="ck_text51"><b>Cross-linking (dependencies):</b></span>\n'
+       hp+='<div id="ck_entries_space4"></div>\n'
+
+       hp+='<div id="ck_text55">\n'
+       hp+='</div>\n'
 
        # Show meta
        hp+=' <hr class="ck_hr">\n'
@@ -513,10 +542,10 @@ def index(i):
            dn=info.get('data_name','')
            if dn=='': dn=duoa
 
-           xcid=ruid+':'+muid+':'+duid
-           url2=url1+'&cid='+xcid
+           xcid=muid+':'+duid
+           url2=url0+'wcid='+xcid
 
-           url3=url0+'&action=pull&archive=yes&all=yes&cid='+xcid
+           url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
            url4=url0+'&action=load&out=json&cid='+xcid
 
            url5=ck.cfg.get('wiki_data_web','')
@@ -656,10 +685,12 @@ def create_selector(i):
 def convert_ck_list_to_select_data(i):
     """
     Input:  {
-              lst         - CK list object
-              (add_empty) - if 'yes', add empty line
-              (sort)      - if 'yes', sort by name
-              (value_uoa) - if !='', find uoa and return uid
+              lst             - CK list object
+              (add_empty)     - if 'yes', add empty line
+              (sort)          - if 'yes', sort by name
+              (value_uoa)     - if !='', find uoa and return uid
+              (ignore_remote) - if 'yes', ignore if meta has 'remote':'yes' 
+                                   (to avoid remote repositories)
             }
 
     Output: {
@@ -683,17 +714,26 @@ def convert_ck_list_to_select_data(i):
     vuoa=i.get('value_uoa','')
     vuid=''
 
+    ir=i.get('ignore_remote','')
+
     for q in lst:
         duoa=q['data_uoa']
         duid=q['data_uid']
 
-        dn=q.get('info',{}).get('data_name','')
-        if dn=='': dn=duoa
+        skip=False
+        if ir=='yes':
+           meta=q.get('meta',{})
+           if meta.get('remote','')=='yes':
+              skip=True
 
-        if vuoa!='' and vuoa==duoa:
-           vuid=duid
+        if not skip:
+           dn=q.get('info',{}).get('data_name','')
+           if dn=='': dn=duoa
 
-        dat.append({'name':dn, 'value':duid}) 
+           if vuoa!='' and vuoa==duoa:
+              vuid=duid
+
+           dat.append({'name':dn, 'value':duid}) 
 
     if i.get('sort','')=='yes':
        dat=sorted(dat, key=lambda k: k['name'].lower())
