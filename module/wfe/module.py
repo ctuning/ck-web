@@ -433,7 +433,7 @@ def index(i):
               if stags!='': stags+=','
               stags+=q
 
-          hp+='<b>Tags:</b> <i>'+stags+'</i>\n'
+          hp+='<center><b>Tags:</b> <i>'+stags+'</i></center>\n'
 
        hp+='<div id="ck_downloads">\n'
        if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
