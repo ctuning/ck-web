@@ -13,6 +13,15 @@ ck=None # Will be updated by CK (initialized CK kernel)
 
 # Local settings
 
+import os
+
+fdata_name='ck_top_data'
+fmodule_name='ck_top_module'
+frepo_name='ck_top_repo'
+
+form_name='ck_top_form'
+onchange='document.'+form_name+'.submit();'
+
 ##############################################################################
 # Initialize module
 
@@ -51,15 +60,6 @@ def index(i):
 
     """
 
-    import os
-
-    form_name='ck_top_form'
-    onchange='document.'+form_name+'.submit();'
-
-    fdata_name='ck_top_data'
-    fmodule_name='ck_top_module'
-    frepo_name='ck_top_repo'
-
     fsearch_name='ck_top_search'
     fsearch_tag_name='ck_top_search_tag'
 
@@ -67,6 +67,7 @@ def index(i):
     fdate_before_name='ck_top_date_before'
 
     fsubmit_name='ck_top_prune'
+    fadd_name='ck_top_add'
 
     flimit_name='ck_limit'
     fmore_button_name='ck_top_more'
@@ -142,6 +143,9 @@ def index(i):
     # Prepare URL
     url+='action='+action+'&'+'module_uoa='+muoa
     url1=url
+
+    url_add=url0+'action=webadd&module_uoa='+muoa
+    if cid!='': url_add+='&wcid='+cid
 
     # Check limits
     ln=i.get(flimit_name,'')
@@ -250,9 +254,12 @@ def index(i):
        hreset='<a href="'+url1+'">[Reset form]</a>'
 
        # Prepare submit
-       r=create_button({'name': fsubmit_name, 'value':'Prune'})
+       r=create_button({'name': fsubmit_name, 'value':'Search / Prune'})
        if r['return']>0: return r
        hsubmit=r['html']
+
+       # Prepare add
+       hadd='<a href="'+url_add+'">[Add new entry]</a>'
 
        # Prepare top
        ht=hf
@@ -279,7 +286,7 @@ def index(i):
        ht+=' </tr>\n'
        ht+='</table>\n'
        ht+='</center>\n'
-       ht+=hreset+'&nbsp;'+hsubmit+'\n'
+       ht+=hreset+'&nbsp;&nbsp;'+hsubmit+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+hadd+'\n'
 
        if ck.cfg.get('use_indexing','')=='no':
           ht+='<br><br><b><i><small>Warning: Elastic Search indexing is off - search by string/tags/date can be slow ...</small></i></b><br>'
@@ -322,8 +329,6 @@ def index(i):
 
        q=lst[0]
 
-       hp=''
-
        ruoa=q['repo_uoa']
        muoa=q['module_uoa']
 
@@ -332,6 +337,12 @@ def index(i):
 
        duoa=q['data_uoa']
        duid=q['data_uid']
+
+       hp='<div id="ck_prune">\n'
+       hp+='<b>View entry:</b><br>\n'
+       hp+='<small>[ <a href="'+url0+'">Back to CK browser</a> ]</small>\n'
+       hp+='</div>\n'
+       hp+='\n'
 
        # Load for full info
        rx=ck.access({'action':'load', 'repo_uoa':ruid, 'module_uoa':muid, 'data_uoa':duid})
@@ -365,6 +376,7 @@ def index(i):
 
        url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
        url4=url0+'&action=load&out=json&cid='+xcid
+       url7=url0+'&action=webadd&update=yes&module_uoa=wfe&wcid='+xcid
 
        url5=ck.cfg.get('wiki_data_web','')
        if url5!='':
@@ -437,6 +449,7 @@ def index(i):
 
        hp+='<div id="ck_downloads">\n'
        if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
+       hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
        hp+='<a href="'+url3+'">[Download entry as archive]</a>\n'
        hp+='</div>\n'
 
@@ -550,6 +563,7 @@ def index(i):
 
            url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
            url4=url0+'&action=load&out=json&cid='+xcid
+           url7=url0+'&action=webadd&update=yes&module_uoa=wfe&wcid='+xcid
 
            url5=ck.cfg.get('wiki_data_web','')
            if url5!='':
@@ -571,6 +585,7 @@ def index(i):
            hp+='<div id="ck_downloads">\n'
            hp+='<a href="'+url4+'" target="_blank">[View meta]</a>&nbsp;\n'
            if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
+           hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
            hp+='<a href="'+url3+'">[Download entry]</a>\n'
            hp+='</div>\n'
 
@@ -834,10 +849,59 @@ def create_input(i):
        h+=' name="'+name+'"'
 
     value=i.get('value','')
-    if value!='':
+    if tp=='checkbox':
+       if value=='on': h+=' checked'
+    elif value!='':
        h+=' value="'+value+'"'
 
     h+='>\n' 
+
+    return {'return':0, 'html':h}
+
+##############################################################################
+# create search
+
+def create_textarea(i):
+    """
+    Input:  {
+              (cols)       - columns, 50 by default
+              (rows)       - raws, 10 by default
+              (spellcheck) - if !='yes', skip 
+              (name)       - name
+              (value)      - default value
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+
+              html         - html for the form
+            }
+
+    """
+
+    cols=i.get('cols','')
+    if cols=='': cols='50'
+
+    rows=i.get('rows','')
+    if rows=='': rows='10'
+     
+    h='<textarea cols="'+cols+'" rows="'+rows+'"'
+
+    sp=i.get('spellcheck','')
+    if sp!='yes':
+       h+=' spellcheck="false"'
+
+    name=i.get('name','')
+    if name!='':
+       h+=' name="'+name+'"'
+    h+='>\n' 
+
+    value=i.get('value','')
+    if value!='': h+=value
+
+    h+='</textarea>'
 
     return {'return':0, 'html':h}
 
@@ -878,5 +942,543 @@ def create_button(i):
        h+=' value="'+value+'"'
 
     h+='>'
+
+    return {'return':0, 'html':h}
+
+##############################################################################
+# add via web front end
+
+def webadd(i):
+    """
+    Input:  {
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+            }
+
+    """
+
+    fda_name='ck_top_data_alias'
+    fdu_name='ck_top_data_uid'
+    fdn_name='ck_top_data_name'
+
+    fauthor_name='ck_top_author'
+    fauthor_email_name='ck_top_author_email'
+    fauthor_web_name='ck_top_author_web'
+    fcopyright_name='ck_top_copyright'
+    flicense_name='ck_top_license'
+
+    ftags_name='ck_top_tags'
+
+    ffile_name='file_content'
+    ffile_overwrite_name='file_content_overwrite'
+    ffile1_name=ffile_name+'_uploaded'
+
+    fmeta_name='ck_top_meta'
+
+    fadd_name1='ck_top_final_add'
+
+    # Check if submission
+    submission=False
+    missing=False
+    meta_bad=False
+    if fadd_name1 in i: submission=True
+
+    # Check filters
+    cid=i.get('wcid','')
+    cduoa=''
+    cmuoa=''
+    cruoa=''
+
+    if cid!='':
+       r=ck.parse_cid({'cid':cid})
+       if r['return']>0: return r
+       cduoa=r['data_uoa']
+       cmuoa=r['module_uoa']
+       cruoa=r.get('repo_uoa','')
+
+    if i.get('wrepo_uoa','')!='':
+       cruoa=i['wrepo_uoa']
+
+    if fdata_name in i: cduoa=i[fdata_name]
+    if fmodule_name in i: cmuoa=i[fmodule_name]
+    if frepo_name in i: cruoa=i[frepo_name]
+
+    cid=''
+    cidx=''
+    if cruoa!='' or cmuoa!='' or cduoa!='':
+       if cduoa!='': cid=cduoa
+       cid=':'+cid
+       if cmuoa!='': cid=cmuoa+cid
+       cid=':'+cid
+       cidx=cid
+       if cruoa!='': cid=cruoa+cid
+
+    dalias=i.get('data_alias','')
+    if fda_name in i: dalias=i[fda_name]
+
+    duid=i.get('data_uid','')
+    if fdu_name in i: duid=i[fdu_name]
+
+    if dalias!='': cduoa=dalias
+    if duid!='': cduoa=duid
+
+    dname=i.get('data_name','')
+    if fdn_name in i: dname=i[fdn_name]
+
+    dtags=i.get('tags','')
+    if ftags_name in i: dtags=i[ftags_name]
+
+    xauthor=i.get('author','')
+    if fauthor_name in i: xauthor=i[fauthor_name]
+
+    xauthor_email=i.get('author_email','')
+    if fauthor_email_name in i: xauthor_email=i[fauthor_email_name]
+
+    xauthor_web=i.get('author_web','')
+    if fauthor_web_name in i: xauthor_web=i[fauthor_web_name]
+
+    xcopyright=i.get('copyright','')
+    if fcopyright_name in i: xcopyright=i[fcopyright_name]
+
+    xlicense=i.get('license','')
+    if flicense_name in i: xlicense=i[flicense_name]
+
+    xmeta=i.get('meta','')
+    if fmeta_name in i: xmeta=i[fmeta_name]
+    if xmeta=='': xmeta='{\n}\n'
+
+    xfoverwrite=i.get(ffile_overwrite_name,'')
+
+    ddx={}
+    rddx=''
+    rx=ck.convert_json_str_to_dict({'str':xmeta, 'skip_quote_replacement':'yes'})
+    if rx['return']>0: 
+       missing=True
+       meta_bad=True
+       rddx=rx['error']
+    else:
+       ddx=rx['dict']
+
+    # Check if already exists - then update
+    if cmuoa!='' and cduoa!='':
+       ii={'action':'load', 'module_uoa':cmuoa, 'data_uoa':cduoa}
+       if cruoa!='': ii['repo_uoa']=cruoa
+       rx=ck.access(ii)
+       if rx['return']==0:
+          dd=rx['dict']
+          di=rx['info']
+
+          ry=ck.dumps_json({'dict':dd, 'sort_keys':'yes'})
+          if ry['return']==0:
+             xmeta=ry['string']
+
+          duid=rx['data_uid']
+          dname=rx['data_name']
+
+          atags=dd.get('tags',{})
+          if len(atags)>0 and dtags=='':
+             for q in atags:
+                 if dtags!='': dtags+=','
+                 dtags+=q
+
+          control=di.get('control',{})
+
+          if control.get('author','')!='': xauthor=control['author']
+          if control.get('author_email','')!='': xauthor_email=control['author_email']
+          if control.get('author_webpage','')!='': xauthor_web=control['author_webpage']
+          if control.get('copyright','')!='': xcopyright=control['copyright']
+          if control.get('license','')!='': xlicense=control['license']
+
+    # Check host URL prefix and default module/action
+    url0=ck.cfg.get('wfe_url_prefix','')
+    url=url0
+    action=i.get('action','')
+    muoa=i.get('module_uoa','')
+
+    template=i.get('template','')
+    if template=='': template=ck.cfg.get('wfe_template','')
+
+    url_template_pull=url+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
+
+    # Load template
+    ii={'action':'load',
+        'module_uoa':work['self_module_uoa'],
+        'data_uoa':template}
+    r=ck.access(ii)
+    if r['return']>0: return r
+    d=r['dict']
+    p=r['path']
+
+    px=os.path.join(p, 'template.html')
+    if not os.path.isfile(px):
+       return {'return':1, 'error':'template file not found'}
+    r=ck.load_text_file({'text_file':px})
+    if r['return']>0: return r
+    h=r['string']
+
+    # Prepare URL
+    url_add=url0+'action=webadd'
+    if i.get('update','')=='yes': url_add+='&update=yes'
+    url_add+='&module_uoa='+muoa
+    url_add1=url_add
+    if cid!='': url_add+='&wcid='+cid
+
+    # Check submission
+    if submission:
+       if cmuoa=='': missing=True
+
+    if submission and not missing:
+       ht='<center><br><br>\n'
+
+       if dtags!='':
+          xtags=dtags.split(',')
+          xtags1=[]
+          for q in xtags:
+              xtags1.append(q.strip())
+          ddx['tags']=xtags1
+
+       ii={'action':'add',
+           'dict': ddx,
+           'module_uoa':cmuoa}
+
+       if i.get('update','')=='yes': ii['action']='update'
+
+       if cruoa!='': ii['repo_uoa']=cruoa 
+       if dalias!='': ii['data_uoa']=dalias
+       if duid!='': ii['data_uid']=duid
+       if dname!='': ii['data_name']=dname
+
+       info={}
+       if xauthor!='': info['author']=xauthor
+       if xauthor_email!='': info['author_email']=xauthor_email
+       if xauthor_web!='': info['author_webpage']=xauthor_web
+       if xcopyright!='': info['copyright']=xcopyright
+       if xlicense!='': info['license']=xlicense
+
+       ii['extra_info']=info
+
+       rx=ck.access(ii)
+       if rx['return']>0: 
+          ht+=rx['error']
+       else:
+          p=rx['path']
+
+          duoa=rx['data_uoa']
+          duid=rx['data_uid']
+
+          x=duoa
+          if duoa!=duid: 
+             x+=' ('+duid+')'
+
+          xu='added'
+          if i.get('update','')=='yes': xu='updated'
+
+          ht+='<b>Entry '+x+' '+xu+'!</b><br><br>\n'
+
+          overwrite=False
+          if xfoverwrite=='on': overwrite=True
+
+          farc=i.get(ffile1_name, '')
+          if farc!='' and os.path.isfile(farc):
+             # Process if archive
+             import zipfile
+             f=open(farc,'rb')
+
+             arc=True
+             try:
+                z=zipfile.ZipFile(f)
+             except Exception as e: 
+                ht+='<b><i>Problem uploading archive ('+format(e)+')</i></b><br>'
+                arc=False
+                pass
+
+             if arc:
+                ht+='<i>Archive uploaded.</i><br><br>'
+                for d in z.namelist():
+                    if not d.startswith('.') and not d.startswith('/') and not d.startswith('\\'):
+                       pp=os.path.join(p,d)
+                       if d.endswith('/'): 
+                          # create directory 
+                          if not os.path.exists(pp): os.makedirs(pp)
+                       else:
+                          ppd=os.path.dirname(pp)
+                          if not os.path.exists(ppd): os.makedirs(ppd)
+
+                          # extract file
+                          if os.path.isfile(pp) and not overwrite:
+                             ht+='Warning:  File <i>"'+d+'"</i> already exists in the entry - skipping ...<br>\n'
+                          else:
+                             fo=open(pp, 'wb')
+                             fo.write(z.read(d))
+                             fo.close()
+             f.close()
+
+             try:
+                os.remove(farc)
+             except Exception as e:
+                pass
+
+#          import json
+#          ht+='<br><pre>'+json.dumps(i, indent=2)+'</pre>'
+
+       ht+='</center><br>'
+       hm=''
+
+    else:
+
+       # Start form + URL
+       ii={'url':url_add1, 'name':form_name}
+       r=start_form(ii)
+       if r['return']>0: return r
+       hf=r['html']
+
+       hf+='<BR><BR>Overwrite:'+xfoverwrite+'<BR>'
+
+       # Get list of repos
+       r=ck.access({'action':'list',
+                    'module_uoa':ck.cfg["repo_name"],
+                    'add_info':'yes',
+                    'add_meta':'yes'})
+       if r['return']>0: return r
+       lm=r['lst']
+
+       r=convert_ck_list_to_select_data({'lst':lm, 'add_empty':'yes', 'sort':'yes', 'value_uoa':cruoa, 'ignore_remote':'yes'})
+       if r['return']>0: return r
+       dlm=r['data']
+       if r.get('value_uid','')!='': cruoa=r['value_uid']
+
+       ii={'data':dlm, 'name':frepo_name, 'onchange':onchange, 'style':'width:300px;'}
+       if cruoa!='': ii['selected_value']=cruoa
+       r=create_selector(ii)
+       if r['return']>0: return r
+       hlr=r['html']
+
+       # Get list of modules
+       r=ck.access({'action':'list',
+                    'module_uoa':ck.cfg["module_name"],
+                    'add_info':'yes'})
+       if r['return']>0: return r
+       lm=r['lst']
+
+       r=convert_ck_list_to_select_data({'lst':lm, 'add_empty':'yes', 'sort':'yes', 'value_uoa':cmuoa})
+       if r['return']>0: return r
+       dlm=r['data']
+       if r.get('value_uid','')!='': cmuoa=r['value_uid']
+
+       ii={'data':dlm, 'name':fmodule_name, 'onchange':onchange, 'style':'width:300px;'}
+       if cmuoa!='': ii['selected_value']=cmuoa
+       r=create_selector(ii)
+       if r['return']>0: return r
+       hlm=r['html']
+
+       # Prepare add
+       r=create_button({'name': fadd_name1, 'value':'Add entry'})
+       if r['return']>0: return r
+       hadd=r['html']
+
+       # Prepare alias
+       r=create_input({'size':'38', 'name': fda_name, 'value':dalias})
+       if r['return']>0: return r
+       hdalias=r['html']
+
+       # Prepare UID
+       r=create_input({'size':'38', 'name': fdu_name, 'value':duid})
+       if r['return']>0: return r
+       hduid=r['html']
+
+       # Prepare name
+       r=create_input({'size':'38', 'name': fdn_name, 'value':dname})
+       if r['return']>0: return r
+       hdname=r['html']
+
+       # Prepare tags
+       r=create_input({'size':'38', 'name': ftags_name, 'value':dtags})
+       if r['return']>0: return r
+       hdtags=r['html']
+
+       # Prepare author
+       r=create_input({'size':'38', 'name': fauthor_name, 'value':xauthor})
+       if r['return']>0: return r
+       hauthor=r['html']
+
+       # Prepare author email
+       r=create_input({'size':'38', 'name': fauthor_email_name, 'value':xauthor_email})
+       if r['return']>0: return r
+       hauthor_email=r['html']
+
+       # Prepare author web
+       r=create_input({'size':'38', 'name': fauthor_web_name, 'value':xauthor_web})
+       if r['return']>0: return r
+       hauthor_web=r['html']
+
+       # Prepare copyright
+       r=create_input({'size':'38', 'name': fcopyright_name, 'value':xcopyright})
+       if r['return']>0: return r
+       hcopyright=r['html']
+
+       # Prepare author web
+       r=create_input({'size':'38', 'name': flicense_name, 'value':xlicense})
+       if r['return']>0: return r
+       hlicense=r['html']
+
+       # Prepare zip file upload
+       r=create_input({'type':'file', 'size':'38', 'name': ffile_name})
+       if r['return']>0: return r
+       hfile=r['html']
+
+       # Prepare zip file upload
+       r=create_input({'type':'checkbox', 'size':'38', 'name': ffile_overwrite_name, 'value':xfoverwrite})
+       if r['return']>0: return r
+       hfile_overwrite=r['html']
+
+       # Prepare meta
+       r=create_textarea({'cols':'120', 'rows':'30', 'name': fmeta_name, 'value':xmeta})
+       if r['return']>0: return r
+       hmeta=r['html']
+
+       r=create_input({'type':'hidden', 'name': 'file_content_record_to_tmp', 'value':'yes'})
+       if r['return']>0: return r
+       hx1=r['html']+'\n'
+
+       # Prepare top
+       ht=hf
+
+       ht+='<div id="ck_prune">\n'
+       ht+='<b>Add/update entry:</b><br>\n'
+       ht+='<small>[ <a href="'+url0+'">Back to CK browser</a> ]</small>\n'
+       ht+='</div>\n'
+       ht+='\n'
+
+       ht+='<table border="0" cellpadding="5">\n'
+       ht+=' <tr>\n'
+       tx=''
+       if submission and missing and cmuoa=='':
+          tx=' style="color:red" '
+       ht+='  <td align="right"'+tx+'>Module/class:</td>\n'
+       ht+='  <td>'+hlm+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Repository:</td>\n'
+       ht+='  <td>'+hlr+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right"><br></td>\n'
+       ht+='  <td><br></td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Alias:</td>\n'
+       ht+='  <td>'+hdalias+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">(UID):</td>\n'
+       ht+='  <td>'+hduid+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">User-friendly name:</td>\n'
+       ht+='  <td>'+hdname+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right"><br></td>\n'
+       ht+='  <td><br></td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Tags:</td>\n'
+       ht+='  <td>'+hdtags+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right"><br></td>\n'
+       ht+='  <td><br></td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Author:</td>\n'
+       ht+='  <td>'+hauthor+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Author email:</td>\n'
+       ht+='  <td>'+hauthor_email+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Author web-page:</td>\n'
+       ht+='  <td>'+hauthor_web+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Entry copyright:</td>\n'
+       ht+='  <td>'+hcopyright+'</td>\n'
+       ht+=' </tr>\n'
+       ht+=' <tr>\n'
+       ht+='  <td align="right">Entry license:</td>\n'
+       ht+='  <td>'+hlicense+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right"><br></td>\n'
+       ht+='  <td><br></td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       tx=''
+       txr=''
+       if meta_bad: 
+          tx=' style="color:red" '
+          txr='<br><small><i>'+rddx+'</i></small>'
+       ht+='  <td align="right" valign="top"'+tx+'>Meta-description in JSON:'+txr+'</td>\n'
+       ht+='  <td>'+hmeta+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right"><br></td>\n'
+       ht+='  <td><br></td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right" valign="top">Upload zip file:</td>\n'
+       ht+='  <td>'+hfile+'\n'+hx1+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right" valign="top">Overwrite existing files:</td>\n'
+       ht+='  <td>'+hfile_overwrite+'</td>\n'
+       ht+=' </tr>\n'
+
+       ht+=' <tr>\n'
+       ht+='  <td align="right"><br></td>\n'
+       ht+='  <td><br></td>\n'
+       ht+=' </tr>\n'
+
+       ht+='</table>\n'
+
+       hm=hadd+'<br>\n'
+       hm+='</form>\n'
+
+    # Replace top if needed
+    h=h.replace('$#template_top#$',ht)
+
+    hp=''
+    h=h.replace('$#template_middle#$',hp)
+
+    h=h.replace('$#template_middle_finish#$', hm)
+
+    # Check if visits
+    px=os.path.join(p, 'visits.html')
+    htx=''
+    if os.path.isfile(px):
+       r=ck.load_text_file({'text_file':px})
+       if r['return']>0: return r
+       htx=r['string']
+    h=h.replace('$#template_end#$',htx)
+
+    # Substitute specials
+    h=h.replace('$#title#$', 'CK Browser')
+    h=h.replace('$#ck_url_template_pull#$', url_template_pull)
 
     return {'return':0, 'html':h}

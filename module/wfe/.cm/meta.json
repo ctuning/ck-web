@@ -16,6 +16,10 @@
     }, 
     "start_form": {
       "desc": "start form"
+    }, 
+    "webadd": {
+      "desc": "add via web front end", 
+      "for_web": "y"
     }
   }, 
   "copyright": "See CK Copyright.txt for copyright details", 
