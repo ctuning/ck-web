@@ -1276,7 +1276,10 @@ def webadd(i):
        hlm=r['html']
 
        # Prepare add
-       r=create_button({'name': fadd_name1, 'value':'Add entry'})
+       xu='Add'
+       if i.get('update','')=='yes': xu='Update'
+
+       r=create_button({'name': fadd_name1, 'value':xu+' entry'})
        if r['return']>0: return r
        hadd=r['html']
 
