@@ -1236,8 +1236,6 @@ def webadd(i):
        if r['return']>0: return r
        hf=r['html']
 
-       hf+='<BR><BR>Overwrite:'+xfoverwrite+'<BR>'
-
        # Get list of repos
        r=ck.access({'action':'list',
                     'module_uoa':ck.cfg["repo_name"],
