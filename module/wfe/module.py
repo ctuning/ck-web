@@ -356,6 +356,7 @@ def index(i):
        author=control.get('author','')
        author_wp=control.get('author_webpage','')
        iso_datetime=control.get('iso_datetime','')
+       license=control.get('license','')
 
        desc=info.get('description','')
 
@@ -416,6 +417,7 @@ def index(i):
        if au!='':
           hp+='<span id="ck_entries2"><b>Added by:</b> <i>'+au+'</i></span><br>\n'
        hp+='<span id="ck_entries2"><b>Date:</b> <i>'+iso_datetime+'</i></span><br>\n'
+       hp+='<span id="ck_entries2"><b>License:</b> <i>'+license+'</i></span><br>\n'
 
        hp+='<div id="ck_entries_space4"></div>\n'
 
