@@ -495,7 +495,53 @@ def index(i):
        hp+='<pre>\n'
        rx=ck.dumps_json({'dict':dd, 'sort_keys':'yes'})
        if rx['return']>0: return rx
-       hp+=rx['string']
+
+       mt=rx['string']
+ 
+       # Try to detect links
+       i0=0
+       while i0<len(mt):
+          i1=mt.find('"',i0)
+          if i1<0: break
+
+          i2=mt.find('"',i1+1)
+          if i2<0: break
+
+          x=mt[i1+1:i2]
+          if len(x)==16 and ck.is_uid(x):
+             y='<a href="'+url0+'wcid=:'+x+'">'+x+'</a>'
+             mt=mt[:i1+1]+y+mt[i2:]
+             i0=i1+len(y)
+          elif x.startswith('http://'):
+             y='<a href="'+x+'">'+x+'</a>'
+             mt=mt[:i1+1]+y+mt[i2:]
+             i0=i1+len(y)
+          elif x.startswith('cm:'):
+             # For compatibility with cM
+             x1=x[3:].split(':')
+             y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+             mt=mt[:i1+1]+y+mt[i2:]
+             i0=i1+len(y)
+
+          else:   
+             i0=i1+1
+
+       # Next is for compatibility with cM
+       i0=0
+       while True:
+          i1=mt.find('$#cm_',i0)
+          if i1<0: break
+
+          i2=mt.find('#$',i1+1)
+          if i2<0: break
+
+          x=mt[i1:i2+2]
+          x1=x[5:-2].split('_')
+          y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+          mt=mt[:i1]+y+mt[i2+2:]
+          i0=i1+len(y)
+
+       hp+=mt
        hp+='</pre>\n'
        hp+='</div>\n'
 
