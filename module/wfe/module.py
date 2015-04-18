@@ -116,7 +116,9 @@ def index(i):
 
     # Check host URL prefix and default module/action
     url0=ck.cfg.get('wfe_url_prefix','')
-    if ck.cfg.get('wfe_url_prefix_subst','')!='': url0=ck.cfg['wfe_url_prefix_subst']
+
+    url00=url0
+    if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
     action=i.get('action','')
@@ -386,9 +388,9 @@ def index(i):
        if url5!='':
           url5+='_'+muid+'_'+duid
 
-       urlself1=url0+'wcid='+xcid
+       urlself1=url00+'wcid='+xcid
 #       urlself=url0+'action=index%26module_uoa=wfe%26wcid='+xcid
-       urlself=url0+'wcid='+xcid
+       urlself=url00+'wcid='+xcid
 
 
        url6=url0+'action=generate&module_uoa=qr-code&qr_level=6&image_size=170&string='+urlself
@@ -1146,7 +1148,9 @@ def webadd(i):
 
     # Check host URL prefix and default module/action
     url0=ck.cfg.get('wfe_url_prefix','')
-    if ck.cfg.get('wfe_url_prefix_subst','')!='': url0=ck.cfg['wfe_url_prefix_subst']
+
+    url00=url0
+    if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
     action=i.get('action','')
