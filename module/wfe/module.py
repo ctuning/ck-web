@@ -116,6 +116,8 @@ def index(i):
 
     # Check host URL prefix and default module/action
     url0=ck.cfg.get('wfe_url_prefix','')
+    if ck.cfg.get('wfe_url_prefix_subst','')!='': url0=ck.cfg['wfe_url_prefix_subst']
+
     url=url0
     action=i.get('action','')
     muoa=i.get('module_uoa','')
@@ -1144,6 +1146,8 @@ def webadd(i):
 
     # Check host URL prefix and default module/action
     url0=ck.cfg.get('wfe_url_prefix','')
+    if ck.cfg.get('wfe_url_prefix_subst','')!='': url0=ck.cfg['wfe_url_prefix_subst']
+
     url=url0
     action=i.get('action','')
     muoa=i.get('module_uoa','')
