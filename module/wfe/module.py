@@ -73,7 +73,8 @@ def index(i):
     fmore_button_name='ck_top_more'
 
     # Check filters
-    cid=i.get('wcid','')
+    cid=i.get('wcid','').replace('_',':')
+
     cduoa=''
     cmuoa=''
     cruoa=''
