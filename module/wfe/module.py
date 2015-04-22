@@ -461,7 +461,7 @@ def index(i):
        hp+='</div>\n'
 
        # Check files
-       rx=ck.list_all_files({'path':pp, 'limit':1000})
+       rx=ck.list_all_files({'path':pp, 'limit':10000})
        if rx['return']==0:
           ll=sorted(rx['list'])
           if len(ll)>0:
