@@ -175,9 +175,33 @@ def index(i):
 
     # If viewing a given entry
     view_entry=False
-    if cmuoa!='' and cduoa!='' and \
-       cmuoa.find('*')<0 and cmuoa.find('?')<0 and \
-       cduoa.find('*')<0 and cduoa.find('?')<0:
+#    if cmuoa!='' and cduoa!='' and \
+#       cmuoa.find('*')<0 and cmuoa.find('?')<0 and \
+#       cduoa.find('*')<0 and cduoa.find('?')<0:
+#       view_entry=True
+
+    # Create pruned list 
+    ii={'action':'search',
+        'repo_uoa':cruoa,
+        'module_uoa':cmuoa,
+        'data_uoa':cduoa,
+        'add_info':'yes',
+        'ignore_case':'yes',
+        'limit_size':ln}
+    if cs!='' and not find_cid:
+       ii['search_string']=cs
+    if cst!='' and not find_cid:
+       ii['tags']=cst
+    if datea!='':
+       ii['add_if_date_after']=datea
+    if dateb!='':
+       ii['add_if_date_before']=dateb
+
+    r=ck.access(ii)
+    if r['return']>0: return r
+
+    lst=r['lst']
+    if len(lst)==1:
        view_entry=True
 
     # Prepare query div
@@ -298,28 +322,7 @@ def index(i):
 
        ht+='</div>\n'
 
-    # Create pruned list 
-    ii={'action':'search',
-        'repo_uoa':cruoa,
-        'module_uoa':cmuoa,
-        'data_uoa':cduoa,
-        'add_info':'yes',
-        'ignore_case':'yes',
-        'limit_size':ln}
-    if cs!='' and not find_cid:
-       ii['search_string']=cs
-    if cst!='' and not find_cid:
-       ii['tags']=cst
-    if datea!='':
-       ii['add_if_date_after']=datea
-    if dateb!='':
-       ii['add_if_date_before']=dateb
-
-    r=ck.access(ii)
-    if r['return']>0: return r
-
-    lst=r['lst']
-
+    # Continue showing entries
     show_more=False
 
     if len(lst)==0:
@@ -327,6 +330,7 @@ def index(i):
        hp='<div id="ck_entries">\n'
        hp+='No entries found!'
        hp+='</div>\n'
+
 
     elif len(lst)==1:
        ########################################### Entry viewer #############
