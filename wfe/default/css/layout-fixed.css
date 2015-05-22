@@ -1,29 +1,10 @@
-/* $Id: layout-fixed.css,v 1.5.2.3 2009/02/13 19:20:19 johnalbin Exp $ */
-
-/*
- * LAYOUT STYLES
- *
- * Define CSS classes to create a table-free, 3-column, 2-column, or single
- * column layout depending on whether blocks are enabled in the left or right
- * columns.
- *
- * This layout is based on the Zen Columns layout method.
- *   http://drupal.org/node/201428
- *
- * Only CSS that affects the layout (positioning) of major elements should be
- * listed here.  Such as:
- *   display, position, float, clear, width, height, min-width, min-height
- *   margin, border, padding, overflow
- */
-
-
 html, body 
 {
  margin:0;
  padding:0;
  font-family:Tahoma;
- font-size:92%;
- min-width: 800px;
+ font-size:91%;
+ min-width: 1050px;
 }
 
 a {text-decoration: none}
