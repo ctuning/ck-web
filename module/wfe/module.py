@@ -1588,10 +1588,7 @@ def view_page(i):
     dd=r['dict']
     pp=r['path']
 
-    rurl=ck.cfg.get('wfe_url_prefix','')
-    rurlp=rurl+'page='
-
-    # Check where to get page
+    # Find page html
     h=page
 
     p=os.path.join(pp, h)
@@ -1606,26 +1603,68 @@ def view_page(i):
           else:
              return {'return':1, 'error':'page not found'}
 
-    # Load page template
+    # Check if page has associated meta (.json)
+    dp={}
+
+    x=p.rfind('.')
+    if x>=0:
+       px=p[:x]+'.json'
+       if os.path.isfile(px):
+          rx=ck.load_json_file({'json_file':px})
+          if rx['return']>0: return rx
+          dp=rx['dict']
+
+    # Load (default) page template if needed
+    html=''
+
+    tf=dp.get('template_file','')
+    if tf=='': tf=dd.get('template_file','')
+
+    if tf!='':
+       r=ck.load_text_file({'text_file':os.path.join(pp,tf)}) 
+       if r['return']>0: return r
+       html=r['string']
+
+    # Load page
     r=ck.load_text_file({'text_file':p}) 
     if r['return']>0: return r
-    h=r['string']
+    template=r['string']
+
+    # Substitute middle in template
+    if html=='':
+       html=template
+    else:
+       template='<div id="ck_box_with_shadow">\n'+template+'</div>\n'
+       html=html.replace('$#ck_template_middle#$',template)
+
+    # Prepare substitutes
+    rurl=ck.cfg.get('wfe_url_prefix','')
+    rurlp=rurl+'page='
+
+    rutp=rurl+'action=pull&common_func=yes&cid='
+    if truoa!='': rutp+=truoa+':'
+    rutp+='wfe:'+tduoa+'&filename='
 
     # Add <pre> if text or json
     if p.endswith('.txt') or p.endswith('.txt'):
-       h='<html><body><pre>'+h+'</pre></body></html>'
+       html='<html><body><pre>'+html+'</pre></body></html>'
 
        # Process links
-       r=parse_txt({'string':h, 'skip_search_only_inside_quotes':'yes'})
+       r=parse_txt({'string':html, 'skip_search_only_inside_quotes':'yes'})
        if r['return']>0: return r
-
-       h=r['string']
+       html=r['string']
 
     # Replace various vars
-    h=h.replace('$#ck_root_url#$', rurl)
-    h=h.replace('$#ck_root_page_url#$', rurlp)
+    title=dp.get('title','')
+    if title=='': title=dd.get('title','')
+    html=html.replace('$#ck_title#$',title)
 
-    return {'return':0, 'html':h}
+    html=html.replace('$#ck_root_url#$', rurl)
+    html=html.replace('$#ck_root_page_url#$', rurlp)
+
+    html=html.replace('$#ck_url_template_pull#$', rutp)
+
+    return {'return':0, 'html':html}
 
 ##############################################################################
 # parse text/json/etc files to detect http,CM,CK ...
