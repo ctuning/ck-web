@@ -1,29 +1,37 @@
 {
   "actions": {
-    "convert_ck_list_to_select_data": {},
+    "convert_ck_list_to_select_data": {}, 
     "create_button": {
       "desc": "create button"
-    },
+    }, 
     "create_input": {
       "desc": "create search"
-    },
+    }, 
     "create_selector": {
       "desc": "create HTML selector"
-    },
+    }, 
     "index": {
-      "desc": "index",
+      "desc": "index", 
       "for_web": "yes"
-    },
+    }, 
+    "parse_txt": {
+      "desc": "parse text/json/etc files to detect http,CM,CK ...", 
+      "for_web": "yes"
+    }, 
     "start_form": {
       "desc": "start form"
-    },
+    }, 
+    "view_page": {
+      "desc": "view page", 
+      "for_web": "yes"
+    }, 
     "webadd": {
-      "desc": "add via web front end",
-      "for_web": "y"
+      "desc": "add via web front end", 
+      "for_web": "yes"
     }
-  },
-  "copyright": "See CK Copyright.txt for copyright details",
-  "desc": "CK web front-end",
-  "developer": "cTuning foundation",
+  }, 
+  "copyright": "See CK Copyright.txt for copyright details", 
+  "desc": "CK web front-end", 
+  "developer": "cTuning foundation", 
   "license": "See CK LICENSE.txt for licensing details"
 }

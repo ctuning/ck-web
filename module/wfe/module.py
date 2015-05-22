@@ -56,9 +56,15 @@ def index(i):
               return       - return code =  0, if successful
                                          >  0, if error
               (error)      - error text if return > 0
+
+              html         - unicoded html page
             }
 
     """
+
+    page=i.get('page','')
+    if page!='':
+       return view_page(i)
 
     fsearch_name='ck_top_search'
     fsearch_tag_name='ck_top_search_tag'
@@ -467,7 +473,9 @@ def index(i):
        # Check files
        rx=ck.list_all_files({'path':pp, 'limit':10000})
        if rx['return']==0:
-          ll=sorted(rx['list'])
+          files=rx['list']
+          ll=sorted(files)
+
           if len(ll)>0:
              utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
 
@@ -477,7 +485,8 @@ def index(i):
 
              hp+='<div id="ck_text55">\n'
              for q in ll:
-                 hp+='<a href="'+utp+q+'">'+q+'</a><br>\n'
+                 v=files[q]
+                 hp+='<a href="'+utp+q+'">'+q+'</a>&nbsp;&nbsp;&nbsp;&nbsp;('+str(int((v.get('size',0)+999)/1000))+'KB)<br>\n'
              hp+='</div>\n'
 
              hp+='<div id="ck_downloads">\n'
@@ -505,7 +514,7 @@ def index(i):
        if rx['return']>0: return rx
 
        mt=rx['string']
- 
+
        # Try to detect links
        i0=0
        while i0<len(mt):
@@ -1544,3 +1553,143 @@ def webadd(i):
     h=h.replace('$#ck_url_template_pull#$', url_template_pull)
 
     return {'return':0, 'html':h}
+
+##############################################################################
+# view page
+
+def view_page(i):
+    """
+    Input:  {
+              (page) 
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+
+              html         - unicoded html page
+            }
+
+    """
+
+    page=i.get('page','')
+
+    # Get default path to the entry with pages (web_tempalte_uoa in kernel)
+    truoa=ck.cfg.get('wfe_template_repo_uoa','')
+    tduoa=ck.cfg.get('wfe_template_data_uoa','')
+
+    r=ck.access({'action':'load',
+                 'module_uoa':work['self_module_uoa'],
+                 'repo_uoa':truoa,
+                 'data_uoa':tduoa})
+    if r['return']>0: return r
+
+    dd=r['dict']
+    pp=r['path']
+
+    rurl=ck.cfg.get('wfe_url_prefix','')
+    rurlp=rurl+'page='
+
+    # Check where to get page
+    h=page
+
+    p=os.path.join(pp, h)
+    if not os.path.isfile(p):
+       p=os.path.join(pp, h+'.html')
+       if os.path.isfile(p):
+          h=h+'.html'
+       else:
+          p=os.path.join(pp, h, 'index.html')
+          if os.path.isfile(p):
+             h=os.path.join(h,'index.html')
+          else:
+             return {'return':1, 'error':'page not found'}
+
+    # Load page template
+    r=ck.load_text_file({'text_file':p}) 
+    if r['return']>0: return r
+    h=r['string']
+
+    # Add <pre> if text or json
+    if p.endswith('.txt') or p.endswith('.txt'):
+       h='<html><body><pre>'+h+'</pre></body></html>'
+
+       # Process links
+       r=parse_txt({'string':h, 'skip_search_only_inside_quotes':'yes'})
+       if r['return']>0: return r
+
+       h=r['string']
+
+    # Replace various vars
+    h=h.replace('$#ck_root_url#$', rurl)
+    h=h.replace('$#ck_root_page_url#$', rurlp)
+
+    return {'return':0, 'html':h}
+
+##############################################################################
+# parse text/json/etc files to detect http,CM,CK ...
+
+def parse_txt(i):
+    """
+    Input:  {
+               string                           - text to process
+               (cm_url)                         - root URL when detecting CM refs
+               (skip_search_only_inside_quotes) - if 'yes', do not search inside quotes
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+            }
+
+    """
+
+    mt=i['string']
+
+    url0=i.get('cm_url','')
+
+    ss=i.get('skip_search_only_inside_quotes','')
+
+    # Try to detect links
+    for prefix in ['http://', 'https://']:
+        i0=0
+        while i0>=0:
+           i0=mt.find(prefix, i0)
+
+           if i0<0: break
+
+           j=[]
+           jx=mt.find('\r',i0)
+           if jx>0: j.append(jx)
+           jx=mt.find('\n',i0)
+           if jx>0: j.append(jx)
+           jx=mt.find(' ',i0)
+           if jx>0: j.append(jx)
+           jx=mt.find('"',i0)
+           if jx>0: j.append(jx)
+           j.append(len(mt))
+           j0=min(j)
+           if j0>i0:
+              url=mt[i0:j0]
+              add='<a href="'+url+'">'+url+'</a>'
+              mt=mt[:i0]+add+mt[j0:]
+           i0+=len(add)
+
+    # Next is for compatibility with cM
+    i0=0
+    while True:
+       i1=mt.find('$#cm_',i0)
+       if i1<0: break
+
+       i2=mt.find('#$',i1+1)
+       if i2<0: break
+
+       x=mt[i1:i2+2]
+       x1=x[5:-2].split('_')
+       y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+       mt=mt[:i1]+y+mt[i2+2:]
+       i0=i1+len(y)
+
+    return {'return':0, 'string':mt}
