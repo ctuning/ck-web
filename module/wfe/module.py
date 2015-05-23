@@ -1614,6 +1614,11 @@ def view_page(i):
           if rx['return']>0: return rx
           dp=rx['dict']
 
+    # Make smart merge of original dict with this one (inheritance via json)
+    rx=ck.merge_dicts({'dict1':dd, 'dict2':dp})
+    if rx['return']>0: return rx
+    dd=rx['dict1']
+
     # Load (default) page template if needed
     html=''
 
@@ -1625,18 +1630,6 @@ def view_page(i):
        if r['return']>0: return r
        html=r['string']
 
-    # Load page
-    r=ck.load_text_file({'text_file':p}) 
-    if r['return']>0: return r
-    template=r['string']
-
-    # Substitute middle in template
-    if html=='':
-       html=template
-    else:
-       template='<div id="ck_box_with_shadow">\n'+template+'</div>\n'
-       html=html.replace('$#ck_template_middle#$',template)
-
     # Prepare substitutes
     rurl=ck.cfg.get('wfe_url_prefix','')
     rurlp=rurl+'page='
@@ -1644,6 +1637,67 @@ def view_page(i):
     rutp=rurl+'action=pull&common_func=yes&cid='
     if truoa!='': rutp+=truoa+':'
     rutp+='wfe:'+tduoa+'&filename='
+
+    # Prepare menu
+    menu=''
+
+    mdesc=dd.get('menu_desc',[])
+    mn=dd.get('menu',[])
+    
+    im=0
+    for m in mn:
+        #Get style
+        md=mdesc[im]
+
+        ms=md.get('html_start','')
+        me=md.get('html_end','')
+
+        menu+='   '+ms+'\n'
+
+        for mx in md.get('nodes',[]):
+
+            idx=mx.get('id','')
+            name=mx.get('name','')
+
+            link=mx.get('link','')
+
+            link=link.replace('$#wfe_url_prefix#$',rurl)
+            link=link.replace('$#wfe_url_prefix_page#$',rurlp)
+
+            if idx==m: menu+='     '+md.get('html_on_start','')
+            else:      menu+='     '+md.get('html_off_start','')
+
+            menu+='<a href="'+link+'">'+name+'</a>'
+
+            if idx==m: menu+='     '+md.get('html_on_end','')+'\n'
+            else:      menu+='     '+md.get('html_off_end','')+'\n'
+        
+        menu+='   '+me+'\n'
+
+        im+=1
+
+    # Update menu
+    html=html.replace('$#ck_menu#$', menu)
+
+
+    # Load page
+    r=ck.load_text_file({'text_file':p}) 
+    if r['return']>0: return r
+    template=r['string']
+
+
+
+
+
+
+
+
+
+    # Substitute middle in template
+    if html=='':
+       html=template
+    else:
+       html=html.replace('$#ck_template_middle#$',template)
 
     # Add <pre> if text or json
     if p.endswith('.txt') or p.endswith('.txt'):
