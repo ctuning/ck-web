@@ -11,13 +11,20 @@ a {text-decoration: none}
 
 #ck_top
 {
- background-color:#E4E5E6; 
+/* background-color:#00002F; */
  width:100%; 
- height:50px;
- color:#2f4f8f;
- text-align:center;
- font-size:34px;
- border-bottom: 1px solid #cfcfcf;
+ height:64px;
+ color:#ffffff;
+ text-align:left;
+ font-size:24px;
+/* border-bottom: 1px solid #cfcfcf; */
+
+  background-color: #00003f;
+  -webkit-box-shadow: 0 75px 40px -40px #00000f inset;
+  box-shadow: 0 75px 40px -30px #00000f inset;
+
+ overflow:hidden;
+
 }
 
 #ck_go_back
