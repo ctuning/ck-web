@@ -1661,9 +1661,6 @@ def view_page(i):
 
             link=mx.get('link','')
 
-            link=link.replace('$#wfe_url_prefix#$',rurl)
-            link=link.replace('$#wfe_url_prefix_page#$',rurlp)
-
             if idx==m: menu+='     '+md.get('html_on_start','')
             else:      menu+='     '+md.get('html_off_start','')
 
@@ -1715,6 +1712,7 @@ def view_page(i):
 
     html=html.replace('$#ck_root_url#$', rurl)
     html=html.replace('$#ck_root_page_url#$', rurlp)
+    html=html.replace('$#wfe_url_prefix_page#$',rurlp)
 
     html=html.replace('$#ck_url_template_pull#$', rutp)
 
