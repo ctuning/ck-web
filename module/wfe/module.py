@@ -396,7 +396,7 @@ def index(i):
 
        url5=ck.cfg.get('wiki_data_web','')
        if url5!='':
-          url5+='_'+muid+'_'+duid
+          url5+=muid+'_'+duid
 
        urlself1=url00+'wcid='+xcid
 #       urlself=url0+'action=index%26module_uoa=wfe%26wcid='+xcid
@@ -633,7 +633,7 @@ def index(i):
 
            url5=ck.cfg.get('wiki_data_web','')
            if url5!='':
-              url5+='_'+muid+'_'+duid
+              url5+=muid+'_'+duid
 
            hp+='<div id="ck_entries">\n'
 
