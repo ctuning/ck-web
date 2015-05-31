@@ -1682,28 +1682,19 @@ def view_page(i):
     if r['return']>0: return r
     template=r['string']
 
+    if p.endswith('.txt') or p.endswith('.txt'):
+       # Process links
+       r=parse_txt({'string':template, 'skip_search_only_inside_quotes':'yes'})
+       if r['return']>0: return r
+       template=r['string']
 
-
-
-
-
-
-
+       template='<pre>'+template+'</pre>'
 
     # Substitute middle in template
     if html=='':
        html=template
     else:
        html=html.replace('$#ck_template_middle#$',template)
-
-    # Add <pre> if text or json
-    if p.endswith('.txt') or p.endswith('.txt'):
-       html='<html><body><pre>'+html+'</pre></body></html>'
-
-       # Process links
-       r=parse_txt({'string':html, 'skip_search_only_inside_quotes':'yes'})
-       if r['return']>0: return r
-       html=r['string']
 
     # Replace various vars
     title=dp.get('title','')
