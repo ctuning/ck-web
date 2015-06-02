@@ -363,6 +363,7 @@ def index(i):
        rx=ck.access({'action':'load', 'repo_uoa':ruid, 'module_uoa':muid, 'data_uoa':duid})
        if rx['return']>0: return rx
        dd=rx['dict']
+       dx=rx['desc']
        pp=rx['path']
 
        info=q.get('info',{})
@@ -493,6 +494,7 @@ def index(i):
              hp+='<a href="'+url3+'">[Download archive]</a>\n'
              hp+='</div>\n'
 
+       ##################################################################################################
        # Show dependencies
        hp+=' <hr class="ck_hr">\n'
 
@@ -559,9 +561,28 @@ def index(i):
           i0=i1+len(y)
 
        hp+=mt
+
        hp+='</pre>\n'
        hp+='</div>\n'
 
+       ##################################################################################################
+       # Show meta
+       hp+=' <hr class="ck_hr">\n'
+
+       hp+=' <span id="ck_text51"><b>API desc:</b></span>\n'
+       hp+='<div id="ck_entries_space4"></div>\n'
+
+       hp+='<div id="ck_text55">\n'
+       hp+='<pre>\n'
+       rx=ck.dumps_json({'dict':dx, 'sort_keys':'yes'})
+       if rx['return']>0: return rx
+
+       hp+=rx['string']
+
+       hp+='</pre>\n'
+       hp+='</div>\n'
+
+       ##################################################################################################
        hp+='<div id="ck_downloads">\n'
        hp+='<a href="'+url4+'" target="_blank">[Download meta]</a>&nbsp;\n'
        hp+='</div>\n'
