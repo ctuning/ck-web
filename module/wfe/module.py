@@ -363,7 +363,7 @@ def index(i):
        rx=ck.access({'action':'load', 'repo_uoa':ruid, 'module_uoa':muid, 'data_uoa':duid})
        if rx['return']>0: return rx
        dd=rx['dict']
-       dx=rx['desc']
+       dx=rx.get('desc',{})
        pp=rx['path']
 
        info=q.get('info',{})
