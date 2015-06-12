@@ -192,6 +192,7 @@ def index(i):
         'module_uoa':cmuoa,
         'data_uoa':cduoa,
         'add_info':'yes',
+        'add_meta':'yes',
         'ignore_case':'yes',
         'limit_size':ln}
     if cs!='' and not find_cid:
@@ -353,11 +354,13 @@ def index(i):
        duoa=q['data_uoa']
        duid=q['data_uid']
 
-       hp='<div id="ck_prune">\n'
-       hp+='<b>View entry:</b><br>\n'
-       hp+='<small>[ <a href="'+url0+'">Back to CK browser</a> ]</small>\n'
-       hp+='</div>\n'
-       hp+='\n'
+       hp='' # init html
+
+#       hp='<div id="ck_prune">\n'
+#       hp+='<b>View entry:</b><br>\n'
+#       hp+='<small>[ <a href="'+url0+'">Back to CK browser</a> ]</small>\n'
+#       hp+='</div>\n'
+#       hp+='\n'
 
        # Load for full info
        rx=ck.access({'action':'load', 'repo_uoa':ruid, 'module_uoa':muid, 'data_uoa':duid})
@@ -373,6 +376,15 @@ def index(i):
        author_wp=control.get('author_webpage','')
        iso_datetime=control.get('iso_datetime','')
        license=control.get('license','')
+
+       tags=dd.get('tags', [])
+       stags=''
+       if type(tags)!=list: stags=tags
+       elif len(tags)>0:
+          stags=''
+          for q in tags:
+              if stags!='': stags+=','
+              stags+=q
 
        desc=info.get('description','')
 
@@ -408,193 +420,209 @@ def index(i):
 
        hp+='<div id="ck_entries">\n'
 
-       hp+=' <table border="0">\n'
+       # Check if specialized rendering function exists for the given module
+       raw=True
+       show_top=True
+       hspec=''
+       utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
 
-       hp+='  <tr colspan="2">\n'
-       hp+='   <td valign="top">\n'
-       hp+='    <img src="'+url6+'">\n'
-
-       # Check if share
-       ps=os.path.join(p, 'share.html')
-       if os.path.isfile(ps):
-          r=ck.load_text_file({'text_file':ps})
-          if r['return']>0: return r
-          htx=r['string'].replace('$#url#$',url2)
-          hp+=htx+'\n'
-
-       hp+='   </td>\n'
-       hp+='   <td valign="top">\n'
-
-
-       hp+='<span id="ck_entries1a">'+dn+'</span><br>\n'
-       hp+=' <hr class="ck_hr">\n'
-
-       hp+='<div id="ck_entries_space4"></div>\n'
-       if au!='':
-          hp+='<span id="ck_entries2"><b>Added by:</b> <i>'+au+'</i></span><br>\n'
-       hp+='<span id="ck_entries2"><b>Date:</b> <i>'+iso_datetime+'</i></span><br>\n'
-       hp+='<span id="ck_entries2"><b>License:</b> <i>'+license+'</i></span><br>\n'
-
-       hp+='<div id="ck_entries_space4"></div>\n'
-
-       hp+='<span id="ck_entries2"><b>Module:</b> <i>'+muoa+'</i></span><br>\n'
-       hp+='<span id="ck_entries2"><b>Repo:</b> <i>'+ruoa+'</i></span><br>\n'
-
-       hp+='<div id="ck_entries_space4"></div>\n'
-       hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+xcid+'</a></i></span><br>\n'
-
-       if desc!='':
-          hp+='<div id="ck_entries_space8"></div>\n'
-          hp+='<span id="ck_entries3">'+desc+'</span><br>\n'
-
-
-       hp+='<div id="ck_entries_space4"></div>\n'
-
-       hp+='   </td>\n'
-       hp+='  </tr>\n'
-
-       hp+=' </table>\n'
-
-       # Show tags
-       tags=dd.get('tags', [])
-       if len(tags)>0:
-          stags=''
-          for q in tags:
-              if stags!='': stags+=','
-              stags+=q
-
-          hp+='<center><b>Tags:</b> <i>'+stags+'</i></center>\n'
-
-       hp+='<div id="ck_downloads">\n'
-       if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
-       hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
-       hp+='<a href="'+url3+'">[Download entry as archive]</a>\n'
-       hp+='</div>\n'
-
-       # Check files
-       rx=ck.list_all_files({'path':pp, 'limit':10000})
+       ii={'action':'html_viewer',
+           'module_uoa':muid,
+           'data_uoa':duid,
+           'url_base':url0,
+           'url_pull':utp}
+       rx=ck.access(ii)
        if rx['return']==0:
-          files=rx['list']
-          ll=sorted(files)
+          if rx.get('raw','')!='yes': raw=False
+          if rx.get('show_top','')!='yes': show_top=False
+          hspec=rx.get('html','')
 
-          if len(ll)>0:
-             utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
+       # Show top info
+       if show_top:
+          hp+=' <table border="0">\n'
 
-             hp+='<hr class="ck_hr">\n'
-             hp+='<span id="ck_text51"><b>Files:</b></span>\n'
-             hp+='<div id="ck_entries_space4"></div>\n'
+          hp+='  <tr colspan="2">\n'
+          hp+='   <td valign="top">\n'
+          hp+='    <img src="'+url6+'">\n'
 
-             hp+='<div id="ck_text55">\n'
-             for q in ll:
-                 v=files[q]
-                 hp+='<a href="'+utp+q+'">'+q+'</a>&nbsp;&nbsp;&nbsp;&nbsp;('+str(int((v.get('size',0)+999)/1000))+'KB)<br>\n'
-             hp+='</div>\n'
+          # Check if share
+          ps=os.path.join(p, 'share.html')
+          if os.path.isfile(ps):
+             r=ck.load_text_file({'text_file':ps})
+             if r['return']>0: return r
+             htx=r['string'].replace('$#url#$',url2)
+             hp+=htx+'\n'
 
-             hp+='<div id="ck_downloads">\n'
-             hp+='<a href="'+url3+'">[Download archive]</a>\n'
-             hp+='</div>\n'
+          hp+='   </td>\n'
+          hp+='   <td valign="top">\n'
 
-       ##################################################################################################
-       # Show dependencies
-       hp+=' <hr class="ck_hr">\n'
 
-       hp+=' <span id="ck_text51"><b>Cross-linking (dependencies):</b></span>\n'
-       hp+='<div id="ck_entries_space4"></div>\n'
-
-       hp+='<div id="ck_text55">\n'
-       hp+='</div>\n'
-
-       # Show meta
-       hp+=' <hr class="ck_hr">\n'
-
-       hp+=' <span id="ck_text51"><b>Meta:</b></span>\n'
-       hp+='<div id="ck_entries_space4"></div>\n'
-
-       hp+='<div id="ck_text55">\n'
-       hp+='<pre>\n'
-       rx=ck.dumps_json({'dict':dd, 'sort_keys':'yes'})
-       if rx['return']>0: return rx
-
-       mt=rx['string']
-
-       # Try to detect links
-       i0=0
-       while i0<len(mt):
-          i1=mt.find('"',i0)
-          if i1<0: break
-
-          i2=mt.find('"',i1+1)
-          if i2<0: break
-
-          x=mt[i1+1:i2]
-          if len(x)==16 and ck.is_uid(x):
-             y='<a href="'+url0+'wcid=:'+x+'">'+x+'</a>'
-             mt=mt[:i1+1]+y+mt[i2:]
-             i0=i1+len(y)
-          elif x.startswith('http://'):
-             y='<a href="'+x+'">'+x+'</a>'
-             mt=mt[:i1+1]+y+mt[i2:]
-             i0=i1+len(y)
-          elif x.startswith('cm:'):
-             # For compatibility with cM
-             x1=x[3:].split(':')
-             y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
-             mt=mt[:i1+1]+y+mt[i2:]
-             i0=i1+len(y)
-
-          else:   
-             i0=i1+1
-
-       # Next is for compatibility with cM
-       i0=0
-       while True:
-          i1=mt.find('$#cm_',i0)
-          if i1<0: break
-
-          i2=mt.find('#$',i1+1)
-          if i2<0: break
-
-          x=mt[i1:i2+2]
-          x1=x[5:-2].split('_')
-          y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
-          mt=mt[:i1]+y+mt[i2+2:]
-          i0=i1+len(y)
-
-       hp+=mt
-
-       hp+='</pre>\n'
-       hp+='</div>\n'
-
-       ##################################################################################################
-       # Show meta
-       hp+=' <hr class="ck_hr">\n'
-
-       hp+=' <span id="ck_text51"><b>API desc:</b></span>\n'
-       hp+='<div id="ck_entries_space4"></div>\n'
-
-       hp+='<div id="ck_text55">\n'
-       hp+='<pre>\n'
-       rx=ck.dumps_json({'dict':dx, 'sort_keys':'yes'})
-       if rx['return']>0: return rx
-
-       hp+=rx['string']
-
-       hp+='</pre>\n'
-       hp+='</div>\n'
-
-       ##################################################################################################
-       hp+='<div id="ck_downloads">\n'
-       hp+='<a href="'+url4+'" target="_blank">[Download meta]</a>&nbsp;\n'
-       hp+='</div>\n'
-
-       # Check if report
-       ps=os.path.join(p, 'report.html')
-       if os.path.isfile(ps):
-          r=ck.load_text_file({'text_file':ps})
-          if r['return']>0: return r
+          hp+='<span id="ck_entries1a">'+dn+'</span><br>\n'
           hp+=' <hr class="ck_hr">\n'
-          htx=r['string'].replace('$#cid#$',url2)
-          hp+=htx+'\n'
+
+          hp+='<div id="ck_entries_space4"></div>\n'
+          if au!='':
+             hp+='<span id="ck_entries2"><b>Added by:</b> <i>'+au+'</i></span><br>\n'
+          hp+='<span id="ck_entries2"><b>Date:</b> <i>'+iso_datetime+'</i></span><br>\n'
+          hp+='<span id="ck_entries2"><b>License:</b> <i>'+license+'</i></span><br>\n'
+
+          hp+='<div id="ck_entries_space4"></div>\n'
+
+          hp+='<span id="ck_entries2"><b>Module:</b> <i>'+muoa+'</i></span><br>\n'
+          hp+='<span id="ck_entries2"><b>Repo:</b> <i>'+ruoa+'</i></span><br>\n'
+
+          hp+='<div id="ck_entries_space4"></div>\n'
+          hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+xcid+'</a></i></span><br>\n'
+
+          if desc!='':
+             hp+='<div id="ck_entries_space8"></div>\n'
+             hp+='<span id="ck_entries3">'+desc+'</span><br>\n'
+
+
+          hp+='<div id="ck_entries_space4"></div>\n'
+
+          hp+='   </td>\n'
+          hp+='  </tr>\n'
+
+          hp+=' </table>\n'
+
+          # Show tags
+          if stags!='':
+             hp+='<center><b>Tags:</b> <i>'+stags+'</i></center>\n'
+
+          hp+='<div id="ck_downloads">\n'
+          if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
+          hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
+          hp+='<a href="'+url3+'">[Download entry as archive]</a>\n'
+          hp+='</div>\n'
+
+       # Check if has specialized html
+       if hspec!='':
+          hp+=hspec
+
+       if raw:
+          # Check files
+          rx=ck.list_all_files({'path':pp, 'limit':10000})
+          if rx['return']==0:
+             files=rx['list']
+             ll=sorted(files)
+
+             if len(ll)>0:
+                hp+='<hr class="ck_hr">\n'
+                hp+='<span id="ck_text51"><b>Files:</b></span>\n'
+                hp+='<div id="ck_entries_space4"></div>\n'
+
+                hp+='<div id="ck_text55">\n'
+                for q in ll:
+                    v=files[q]
+                    hp+='<a href="'+utp+q+'">'+q+'</a>&nbsp;&nbsp;&nbsp;&nbsp;('+str(int((v.get('size',0)+999)/1000))+'KB)<br>\n'
+                hp+='</div>\n'
+
+                hp+='<div id="ck_downloads">\n'
+                hp+='<a href="'+url3+'">[Download archive]</a>\n'
+                hp+='</div>\n'
+
+          ##################################################################################################
+          # Show dependencies
+          hp+=' <hr class="ck_hr">\n'
+
+          hp+=' <span id="ck_text51"><b>Cross-linking (dependencies):</b></span>\n'
+          hp+='<div id="ck_entries_space4"></div>\n'
+
+          hp+='<div id="ck_text55">\n'
+          hp+='</div>\n'
+
+          # Show meta
+          hp+=' <hr class="ck_hr">\n'
+
+          hp+=' <span id="ck_text51"><b>Meta:</b></span>\n'
+          hp+='<div id="ck_entries_space4"></div>\n'
+
+          hp+='<div id="ck_text55">\n'
+          hp+='<pre>\n'
+          rx=ck.dumps_json({'dict':dd, 'sort_keys':'yes'})
+          if rx['return']>0: return rx
+
+          mt=rx['string']
+
+          # Try to detect links
+          i0=0
+          while i0<len(mt):
+             i1=mt.find('"',i0)
+             if i1<0: break
+
+             i2=mt.find('"',i1+1)
+             if i2<0: break
+
+             x=mt[i1+1:i2]
+             if len(x)==16 and ck.is_uid(x):
+                y='<a href="'+url0+'wcid=:'+x+'">'+x+'</a>'
+                mt=mt[:i1+1]+y+mt[i2:]
+                i0=i1+len(y)
+             elif x.startswith('http://'):
+                y='<a href="'+x+'">'+x+'</a>'
+                mt=mt[:i1+1]+y+mt[i2:]
+                i0=i1+len(y)
+             elif x.startswith('cm:'):
+                # For compatibility with cM
+                x1=x[3:].split(':')
+                y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+                mt=mt[:i1+1]+y+mt[i2:]
+                i0=i1+len(y)
+
+             else:   
+                i0=i1+1
+
+          # Next is for compatibility with cM
+          i0=0
+          while True:
+             i1=mt.find('$#cm_',i0)
+             if i1<0: break
+
+             i2=mt.find('#$',i1+1)
+             if i2<0: break
+
+             x=mt[i1:i2+2]
+             x1=x[5:-2].split('_')
+             y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+             mt=mt[:i1]+y+mt[i2+2:]
+             i0=i1+len(y)
+
+          hp+=mt
+
+          hp+='</pre>\n'
+          hp+='</div>\n'
+
+          ##################################################################################################
+          # Show meta
+          hp+=' <hr class="ck_hr">\n'
+
+          hp+=' <span id="ck_text51"><b>API desc:</b></span>\n'
+          hp+='<div id="ck_entries_space4"></div>\n'
+
+          hp+='<div id="ck_text55">\n'
+          hp+='<pre>\n'
+          rx=ck.dumps_json({'dict':dx, 'sort_keys':'yes'})
+          if rx['return']>0: return rx
+
+          hp+=rx['string']
+
+          hp+='</pre>\n'
+          hp+='</div>\n'
+
+          ##################################################################################################
+          hp+='<div id="ck_downloads">\n'
+          hp+='<a href="'+url4+'" target="_blank">[Download meta]</a>&nbsp;\n'
+          hp+='</div>\n'
+
+          # Check if report
+          ps=os.path.join(p, 'report.html')
+          if os.path.isfile(ps):
+             r=ck.load_text_file({'text_file':ps})
+             if r['return']>0: return r
+             hp+=' <hr class="ck_hr">\n'
+             htx=r['string'].replace('$#cid#$',url2)
+             hp+=htx+'\n'
 
        hp+='</div>\n'
 
@@ -618,6 +646,7 @@ def index(i):
            duoa=q['data_uoa']
            duid=q['data_uid']
 
+           meta=q.get('meta',{})
            info=q.get('info',{})
            control=info.get('control',{})
 
@@ -625,11 +654,23 @@ def index(i):
            author_wp=control.get('author_webpage','')
            iso_datetime=control.get('iso_datetime','')
 
+           tags=meta.get('tags', [])
+           stags=''
+           if type(tags)!=list: stags=tags
+           elif len(tags)>0:
+              stags=''
+              for q in tags:
+                  if stags!='': stags+=','
+                  stags+=q
+
            desc=info.get('description','')
 
            au=''
-           if author!='': au=author
-           if author_wp!='': au='<a href="'+author_wp+'" target="_blank">'+au+'</a>'
+
+           if author!='': 
+              au=author
+              if author_wp!='': au='<a href="'+author_wp+'" target="_blank">'+au+'</a>'
+              au='Added by '+au
 
            if iso_datetime!='':
               if au!='': au+=', '
@@ -638,9 +679,12 @@ def index(i):
               if ix>0: x=x[:ix]
               au+=x
 
-           if au!='':
-              au+=', '
+           if au!='': au+=', '
            au+='Repo: '+ruoa
+
+           if stags!='':
+              if au!='': au+=', '
+              au+='<b>Tags:</b> '+stags
 
            dn=info.get('data_name','')
            if dn=='': dn=duoa
