@@ -78,6 +78,8 @@ def index(i):
     flimit_name='ck_limit'
     fmore_button_name='ck_top_more'
 
+    fview_raw='view_raw'
+
     # Check filters
     cid=i.get('wcid','').replace('_',':')
 
@@ -168,6 +170,8 @@ def index(i):
     if fmore_button_name in i: ln=str(int(ln)+lnstep)
     else: ln=str(lnstep)
 
+    vr=i.get(fview_raw,'')
+
     if i.get('nolimit','')=='yes':
        ln=''
 
@@ -213,6 +217,13 @@ def index(i):
 
     # Prepare query div
     ht=''
+
+    # Start form + URL (even when viewing entry)
+    ii={'url':url1, 'name':form_name}
+    r=start_form(ii)
+    if r['return']>0: return r
+    hf=r['html']
+
     if view_entry:
        ht='<script>\n'
        ht+=' function goBack() {window.history.back()}\n'
@@ -223,12 +234,6 @@ def index(i):
 #       ht+='</div>\n'
 
     else:
-        # Start form + URL
-       ii={'url':url1, 'name':form_name}
-       r=start_form(ii)
-       if r['return']>0: return r
-       hf=r['html']
-
        # Get list of repos
        r=ck.access({'action':'list',
                     'module_uoa':ck.cfg["repo_name"],
@@ -354,7 +359,20 @@ def index(i):
        duoa=q['data_uoa']
        duid=q['data_uid']
 
-       hp='' # init html
+       hp=hf # init html + form
+
+       # Preset current entry params
+       rx=create_input({'type':'hidden', 'name': frepo_name, 'value':ruid})
+       if rx['return']>0: return rx
+       hp+=rx['html']+'\n'
+
+       rx=create_input({'type':'hidden', 'name': fmodule_name, 'value':muid})
+       if rx['return']>0: return rx
+       hp+=rx['html']+'\n'
+
+       rx=create_input({'type':'hidden', 'name': fdata_name, 'value':duid})
+       if rx['return']>0: return rx
+       hp+=rx['html']+'\n'
 
 #       hp='<div id="ck_prune">\n'
 #       hp+='<b>View entry:</b><br>\n'
@@ -435,6 +453,9 @@ def index(i):
        if rx['return']==0:
           if rx.get('raw','')!='yes': raw=False
           if rx.get('show_top','')!='yes': show_top=False
+          if vr=='on': 
+             raw=True
+             show_top=True
           hspec=rx.get('html','')
 
        # Show top info
@@ -455,7 +476,6 @@ def index(i):
 
           hp+='   </td>\n'
           hp+='   <td valign="top">\n'
-
 
           hp+='<span id="ck_entries1a">'+dn+'</span><br>\n'
           hp+=' <hr class="ck_hr">\n'
@@ -497,8 +517,10 @@ def index(i):
           hp+='</div>\n'
 
        # Check if has specialized html
-       if hspec!='':
-          hp+=hspec
+       if hspec!='' and vr!='on':
+          hp+='<div id="ck_entries2">\n'
+          hp+=' '+hspec+'\n'
+          hp+='</div>\n'
 
        if raw:
           # Check files
@@ -624,7 +646,15 @@ def index(i):
              htx=r['string'].replace('$#cid#$',url2)
              hp+=htx+'\n'
 
+
+       # Raw selector
+       if hspec!='':
+          checked=''
+          if vr=='on': checked=' checked '
+          hp+='<br><center><input type="checkbox" name="'+fview_raw+'" id="'+fview_raw+'" onchange="submit()"'+checked+'>View entry in raw format</center>\n'
+
        hp+='</div>\n'
+       hp+='</form>\n'
 
     else:
        ######################################## View multiple entries ###############
@@ -1364,7 +1394,6 @@ def webadd(i):
        hm=''
 
     else:
-
        # Start form + URL
        ii={'url':url_add1, 'name':form_name}
        r=start_form(ii)
