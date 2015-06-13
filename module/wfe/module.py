@@ -472,7 +472,12 @@ def index(i):
        utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
 
        utp_data_uoa='wfe'
-       utp_tmp=url0+'action=pull&common_func=yes&cid=tmp:'+utp_data_uoa+'&filename='
+
+       x='tmp:'+utp_data_uoa
+       if ck.cfg.get('graph_tmp_repo_uoa','')!='':
+          x=ck.cfg['graph_tmp_repo_uoa']+':'+x
+
+       utp_tmp=url0+'action=pull&common_func=yes&cid='+x+'&filename='
 
        ii={'action':'html_viewer',
            'module_uoa':muid,
