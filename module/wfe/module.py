@@ -468,6 +468,7 @@ def index(i):
        # Check if share
        ps=os.path.join(p, 'share.html')
        hshare=''
+       ishare=False
        if os.path.isfile(ps):
           r=ck.load_text_file({'text_file':ps})
           if r['return']>0: return r
@@ -521,6 +522,7 @@ def index(i):
 
           # Check if share
           if hshare!='':
+             ishare=True
              hp+=hshare+'\n'
 
           hp+='   </td>\n'
@@ -700,7 +702,7 @@ def index(i):
        if hspec!='':
           checked=''
           if vr=='on': checked=' checked '
-          hp+='<br><center><input type="checkbox" name="'+fview_raw+'" id="'+fview_raw+'" onchange="submit()"'+checked+'>View entry in raw format</center>\n'
+          hp+='<center><input type="checkbox" name="'+fview_raw+'" id="'+fview_raw+'" onchange="submit()"'+checked+'>View entry in raw format</center>\n'
 
        hp+='</div>\n'
        hp+='</form>\n'
