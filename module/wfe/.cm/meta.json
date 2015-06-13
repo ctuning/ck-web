@@ -64,7 +64,7 @@
       "module_uoa":"model"
     },{
       "module_uoas":["dissemination.publication", "29db2248aba45e59"],
-      "name":"Article",
+      "name":"Articles",
       "module_uoa":"dissemination.publication"
     }
   ]

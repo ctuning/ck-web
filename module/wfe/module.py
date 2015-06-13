@@ -239,7 +239,7 @@ def index(i):
     hf=r['html']
 
     if view_entry:
-       ht='<script>\n'
+       ht+='<script>\n'
        ht+=' function goBack() {window.history.back()}\n'
        ht+='</script>\n'
        ht+='\n'
@@ -248,6 +248,8 @@ def index(i):
 #       ht+='</div>\n'
 
     else:
+       ht+=' <hr class="ck_hr">\n'
+
        # Get list of repos
        r=ck.access({'action':'list',
                     'module_uoa':ck.cfg["repo_name"],
