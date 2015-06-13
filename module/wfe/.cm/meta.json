@@ -1,5 +1,8 @@
 {
   "actions": {
+    "clean": {
+      "desc": "clean tmp cache"
+    }, 
     "convert_ck_list_to_select_data": {}, 
     "create_button": {
       "desc": "create button"
@@ -33,5 +36,36 @@
   "copyright": "See CK Copyright.txt for copyright details", 
   "desc": "CK web front-end", 
   "developer": "cTuning foundation", 
-  "license": "See CK LICENSE.txt for licensing details"
+  "license": "See CK LICENSE.txt for licensing details",
+  "top_menu": [
+    {
+      "module_uoas":[""],
+      "name":"All",
+      "module_uoa":""
+    },{
+      "module_uoas":["graph","2d41f89bcf32d4d4"],
+      "name":"Graphs",
+      "module_uoa":"graph"
+    },{
+      "module_uoas":["experiment","bc0409fb61f0aa82"],
+      "name":"Experiments",
+      "module_uoa":"experiment"
+    },{
+      "module_uoas":["program","b0ac08fe1d3c2615"],
+      "name":"Programs",
+      "module_uoa":"program"
+    },{
+      "module_uoas":["dataset","8a7141c59cd335f5"],
+      "name":"Datasets",
+      "module_uoa":"dataset"
+    },{
+      "module_uoas":["model","f92b25ca2f1a98ae"],
+      "name":"Models",
+      "module_uoa":"model"
+    },{
+      "module_uoas":["dissemination.publication", "29db2248aba45e59"],
+      "name":"Article",
+      "module_uoa":"dissemination.publication"
+    }
+  ]
 }

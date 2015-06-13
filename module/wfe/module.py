@@ -215,8 +215,22 @@ def index(i):
     if len(lst)==1:
        view_entry=True
 
-    # Prepare query div
+    # Top html
     ht=''
+
+    ht+='<center><div id="ck_menu_0">\n'
+    for q in cfg['top_menu']:
+        name=q['name']
+        muoas=q.get('module_uoas',[])
+        xmuoa=q.get('module_uoa','')
+        style='ck_menu_text_0'
+        if cmuoa in muoas:
+           style='ck_menu_text_0_selected'
+        x=url0+'wcid='+xmuoa+':'
+        ht+='<span id="'+style+'"><a href="'+x+'">'+name+'</a></span>\n'
+    ht+='</div></center>\n'
+
+    # Prepare query div
 
     # Start form + URL (even when viewing entry)
     ii={'url':url1, 'name':form_name}
@@ -303,7 +317,7 @@ def index(i):
        hadd='<a href="'+url_add+'">[Add new entry]</a>'
 
        # Prepare top
-       ht=hf
+       ht+=hf
        ht+='<div id="ck_prune">\n'
        ht+='<small><b>Prune entries by:</b></small><br>\n'
 
@@ -444,11 +458,17 @@ def index(i):
        hspec=''
        utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
 
+       utp_data_uoa='wfe'
+       utp_tmp=url0+'action=pull&common_func=yes&cid=tmp:'+utp_data_uoa+'&filename='
+
        ii={'action':'html_viewer',
            'module_uoa':muid,
            'data_uoa':duid,
            'url_base':url0,
-           'url_pull':utp}
+           'url_pull':utp,
+           'url_pull_tmp':utp_tmp,
+           'tmp_data_uoa':utp_data_uoa,
+           'all_params':i}
        rx=ck.access(ii)
        if rx['return']==0:
           if rx.get('raw','')!='yes': raw=False
@@ -1869,3 +1889,43 @@ def parse_txt(i):
        i0=i1+len(y)
 
     return {'return':0, 'string':mt}
+
+##############################################################################
+# clean tmp cache
+
+def clean(i):
+    """
+    Input:  {
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+            }
+
+    """
+
+    o=i.get('out','')
+
+    if o=='con':
+       ck.out('Cleaning web cache ...')
+
+    # Check if tmp exists
+    rx=ck.access({'action':'load',
+                  'module_uoa':'tmp',
+                  'data_uoa':work['self_module_uoa']})
+    if rx['return']==0:
+       p=rx['path']
+
+       dirList=os.listdir(p)
+       for fn in dirList:
+           if fn.startswith('tmp-'):
+              pp=os.path.join(p, fn)
+              if os.path.isfile(pp):
+                 try:
+                    os.remove(pp)
+                 except Exception as e:
+                     None
+
+    return {'return':0}
