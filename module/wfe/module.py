@@ -209,7 +209,8 @@ def index(i):
        ii['add_if_date_before']=dateb
 
     r=ck.access(ii)
-    if r['return']>0: return r
+    if r['return']>0: # On some machines, some modules are not available - so do not process error to avoid crashing ...
+       r['lst']=[]
 
     lst=r['lst']
     if len(lst)==1:
@@ -219,12 +220,17 @@ def index(i):
     ht=''
 
     ht+='<center><div id="ck_menu_0">\n'
+
+    xcmuoa=cmuoa
+    if view_entry and len(lst)==1:
+       xcmuoa=lst[0]['module_uoa']
+
     for q in cfg['top_menu']:
         name=q['name']
         muoas=q.get('module_uoas',[])
         xmuoa=q.get('module_uoa','')
         style='ck_menu_text_0'
-        if cmuoa in muoas:
+        if xcmuoa in muoas:
            style='ck_menu_text_0_selected'
         x=url0+'wcid='+xmuoa+':'
         ht+='<span id="'+style+'"><a href="'+x+'">'+name+'</a></span>\n'
