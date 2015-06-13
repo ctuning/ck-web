@@ -227,12 +227,17 @@ def index(i):
 
     for q in cfg['top_menu']:
         name=q['name']
+        x=q.get('url','')
         muoas=q.get('module_uoas',[])
         xmuoa=q.get('module_uoa','')
+
         style='ck_menu_text_0'
         if xcmuoa in muoas:
            style='ck_menu_text_0_selected'
-        x=url0+'wcid='+xmuoa+':'
+
+        if x=='':
+           x=url0+'wcid='+xmuoa+':'
+
         ht+='<span id="'+style+'"><a href="'+x+'">'+name+'</a></span>\n'
     ht+='</div></center>\n'
 

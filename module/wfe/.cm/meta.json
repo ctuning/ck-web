@@ -43,6 +43,10 @@
       "name":"All",
       "module_uoa":""
     },{
+      "module_uoas":["report", "1e348bd6ab43ce8a"],
+      "name":"Reports",
+      "module_uoa":"report"
+    },{
       "module_uoas":["graph","2d41f89bcf32d4d4"],
       "name":"Graphs",
       "module_uoa":"graph"
@@ -66,6 +70,9 @@
       "module_uoas":["dissemination.publication", "29db2248aba45e59"],
       "name":"Articles",
       "module_uoa":"dissemination.publication"
+    },{
+      "name":"Help",
+      "url":"http://github.com/ctuning/ck/wiki"
     }
   ]
 }
