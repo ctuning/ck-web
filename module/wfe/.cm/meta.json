@@ -43,13 +43,13 @@
       "name":"All",
       "module_uoa":""
     },{
-      "module_uoas":["report", "1e348bd6ab43ce8a"],
-      "name":"Reports",
-      "module_uoa":"report"
-    },{
       "module_uoas":["graph","2d41f89bcf32d4d4"],
       "name":"Graphs",
       "module_uoa":"graph"
+    },{
+      "module_uoas":["report", "1e348bd6ab43ce8a"],
+      "name":"Reports",
+      "module_uoa":"report"
     },{
       "module_uoas":["experiment","bc0409fb61f0aa82"],
       "name":"Experiments",

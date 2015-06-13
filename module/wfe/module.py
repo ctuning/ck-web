@@ -482,6 +482,10 @@ def index(i):
            'url_pull_tmp':utp_tmp,
            'tmp_data_uoa':utp_data_uoa,
            'all_params':i}
+       for q in i:
+           if q.startswith('cur_form'):
+              ii[q]=i[q]
+
        rx=ck.access(ii)
        if rx['return']==0:
           if rx.get('raw','')!='yes': raw=False
