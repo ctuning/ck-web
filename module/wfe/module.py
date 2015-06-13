@@ -486,10 +486,11 @@ def index(i):
            'url_pull':utp,
            'url_pull_tmp':utp_tmp,
            'tmp_data_uoa':utp_data_uoa,
+           'form_name':form_name,
            'all_params':i}
-       for q in i:
-           if q.startswith('cur_form'):
-              ii[q]=i[q]
+#       for q in i:
+#           if q.startswith('cur_form'):
+#              ii[q]=i[q]
 
        rx=ck.access(ii)
        if rx['return']==0:
