@@ -465,6 +465,14 @@ def index(i):
 
        hp+='<div id="ck_entries">\n'
 
+       # Check if share
+       ps=os.path.join(p, 'share.html')
+       hshare=''
+       if os.path.isfile(ps):
+          r=ck.load_text_file({'text_file':ps})
+          if r['return']>0: return r
+          hshare=r['string'].replace('$#url#$',url2)
+
        # Check if specialized rendering function exists for the given module
        raw=True
        show_top=True
@@ -485,6 +493,8 @@ def index(i):
            'url_base':url0,
            'url_pull':utp,
            'url_pull_tmp':utp_tmp,
+           'url_wiki':url5,
+           'html_share':hshare,
            'tmp_data_uoa':utp_data_uoa,
            'form_name':form_name,
            'all_params':i}
@@ -510,12 +520,8 @@ def index(i):
           hp+='    <img src="'+url6+'">\n'
 
           # Check if share
-          ps=os.path.join(p, 'share.html')
-          if os.path.isfile(ps):
-             r=ck.load_text_file({'text_file':ps})
-             if r['return']>0: return r
-             htx=r['string'].replace('$#url#$',url2)
-             hp+=htx+'\n'
+          if hshare!='':
+             hp+=hshare+'\n'
 
           hp+='   </td>\n'
           hp+='   <td valign="top">\n'
