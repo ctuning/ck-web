@@ -71,6 +71,9 @@
       "name":"Articles",
       "module_uoa":"dissemination.publication"
     },{
+      "name":"Discussions",
+      "url":"https://groups.google.com/forum/#!forum/collective-mind"
+    },{
       "name":"Help",
       "url":"http://github.com/ctuning/ck/wiki"
     }
