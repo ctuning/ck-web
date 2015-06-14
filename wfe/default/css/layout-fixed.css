@@ -232,4 +232,43 @@ table.ck_round_table td
  box-shadow: 2px 2px 3px 1px #bbb;
 }
 
+/************************** Articles/reports **************************/
+
+#ck_article_title
+{
+ color:#000000;
+ font-weight: bold;
+ font-family:Arial;
+ font-size:24px;
+}
+
+#ck_article_authors
+{
+ color:#000000;
+ font-style: italic;
+ font-family:Arial;
+ font-size:14px;
+}
+
+#ck_article_affiliations
+{
+ color:#000000;
+ font-family:Arial;
+ font-size:14px;
+}
+
+#ck_article_cauthor
+{
+ color:#000000;
+ font-family:Arial;
+ font-size:12px;
+}
+
+#ck_article_text
+{
+ color:#000000;
+ font-family:Arial;
+ font-size:12px;
+}
+
 /*****************************************************************/
