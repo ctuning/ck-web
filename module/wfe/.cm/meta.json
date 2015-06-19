@@ -21,6 +21,10 @@
       "desc": "parse text/json/etc files to detect http,CM,CK ...", 
       "for_web": "yes"
     }, 
+    "process_ck_page": {
+      "desc": "process ck special instructions in html pages", 
+      "for_web": "yes"
+    }, 
     "start_form": {
       "desc": "start form"
     }, 
@@ -36,46 +40,78 @@
   "copyright": "See CK Copyright.txt for copyright details", 
   "desc": "CK web front-end", 
   "developer": "cTuning foundation", 
-  "license": "See CK LICENSE.txt for licensing details",
+  "license": "See CK LICENSE.txt for licensing details", 
   "top_menu": [
     {
-      "module_uoas":[""],
-      "name":"All",
-      "module_uoa":""
-    },{
-      "module_uoas":["graph","2d41f89bcf32d4d4"],
-      "name":"Graphs",
-      "module_uoa":"graph"
-    },{
-      "module_uoas":["report", "1e348bd6ab43ce8a"],
-      "name":"Reports",
-      "module_uoa":"report"
-    },{
-      "module_uoas":["experiment","bc0409fb61f0aa82"],
-      "name":"Experiments",
-      "module_uoa":"experiment"
-    },{
-      "module_uoas":["program","b0ac08fe1d3c2615"],
-      "name":"Programs",
-      "module_uoa":"program"
-    },{
-      "module_uoas":["dataset","8a7141c59cd335f5"],
-      "name":"Datasets",
-      "module_uoa":"dataset"
-    },{
-      "module_uoas":["model","f92b25ca2f1a98ae"],
-      "name":"Models",
-      "module_uoa":"model"
-    },{
-      "module_uoas":["dissemination.publication", "29db2248aba45e59"],
-      "name":"Articles",
-      "module_uoa":"dissemination.publication"
-    },{
-      "name":"Discussions",
-      "url":"https://groups.google.com/forum/#!forum/ctuning-discussions"
-    },{
-      "name":"Help",
-      "url":"http://github.com/ctuning/ck/wiki"
+      "module_uoa": "", 
+      "module_uoas": [
+        ""
+      ], 
+      "name": "All"
+    }, 
+    {
+      "module_uoa": "graph", 
+      "module_uoas": [
+        "graph", 
+        "2d41f89bcf32d4d4"
+      ], 
+      "name": "Graphs"
+    }, 
+    {
+      "module_uoa": "report", 
+      "module_uoas": [
+        "report", 
+        "1e348bd6ab43ce8a"
+      ], 
+      "name": "Reports"
+    }, 
+    {
+      "module_uoa": "experiment", 
+      "module_uoas": [
+        "experiment", 
+        "bc0409fb61f0aa82"
+      ], 
+      "name": "Experiments"
+    }, 
+    {
+      "module_uoa": "program", 
+      "module_uoas": [
+        "program", 
+        "b0ac08fe1d3c2615"
+      ], 
+      "name": "Programs"
+    }, 
+    {
+      "module_uoa": "dataset", 
+      "module_uoas": [
+        "dataset", 
+        "8a7141c59cd335f5"
+      ], 
+      "name": "Datasets"
+    }, 
+    {
+      "module_uoa": "model", 
+      "module_uoas": [
+        "model", 
+        "f92b25ca2f1a98ae"
+      ], 
+      "name": "Models"
+    }, 
+    {
+      "module_uoa": "dissemination.publication", 
+      "module_uoas": [
+        "dissemination.publication", 
+        "29db2248aba45e59"
+      ], 
+      "name": "Articles"
+    }, 
+    {
+      "name": "Discussions", 
+      "url": "https://groups.google.com/forum/#!forum/ctuning-discussions"
+    }, 
+    {
+      "name": "Help", 
+      "url": "http://github.com/ctuning/ck/wiki"
     }
   ]
 }

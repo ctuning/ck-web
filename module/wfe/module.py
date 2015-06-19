@@ -137,6 +137,8 @@ def index(i):
 
     url_template_pull=url+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
 
+    hstyle=''
+
     # Load template
     ii={'action':'load',
         'module_uoa':work['self_module_uoa'],
@@ -492,6 +494,7 @@ def index(i):
            'module_uoa':muid,
            'data_uoa':duid,
            'url_base':url0,
+           'url_cid':x,
            'url_pull':utp,
            'url_pull_tmp':utp_tmp,
            'url_wiki':url5,
@@ -511,6 +514,17 @@ def index(i):
              raw=True
              show_top=True
           hspec=rx.get('html','')
+          hstyle=rx.get('style','')
+
+          # Process special vars
+          rx=process_ck_page({'html':hspec})
+          if rx['return']>0: return rx
+          hspec=rx['html']
+          if rx.get('style','')!='':
+             hstyle+='\n\n'+rx['style']+'\n\n'
+
+          # Replace Root URL
+          hspec=hspec.replace('$#ck_root_url#$', url0)
 
        # Show top info
        if show_top:
@@ -803,6 +817,11 @@ def index(i):
 
            hp+='</div>\n'
 
+    # Replace styles
+    if hstyle!='':
+       hstyle='<style>\n'+hstyle+'</style>\n\n'
+    h=h.replace('$#ck_styles#$',hstyle)
+
     # Replace top if needed
     h=h.replace('$#template_top#$',ht)
 
@@ -895,7 +914,7 @@ def create_selector(i):
 
     sv=i.get('selected_value','')
 
-    for q in d:
+    for q in sorted(d):
         n=q['name']
         v=q['value']
 
@@ -1960,3 +1979,77 @@ def clean(i):
                      None
 
     return {'return':0}
+
+##############################################################################
+# process ck special instructions in html pages
+
+def process_ck_page(i):
+    """
+    Input:  {
+              html
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+            }
+
+    """
+
+    h=i.get('html','')
+    st=''
+
+    j=0
+
+    while True:
+       j1=h.find('$#ck_include_start#$', j)
+       if j1>0:
+          j2=h.find('$#ck_include_stop#$', j1)
+          if j2>0:
+             sparams=h[j1+20:j2]
+
+             subst=''
+
+             # Convert JSON params to dict
+             rx=ck.convert_json_str_to_dict({'str':sparams, 'skip_quote_replacement':'yes'})
+             if rx['return']==0:
+                params=rx['dict']
+
+                cid=params.get('cid','')
+                fh=params.get('html','')
+                fs=params.get('style','')
+
+                if cid!='':
+                   rx=ck.access({'action':'load',
+                                 'cid':cid})
+                   if rx['return']==0:
+                      pp=rx['path']
+
+                      if fh!='':
+                         px=os.path.join(pp, fh)
+                         if os.path.isfile(px):
+                            r=ck.load_text_file({'text_file':px})
+                            if r['return']>0: return r
+                            subst=r['string']
+
+                         # Replace where to attach
+                         where=params.get('where','')
+                         if where=='': where='body'
+                         subst=subst.replace('$#ck_where#$', where)
+
+                      if fs!='':
+                         px=os.path.join(pp, fs)
+                         if os.path.isfile(px):
+                            r=ck.load_text_file({'text_file':px})
+                            if r['return']>0: return r
+                            st=r['string']
+
+             h=h[:j1]+subst+h[j2+19:]
+       
+             j=j1
+             continue
+
+       break
+
+    return {'return':0, 'html':h, 'style':st}
