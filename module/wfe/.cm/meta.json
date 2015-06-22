@@ -3,7 +3,9 @@
     "clean": {
       "desc": "clean tmp cache"
     }, 
-    "convert_ck_list_to_select_data": {}, 
+    "convert_ck_list_to_select_data": {
+      "desc": "convert ck list to select data"
+    }, 
     "create_button": {
       "desc": "create button"
     }, 
