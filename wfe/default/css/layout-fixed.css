@@ -156,6 +156,43 @@ table.ck_round_table td
  padding:4px;
 }
 
+table.ck_table
+{
+ border: 1px solid #00009f;
+ background-color: #FFFFFF;
+ margin: 5px;
+ padding: 0px;
+ border-spacing: 0px;
+}
+
+table.ck_table td
+{
+ spacing:0px;
+ padding:4px;
+}
+
+.light_right_in_table
+{
+ border-right:solid;
+ border-right-width:1px;
+}
+
+.light_bottom_in_table
+{
+ border-bottom:solid;
+ border-bottom-width:1px;
+}
+
+.light_green_in_table
+{
+ background-color: #ffffcf;
+}
+
+.light_green_in_table1
+{
+ background-color: #ffffdf;
+}
+
 .ck_hr
 {
  border:none; 
@@ -163,6 +200,13 @@ table.ck_round_table td
  background-color:#00009F; 
  color:#00009F; 
  height:1px;
+}
+
+.ck_small_button
+{
+ color:#00009f;
+ height: 20px;
+ font-size:10px;
 }
 
 /************************** Menu 0 **************************/
