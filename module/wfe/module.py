@@ -671,7 +671,10 @@ def index(i):
 
              x=mt[i1:i2+2]
              x1=x[5:-2].split('_')
-             y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+             if len(x1)>1:
+                y='<a href="'+url0+'wcid='+x1[0]+':'+x1[1]+'">'+x+'</a>'
+             else:
+                y=x
              mt=mt[:i1]+y+mt[i2+2:]
              i0=i1+len(y)
 
