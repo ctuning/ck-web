@@ -1843,7 +1843,6 @@ def view_page(i):
     # Update menu
     html=html.replace('$#ck_menu#$', menu)
 
-
     # Load page
     r=ck.load_text_file({'text_file':p}) 
     if r['return']>0: return r
@@ -1868,11 +1867,23 @@ def view_page(i):
     if title=='': title=dd.get('title','')
     html=html.replace('$#ck_title#$',title)
 
+    keys=dd.get('global_keywords','')
+    keys1=dp.get('keywords','')
+    if keys!='' and keys1!='': keys+=','
+    keys+=keys1
+    html=html.replace('$#ck_page_keywords#$',keys)
+
+    # Replace various vars
+    share=dd.get('share','')
+    html=html.replace('$#ck_var_share#$',share)
+
     html=html.replace('$#ck_root_url#$', rurl)
     html=html.replace('$#ck_root_page_url#$', rurlp)
     html=html.replace('$#wfe_url_prefix_page#$',rurlp)
 
     html=html.replace('$#ck_url_template_pull#$', rutp)
+
+    html=html.replace('$#ck_var_page_name#$', page)
 
     return {'return':0, 'html':html}
 
