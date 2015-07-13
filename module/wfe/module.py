@@ -1728,6 +1728,7 @@ def view_page(i):
     """
     Input:  {
               (page) 
+              (wfe_template_data_uoa) - only if not defined in ck.cfg
             }
 
     Output: {
@@ -1745,6 +1746,9 @@ def view_page(i):
     # Get default path to the entry with pages (web_tempalte_uoa in kernel)
     truoa=ck.cfg.get('wfe_template_repo_uoa','')
     tduoa=ck.cfg.get('wfe_template_data_uoa','')
+
+    if tduoa=='':
+       tduoa=i.get('wfe_template_data_uoa','')
 
     r=ck.access({'action':'load',
                  'module_uoa':work['self_module_uoa'],
@@ -1798,12 +1802,24 @@ def view_page(i):
        html=r['string']
 
     # Prepare substitutes
-    rurl=ck.cfg.get('wfe_url_prefix','')
-    rurlp=rurl+'page='
+    rurl=''
+    if os.environ.get('CK_WFE_URL_PREFIX_SKIP','')!='yes':
+       rurl=os.environ.get('CK_WFE_URL_PREFIX','')
+       if rurl=='':
+          rurl=ck.cfg.get('wfe_url_prefix','')
 
-    rutp=rurl+'action=pull&common_func=yes&cid='
-    if truoa!='': rutp+=truoa+':'
-    rutp+='wfe:'+tduoa+'&filename='
+    rurlp=rurl
+    add_html=''
+    if os.environ.get('CK_WFE_URL_PREFIX_PAGE_SKIP','')!='yes':
+       rurlp+='page='
+    else:
+       add_html='.html'
+
+    rutp=rurl
+    if os.environ.get('CK_WFE_URL_PREFIX_PULL_SKIP','')!='yes':
+       rutp+='action=pull&common_func=yes&cid='
+       if truoa!='': rutp+=truoa+':'
+       rutp+='wfe:'+tduoa+'&filename='
 
     # Prepare menu
     menu=''
@@ -1812,6 +1828,7 @@ def view_page(i):
     mn=dd.get('menu',[])
     
     im=0
+    st='' # subtitle, if needed
     for m in mn:
         #Get style
         md=mdesc[im]
@@ -1826,12 +1843,17 @@ def view_page(i):
             idx=mx.get('id','')
             name=mx.get('name','')
 
-            link=mx.get('link','')
+            link=mx.get('link','')+add_html
 
             if idx==m: menu+='     '+md.get('html_on_start','')
             else:      menu+='     '+md.get('html_off_start','')
 
-            menu+='<a href="'+link+'">'+name+'</a>'
+            xm='<a href="'+link+'">'+name+'</a>'
+            menu+=xm
+
+            if idx==m:
+               if st=='': st='Back to '+xm
+               else: st+='&nbsp;/&nbsp;'+xm
 
             if idx==m: menu+='     '+md.get('html_on_end','')+'\n'
             else:      menu+='     '+md.get('html_off_end','')+'\n'
@@ -1855,6 +1877,11 @@ def view_page(i):
        template=r['string']
 
        template='<pre>'+template+'</pre>'
+
+    # Check if sub-title
+    stx=dp.get('subtitle','')
+    if stx!='':
+       template='<div id="ck_subtitle">'+st+'</div><div id="ck_subtitle1">'+stx+'</div>'+template
 
     # Substitute middle in template
     if html=='':
@@ -1880,10 +1907,17 @@ def view_page(i):
     html=html.replace('$#ck_root_url#$', rurl)
     html=html.replace('$#ck_root_page_url#$', rurlp)
     html=html.replace('$#wfe_url_prefix_page#$',rurlp)
+    html=html.replace('$#ck_page_suffix#$',add_html)
 
     html=html.replace('$#ck_url_template_pull#$', rutp)
 
     html=html.replace('$#ck_var_page_name#$', page)
+
+    # Replace pre-set vars
+    vr=dd.get('vars','')
+    for k in vr:
+        v=vr[k]
+        html=html.replace('$#'+k+'#$',v)
 
     return {'return':0, 'html':html}
 
@@ -2067,3 +2101,63 @@ def process_ck_page(i):
        break
 
     return {'return':0, 'html':h, 'style':st}
+
+##############################################################################
+# process all pages and convert them into static ones
+
+def process_all_pages(i):
+    """
+    Input:  {
+              data_uoa  - website/html templates
+              (web_dir) - website directory
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+            }
+
+    """
+
+    import os
+
+    # Check current path
+    wd=i.get('web_dir','')
+    if wd=='': wd='tmp-website'
+
+    cp=os.getcwd()
+    cpw=os.path.join(cp, wd)
+
+    if not os.path.isdir(cpw):
+       os.makedirs(cpw)
+
+    duoa=i['data_uoa']
+
+    # Find templates
+    ii={'action':'load',
+        'module_uoa':work['self_module_uoa'],
+        'data_uoa':duoa}
+    rx=ck.access(ii)
+    if rx['return']>0: return rx
+    pp=rx['path']
+    dd=rx['dict']
+
+    # Get all htmls
+    dirList=os.listdir(pp)
+    for fn in dirList:
+        if fn.endswith('.html'):
+           page=fn[:-5]
+           ppage=os.path.join(pp, fn)
+
+           ck.out('Processing page "'+page+'" ...')
+
+           r=view_page({'page':page, 'wfe_template_data_uoa':duoa})
+           if r['return']>0: return r
+           html=r['html']
+
+           px=os.path.join(cpw, fn)
+           r=ck.save_text_file({'text_file':px, 'string':html})
+           if r['return']>0: return r
+
+    return {'return':0}

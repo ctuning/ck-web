@@ -23,6 +23,9 @@
       "desc": "parse text/json/etc files to detect http,CM,CK ...", 
       "for_web": "yes"
     }, 
+    "process_all_pages": {
+      "desc": "process all pages and convert them into static ones"
+    }, 
     "process_ck_page": {
       "desc": "process ck special instructions in html pages", 
       "for_web": "yes"
