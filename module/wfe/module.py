@@ -148,7 +148,10 @@ def index(i):
     d=r['dict']
     p=r['path']
 
-    px=os.path.join(p, 'template.html')
+    tf=d.get('template_file','')
+    if tf=='': tf='template.html'
+
+    px=os.path.join(p, tf)
     if not os.path.isfile(px):
        return {'return':1, 'error':'template file not found'}
     r=ck.load_text_file({'text_file':px})
@@ -1729,6 +1732,8 @@ def view_page(i):
     Input:  {
               (page) 
               (wfe_template_data_uoa) - only if not defined in ck.cfg
+                      or
+              (template)
             }
 
     Output: {
@@ -1749,6 +1754,10 @@ def view_page(i):
 
     if tduoa=='':
        tduoa=i.get('wfe_template_data_uoa','')
+
+    temp_uoa=i.get('template','')
+    if tduoa=='':
+       tduoa=temp_uoa
 
     r=ck.access({'action':'load',
                  'module_uoa':work['self_module_uoa'],
@@ -1807,6 +1816,10 @@ def view_page(i):
        rurl=os.environ.get('CK_WFE_URL_PREFIX','')
        if rurl=='':
           rurl=ck.cfg.get('wfe_url_prefix','')
+
+    # Check if different template
+    if temp_uoa!='':
+       rurl+='template='+temp_uoa+'&'
 
     rurlp=rurl
     add_html=''
