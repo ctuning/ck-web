@@ -649,7 +649,7 @@ def index(i):
                 y='<a href="'+url0+'wcid=:'+x+'">'+x+'</a>'
                 mt=mt[:i1+1]+y+mt[i2:]
                 i0=i1+len(y)
-             elif x.startswith('http://'):
+             elif x.startswith('http://') or x.startswith('https://'):
                 y='<a href="'+x+'">'+x+'</a>'
                 mt=mt[:i1+1]+y+mt[i2:]
                 i0=i1+len(y)
