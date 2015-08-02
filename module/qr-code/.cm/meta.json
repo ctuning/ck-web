@@ -6,7 +6,7 @@
     }
   },
   "copyright": "See CK Copyright.txt for copyright details",
-  "desc": "QR code",
+  "desc": "generating QR codes",
   "developer": "cTuning foundation",
   "license": "See CK LICENSE.txt for licensing details; includes PyQRNative.py with MIT license (see python code for details)"
 }

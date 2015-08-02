@@ -1,49 +1,49 @@
 {
   "actions": {
     "clean": {
-      "desc": "clean tmp cache"
+      "desc": "clean tmp cache of a CK web service"
     }, 
     "convert_ck_list_to_select_data": {
-      "desc": "convert ck list to select data"
+      "desc": "convert CK list to html to select data"
     }, 
     "create_button": {
-      "desc": "create button"
+      "desc": "create html button"
     }, 
     "create_input": {
-      "desc": "create search"
+      "desc": "create html search"
     }, 
     "create_selector": {
-      "desc": "create HTML selector"
+      "desc": "create html universal selector"
     }, 
     "index": {
-      "desc": "index", 
+      "desc": "browse CK repositories", 
       "for_web": "yes"
     }, 
     "parse_txt": {
-      "desc": "parse text/json/etc files to detect http,CM,CK ...", 
+      "desc": "parse text or json files to process, high-light and cross-link special CK words including $#cm_, $#ck_, http ...", 
       "for_web": "yes"
     }, 
     "process_all_pages": {
-      "desc": "process all pages and convert them into static ones"
+      "desc": "process all pages and convert them into static ones (to create static websites)"
     }, 
     "process_ck_page": {
-      "desc": "process ck special instructions in html pages", 
+      "desc": "process special CK words in html pages", 
       "for_web": "yes"
     }, 
     "start_form": {
-      "desc": "start form"
+      "desc": "start html form"
     }, 
     "view_page": {
-      "desc": "view page", 
+      "desc": "view a given CK page", 
       "for_web": "yes"
     }, 
     "webadd": {
-      "desc": "add via web front end", 
+      "desc": "add/update CK entries via html", 
       "for_web": "yes"
     }
   }, 
   "copyright": "See CK Copyright.txt for copyright details", 
-  "desc": "CK web front-end", 
+  "desc": "CK web front-end (browsing repository and entries, visualizing experiments, viewing interactive graphs and articles, etc)", 
   "developer": "cTuning foundation", 
   "license": "See CK LICENSE.txt for licensing details", 
   "top_menu": [
