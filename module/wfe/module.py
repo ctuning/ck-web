@@ -259,7 +259,7 @@ def index(i):
     # Check if show after menu text, such as number of shared artifacts
 
     if cfg.get('extra_html_after_menu','')!='':
-       ht+=cfg['extra_html_after_menu']+'\n'
+       ht+=cfg['extra_html_after_menu'].replace('$#ck_root_url#$', url0)
 
     show_more=False
 
