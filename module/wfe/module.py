@@ -256,6 +256,11 @@ def index(i):
         ht+='<span id="'+style+'"><a href="'+x+'">'+name+'</a></span>\n'
     ht+='</div></center>\n'
 
+    # Check if show after menu text, such as number of shared artifacts
+
+    if cfg.get('extra_html_after_menu','')!='':
+       ht+=cfg['extra_html_after_menu']+'\n'
+
     show_more=False
 
     # Check if native action **************************************************************
