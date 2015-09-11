@@ -563,7 +563,9 @@ def index(i):
              # Replace Root URL
              hspec=hspec.replace('$#ck_root_url#$', url0)
           else:
-             hspec='<b>CK warning</b>: '+rx['error']
+             x=rx['error']
+             if 'not found in module' not in x:
+                hspec='<b>CK warning</b>: '+rx['error']
 
           # Show top info
           if show_top:
