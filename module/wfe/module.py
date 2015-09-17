@@ -198,6 +198,9 @@ def index(i):
     if fdate_after_name in i: datea=i[fdate_after_name]
     if fdate_before_name in i: dateb=i[fdate_before_name]
 
+    datea=datea.replace(' ','T') # To make ISO standard
+    dateb=dateb.replace(' ','T') # To make ISO standard
+
     # If viewing a given entry
     view_entry=False
 #    if cmuoa!='' and cduoa!='' and \
@@ -218,10 +221,15 @@ def index(i):
        ii['search_string']=cs
     if cst!='' and not find_cid:
        ii['tags']=cst
-    if datea!='':
-       ii['add_if_date_after']=datea
-    if dateb!='':
-       ii['add_if_date_before']=dateb
+
+    if datea!='' or dateb!='':
+       if datea==dateb:
+          ii['add_if_date']=datea
+       else:
+          if datea!='':
+             ii['add_if_date_after']=datea
+          if dateb!='':
+             ii['add_if_date_before']=dateb
 
     r=ck.access(ii)
     if r['return']>0: # On some machines, some modules are not available - so do not process error to avoid crashing ...
@@ -478,8 +486,8 @@ def index(i):
 
           if iso_datetime!='':
              iso_datetime=iso_datetime.replace('T',' ')
-             ix=iso_datetime.find('.')
-             if ix>0: iso_datetime=iso_datetime[:ix]
+#             ix=iso_datetime.find('.')
+#             if ix>0: iso_datetime=iso_datetime[:ix]
 
           dn=info.get('data_name','')
           if dn=='': dn=duoa
