@@ -1,3 +1,5 @@
+* 2015.09.17 * FGG: supporting both ISO and human readable date during search
+
 * 2015.08.12 * FGG: improving interactive graphs for interactive articles
 
 * 2015.08.09 * FGG: Fixing html_viewer if error (output error to html)
