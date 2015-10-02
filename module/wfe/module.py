@@ -966,7 +966,7 @@ def create_selector(i):
 
     sv=i.get('selected_value','')
 
-    for q in sorted(d):
+    for q in sorted(d, key=lambda k: k['name']):
         n=q['name']
         v=q['value']
 
