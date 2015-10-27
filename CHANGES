@@ -1,3 +1,5 @@
+* 2015.10.27 * FGG: automatically detecting server host and port, if used!
+
 * 2015.09.17 * FGG: supporting both ISO and human readable date during search
 
 * 2015.08.12 * FGG: improving interactive graphs for interactive articles

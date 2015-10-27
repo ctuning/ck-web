@@ -135,6 +135,13 @@ def index(i):
     # Check host URL prefix and default module/action
     url0=ck.cfg.get('wfe_url_prefix','')
 
+    # However, if using CK server - automatically substitute server_host and port!
+    if i.get('server_host','')!='':
+       url0='http://'+i['server_host']
+       if i.get('server_port','')!='':
+          url0+=':'+str(i['server_port'])
+       url0+='?'
+
     url00=url0
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
@@ -1379,6 +1386,13 @@ def webadd(i):
     # Check host URL prefix and default module/action
     url0=ck.cfg.get('wfe_url_prefix','')
 
+    # However, if using CK server - automatically substitute server_host and port!
+    if i.get('server_host','')!='':
+       url0='http://'+i['server_host']
+       if i.get('server_port','')!='':
+          url0+=':'+str(i['server_port'])
+       url0+='?'
+
     url00=url0
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
@@ -1862,6 +1876,13 @@ def view_page(i):
        rurl=os.environ.get('CK_WFE_URL_PREFIX','')
        if rurl=='':
           rurl=ck.cfg.get('wfe_url_prefix','')
+
+          # However, if using CK server - automatically substitute server_host and port!
+          if i.get('server_host','')!='':
+             rurl='http://'+i['server_host']
+             if i.get('server_port','')!='':
+                rurl+=':'+str(i['server_port'])
+             rurl+='?'
 
     # Check if different template
     if temp_uoa!='':
