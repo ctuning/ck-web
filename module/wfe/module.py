@@ -843,7 +843,8 @@ def index(i):
               dn=info.get('data_name','')
               if dn=='': dn=duoa
 
-              xcid=muid+':'+duid
+#              xcid=muid+':'+duid
+              xcid=ruid+':'+muid+':'+duid
               url2=url0+'wcid='+xcid
 
               url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
