@@ -1,3 +1,6 @@
+* 2016.01.16 * adding possibility to skip sorting when creating HTML selectors
+               (required in ck-crowdtuning)
+
 * 2015.12.08 * adding repo UID when viewing entries (otherwise can have ambiguities in broken repos)
 
 * 2015.10.27 * automatically detecting server host and port, if used!

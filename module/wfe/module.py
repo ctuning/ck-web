@@ -936,6 +936,8 @@ def create_selector(i):
 
               (data)           - [{'name':name, 'value': uid}, ...]
               (selected_value) - if !='', select this item
+
+              (skip_sort)      - if 'yes', do not sort
             }
 
     Output: {
@@ -974,7 +976,10 @@ def create_selector(i):
 
     sv=i.get('selected_value','')
 
-    for q in sorted(d, key=lambda k: k['name']):
+    if i.get('skip_sort','')!='yes':
+       d=sorted(d, key=lambda k: k['name'])
+
+    for q in d:
         n=q['name']
         v=q['value']
 
