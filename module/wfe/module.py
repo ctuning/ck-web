@@ -258,15 +258,18 @@ def index(i):
     for q in cfg['top_menu']:
         name=q['name']
         x=q.get('url','')
+        y=q.get('url_extra','')
         muoas=q.get('module_uoas',[])
         xmuoa=q.get('module_uoa','')
 
         style='ck_menu_text_0'
-        if not native and xcmuoa in muoas:
+        if (native and i.get('native_module_uoa','')==q.get('native_module_uoa','-')) or (not native and xcmuoa in muoas):
            style='ck_menu_text_0_selected'
 
-        if x=='':
+        if x=='' and y=='':
            x=url0+'wcid='+xmuoa+':'
+        elif y!='':
+           x=url0+y
 
         ht+='<span id="'+style+'"><a href="'+x+'">'+name+'</a></span>\n'
     ht+='</div></center>\n'
@@ -986,7 +989,7 @@ def create_selector(i):
         h+='<option value="'+v+'"'
         if sv!='' and sv==v:
            h+=' SELECTED'
-        h+='>'+n+'</option>'
+        h+='>'+n+'</option>\n'
 
     # Finish
     h+='</select>\n'

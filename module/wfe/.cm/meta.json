@@ -55,6 +55,11 @@
       "name": "All"
     }, 
     {
+      "url_extra": "action=index&module_uoa=wfe&native_action=show&native_module_uoa=program.optimization", 
+      "native_module_uoa":"program.optimization",
+      "name": "CrowdResults"
+    }, 
+    {
       "module_uoa": "graph", 
       "module_uoas": [
         "graph", 
@@ -101,14 +106,6 @@
         "f92b25ca2f1a98ae"
       ], 
       "name": "Models"
-    }, 
-    {
-      "module_uoa": "dissemination.publication", 
-      "module_uoas": [
-        "dissemination.publication", 
-        "29db2248aba45e59"
-      ], 
-      "name": "Articles"
     }, 
     {
       "name": "Discussions", 
