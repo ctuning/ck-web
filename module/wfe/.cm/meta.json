@@ -48,13 +48,6 @@
   "license": "See CK LICENSE.txt for licensing details", 
   "top_menu": [
     {
-      "module_uoa": "", 
-      "module_uoas": [
-        ""
-      ], 
-      "name": "All"
-    }, 
-    {
       "url_extra": "action=index&module_uoa=wfe&native_action=show&native_module_uoa=program.optimization", 
       "native_module_uoa":"program.optimization",
       "name": "CrowdResults"
@@ -106,6 +99,13 @@
         "f92b25ca2f1a98ae"
       ], 
       "name": "Models"
+    }, 
+    {
+      "module_uoa": "", 
+      "module_uoas": [
+        ""
+      ], 
+      "name": "Browse"
     }, 
     {
       "name": "Discussions", 
