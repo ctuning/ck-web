@@ -770,7 +770,7 @@ def index(i):
                 r=ck.load_text_file({'text_file':ps})
                 if r['return']>0: return r
                 hp+=' <hr class="ck_hr">\n'
-                htx=r['string'].replace('$#cid#$',url2)
+                htx=r['string'].replace('$#cid#$',xcid)
                 hp+=htx+'\n'
 
 
