@@ -279,6 +279,10 @@ def index(i):
     if d.get('extra_html_after_menu','')!='':
        ht+=d['extra_html_after_menu'].replace('$#ck_root_url#$', url0)
 
+    ad=ck.cfg.get('extra_brower_text','')
+    if ad!='':
+       ht+=ad
+
     show_more=False
 
     # Check if native action **************************************************************
