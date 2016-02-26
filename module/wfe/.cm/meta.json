@@ -53,20 +53,20 @@
       "name": "CrowdResults"
     }, 
     {
-      "module_uoa": "graph", 
-      "module_uoas": [
-        "graph", 
-        "2d41f89bcf32d4d4"
-      ], 
-      "name": "Graphs"
-    }, 
-    {
       "module_uoa": "report", 
       "module_uoas": [
         "report", 
         "1e348bd6ab43ce8a"
       ], 
       "name": "Reports"
+    }, 
+    {
+      "module_uoa": "graph", 
+      "module_uoas": [
+        "graph", 
+        "2d41f89bcf32d4d4"
+      ], 
+      "name": "Graphs"
     }, 
     {
       "module_uoa": "experiment", 
