@@ -509,7 +509,7 @@ def index(i):
           xcid=muid+':'+duid
           url2=url1+'&wcid='+xcid
 
-          url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
+          url3=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&all=yes&cid='+xcid
           url4=url0+'&action=load&out=json&cid='+xcid
           url7=url0+'&action=webadd&update=yes&module_uoa=wfe&wcid='+xcid
 
@@ -664,8 +664,9 @@ def index(i):
 
                    hp+='<div id="ck_text55">\n'
                    for q in ll:
-                       v=files[q]
-                       hp+='<a href="'+utp+q+'">'+q+'</a>&nbsp;&nbsp;&nbsp;&nbsp;('+str(int((v.get('size',0)+999)/1000))+'KB)<br>\n'
+                       if not q.startswith('tmp-'):
+                          v=files[q]
+                          hp+='<a href="'+utp+q+'">'+q+'</a>&nbsp;&nbsp;&nbsp;&nbsp;('+str(int((v.get('size',0)+999)/1000))+'KB)<br>\n'
                    hp+='</div>\n'
 
                    hp+='<div id="ck_downloads">\n'
@@ -854,7 +855,7 @@ def index(i):
               xcid=ruid+':'+muid+':'+duid
               url2=url0+'wcid='+xcid
 
-              url3=url0+'&action=pull&common_func=yes&archive=yes&all=yes&cid='+xcid
+              url3=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&all=yes&cid='+xcid
               url4=url0+'&action=load&out=json&cid='+xcid
               url7=url0+'&action=webadd&update=yes&module_uoa=wfe&wcid='+xcid
 
