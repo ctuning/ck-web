@@ -510,6 +510,7 @@ def index(i):
           url2=url1+'&wcid='+xcid
 
           url3=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&all=yes&cid='+xcid
+          url3x=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&cid='+xcid
           url4=url0+'&action=load&out=json&cid='+xcid
           url7=url0+'&action=webadd&update=yes&module_uoa=wfe&wcid='+xcid
 
@@ -670,7 +671,7 @@ def index(i):
                    hp+='</div>\n'
 
                    hp+='<div id="ck_downloads">\n'
-                   hp+='<a href="'+url3+'">[Download archive]</a>\n'
+                   hp+='<a href="'+url3x+'">[Download archive]</a>\n'
                    hp+='</div>\n'
 
              ##################################################################################################
@@ -856,6 +857,7 @@ def index(i):
               url2=url0+'wcid='+xcid
 
               url3=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&all=yes&cid='+xcid
+              url3x=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&cid='+xcid
               url4=url0+'&action=load&out=json&cid='+xcid
               url7=url0+'&action=webadd&update=yes&module_uoa=wfe&wcid='+xcid
 
@@ -880,7 +882,7 @@ def index(i):
               hp+='<a href="'+url4+'" target="_blank">[View meta]</a>&nbsp;\n'
               if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
               hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
-              hp+='<a href="'+url3+'">[Download entry]</a>\n'
+              hp+='<a href="'+url3x+'">[Download entry]</a>\n'
               hp+='</div>\n'
 
               hp+='</div>\n'
