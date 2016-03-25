@@ -664,7 +664,7 @@ def index(i):
 
                    hp+='<div id="ck_text55">\n'
                    for q in ll:
-                       if not q.startswith('tmp-'):
+                       if not q.startswith('tmp'):
                           v=files[q]
                           hp+='<a href="'+utp+q+'">'+q+'</a>&nbsp;&nbsp;&nbsp;&nbsp;('+str(int((v.get('size',0)+999)/1000))+'KB)<br>\n'
                    hp+='</div>\n'
