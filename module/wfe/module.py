@@ -2206,6 +2206,8 @@ def process_all_pages(i):
     Input:  {
               data_uoa  - website/html templates
               (web_dir) - website directory
+
+              (dirs)    - list of dirs
             }
 
     Output: {
@@ -2239,21 +2241,36 @@ def process_all_pages(i):
     pp=rx['path']
     dd=rx['dict']
 
+
+    dirs=i.get('dirs',[])
+
+    dd=[""]
+    for q in dirs:
+        dd.append(q)
+
     # Get all htmls
-    dirList=os.listdir(pp)
-    for fn in dirList:
-        if fn.endswith('.html'):
-           page=fn[:-5]
-           ppage=os.path.join(pp, fn)
+    for p0 in dd:
 
-           ck.out('Processing page "'+page+'" ...')
+        if p0!='':
+           pz=os.path.join(cpw, p0)
+           os.makedirs(pz)
 
-           r=view_page({'page':page, 'wfe_template_data_uoa':duoa})
-           if r['return']>0: return r
-           html=r['html']
+        p1=os.path.join(pp,p0)
+        dirList=os.listdir(p1)
+        for fn in dirList:
+            if fn.endswith('.html'):
+               page=fn[:-5]
+               page1=os.path.join(p0, fn)
+               ppage=os.path.join(pp, page1)
 
-           px=os.path.join(cpw, fn)
-           r=ck.save_text_file({'text_file':px, 'string':html})
-           if r['return']>0: return r
+               ck.out('Processing page "'+page1+'" ...')
+
+               r=view_page({'page':page1, 'wfe_template_data_uoa':duoa})
+               if r['return']>0: return r
+               html=r['html']
+
+               px=os.path.join(cpw, p0, fn)
+               r=ck.save_text_file({'text_file':px, 'string':html})
+               if r['return']>0: return r
 
     return {'return':0}
