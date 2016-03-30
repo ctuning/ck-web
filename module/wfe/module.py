@@ -2253,7 +2253,8 @@ def process_all_pages(i):
 
         if p0!='':
            pz=os.path.join(cpw, p0)
-           os.makedirs(pz)
+           if not os.path.isdir(pz): 
+              os.makedirs(pz)
 
         p1=os.path.join(pp,p0)
         dirList=os.listdir(p1)
