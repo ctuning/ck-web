@@ -285,8 +285,75 @@ def index(i):
 
     show_more=False
 
+    # Check if html only **************************************************************
+    if i.get('html_only','')=='yes':
+       q=lst[0]
+
+       ruoa=q['repo_uoa']
+       muoa=q['module_uoa']
+
+       muid=q['module_uid']
+       ruid=q['repo_uid']
+
+       duoa=q['data_uoa']
+       duid=q['data_uid']
+
+       xcid=muid+':'+duid
+
+       utp=url0+'action=pull&common_func=yes&cid='+xcid+'&filename='
+
+       utp_data_uoa='wfe'
+
+       x='tmp:'+utp_data_uoa
+       if ck.cfg.get('graph_tmp_repo_uoa','')!='':
+          x=ck.cfg['graph_tmp_repo_uoa']+':'+x
+
+       utp_tmp=url0+'action=pull&common_func=yes&cid='+x+'&filename='
+
+       hp=''
+
+       ii={'action':'html_viewer',
+           'module_uoa':muid,
+           'data_uoa':duid,
+           'url_base':url0,
+           'url_cid':x,
+           'url_pull':utp,
+           'url_pull_tmp':utp_tmp,
+           'tmp_data_uoa':utp_data_uoa,
+           'form_name':form_name,
+           'all_params':i}
+       rx=ck.access(ii)
+       if rx['return']==0:
+          hspec=rx.get('html','')
+          hstyle=rx.get('style','')
+
+          # Process special vars
+          rx=process_ck_page({'html':hspec})
+          if rx['return']>0: return rx
+          hspec=rx['html']
+          if rx.get('style','')!='':
+             hstyle+='\n\n'+rx['style']+'\n\n'
+
+          # Replace Root URL
+          hspec=hspec.replace('$#ck_root_url#$', url0)
+       else:
+          x=rx['error']
+          if 'not found in module' not in x:
+             hspec='<b>CK warning</b>: '+rx['error']
+
+       h='<html>\n'
+       h+='<style>\n'
+       h+=hstyle+'\n'
+       h+='</style>\n'
+       h+='<body>\n'
+       h+=hspec+'\n'
+       h+='</body>\n'
+       h+='</html>\n'
+
+       hp=''
+
     # Check if native action **************************************************************
-    if native:
+    elif native:
        hp='<div id="ck_box_with_shadow">\n'
 
        import copy
