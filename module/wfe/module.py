@@ -165,6 +165,10 @@ def index(i):
     d=r['dict']
     p=r['path']
 
+    top_menu=cfg['top_menu']
+    if len(d.get('top_menu',{})): 
+       top_menu=d['top_menu']
+
     tf=d.get('template_file','')
     if tf=='': tf='template.html'
 
@@ -255,7 +259,7 @@ def index(i):
     if view_entry and len(lst)==1:
        xcmuoa=lst[0]['module_uoa']
 
-    for q in cfg['top_menu']:
+    for q in top_menu:
         name=q['name']
         x=q.get('url','')
         y=q.get('url_extra','')
