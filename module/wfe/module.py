@@ -69,8 +69,8 @@ def index(i):
     nmuoa=i.get('native_module_uoa','')
 
     native=False
-    if nat!='' and nmuoa!='': native=True
-
+    if nat!='' and nmuoa!='': 
+       native=True
 
     page=i.get('page','')
     if page!='':
@@ -142,15 +142,20 @@ def index(i):
           url0+=':'+str(i['server_port'])
        url0+='?'
 
+    template=i.get('template','')
+    if template=='': 
+       template=ck.cfg.get('wfe_template','')
+
+    if template!='' and template!='default':
+       url0+='template='+template+'&'
+
     url00=url0
-    if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
+    if ck.cfg.get('wfe_url_prefix_subst','')!='': 
+       url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
     action=i.get('action','')
     muoa=i.get('module_uoa','')
-
-    template=i.get('template','')
-    if template=='': template=ck.cfg.get('wfe_template','')
 
     url_template_pull=url+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
 
@@ -186,6 +191,10 @@ def index(i):
     url_add=url0+'action=webadd&module_uoa='+muoa
     if cid!='': url_add+='&wcid='+cid
 
+    # PRUNE *************************************************************
+    view_entry=False
+    lst=[]
+
     # Check limits
     ln=i.get(flimit_name,'')
     lnstep=15
@@ -213,44 +222,44 @@ def index(i):
     dateb=dateb.replace(' ','T') # To make ISO standard
 
     # If viewing a given entry
-    view_entry=False
 #    if cmuoa!='' and cduoa!='' and \
 #       cmuoa.find('*')<0 and cmuoa.find('?')<0 and \
 #       cduoa.find('*')<0 and cduoa.find('?')<0:
 #       view_entry=True
 
-    # Create pruned list 
-    ii={'action':'search',
-        'repo_uoa':cruoa,
-        'module_uoa':cmuoa,
-        'data_uoa':cduoa,
-        'add_info':'yes',
-        'add_meta':'yes',
-        'ignore_case':'yes',
-        'limit_size':ln}
-    if cs!='' and not find_cid:
-       ii['search_string']=cs
-    if cst!='' and not find_cid:
-       ii['tags']=cst
+    if not native:
+       # Create pruned list 
+       ii={'action':'search',
+           'repo_uoa':cruoa,
+           'module_uoa':cmuoa,
+           'data_uoa':cduoa,
+           'add_info':'yes',
+           'add_meta':'yes',
+           'ignore_case':'yes',
+           'limit_size':ln}
+       if cs!='' and not find_cid:
+          ii['search_string']=cs
+       if cst!='' and not find_cid:
+          ii['tags']=cst
 
-    if datea!='' or dateb!='':
-       if datea==dateb:
-          ii['add_if_date']=datea
-       else:
-          if datea!='':
-             ii['add_if_date_after']=datea
-          if dateb!='':
-             ii['add_if_date_before']=dateb
+       if datea!='' or dateb!='':
+          if datea==dateb:
+             ii['add_if_date']=datea
+          else:
+             if datea!='':
+                ii['add_if_date_after']=datea
+             if dateb!='':
+                ii['add_if_date_before']=dateb
 
-    r=ck.access(ii)
-    if r['return']>0: # On some machines, some modules are not available - so do not process error to avoid crashing ...
-       r['lst']=[]
+       r=ck.access(ii)
+       if r['return']>0: # On some machines, some modules are not available - so do not process error to avoid crashing ...
+          r['lst']=[]
 
-    lst=r['lst']
-    if len(lst)==1:
-       view_entry=True
+       lst=r['lst']
+       if len(lst)==1:
+          view_entry=True
 
-    # Top html
+    # Top html ************************************************************
     ht=''
 
     ht+='<center><div id="ck_menu_0">\n'
@@ -267,9 +276,18 @@ def index(i):
         xmuoa=q.get('module_uoa','')
 
         style='ck_menu_text_0'
-        if (native and i.get('native_module_uoa','')==q.get('native_module_uoa','-')) or (not native and xcmuoa in muoas):
+        qnmuoa=q.get('native_module_uoa','')
+        if (q.get('default','')!='yes' or (i.get('wcid','')=='' and cmuoa=='')) and \
+           ((native and i.get('native_module_uoa','')==q.get('native_module_uoa','-')) or \
+            (not native and (q.get('any_module','')=='yes' or (xcmuoa in muoas)))):
            style='ck_menu_text_0_selected'
-
+           if qnmuoa!='' :
+              if nmuoa=='':
+                 nmuoa=qnmuoa
+              if nat=='' and q.get('native_action','')!='':
+                 nat=q['native_action']
+              native=True
+              
         if x=='' and y=='':
            x=url0+'wcid='+xmuoa+':'
         elif y!='':
@@ -279,7 +297,6 @@ def index(i):
     ht+='</div></center>\n'
 
     # Check if show after menu text, such as number of shared artifacts
-
     if d.get('extra_html_after_menu','')!='':
        ht+=d['extra_html_after_menu'].replace('$#ck_root_url#$', url0)
 
@@ -363,9 +380,9 @@ def index(i):
        import copy
        ii=copy.deepcopy(i)
        ii['action']=nat
-       del(i['native_action'])
+       if 'native_action' in i: del(i['native_action'])
        ii['module_uoa']=nmuoa
-       del(i['native_module_uoa'])
+       if 'native_module_uoa' in i: del(i['native_module_uoa'])
 
        rx=ck.access(ii)
        if rx['return']>0:
