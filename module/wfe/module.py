@@ -390,7 +390,7 @@ def index(i):
        else:
           hp+=rx.get('html','')
 
-       hp+='</div">\n'
+       hp+='</div>\n'
 
     else:
        # Prepare query div ***************************************************************
