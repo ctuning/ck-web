@@ -991,18 +991,20 @@ def index(i):
 
     h=h.replace('$#template_middle#$',hp)
 
-    # Show more
-    r=create_input({'type':'hidden', 'name': flimit_name, 'value':ln})
-    if r['return']>0: return r
-    hm=r['html']+'\n'
-
-    # Prepare submit
-    if show_more:
-       r=create_button({'name': fmore_button_name, 'value':'Show more entries'})
+    hm=''
+    if not native:
+       # Show more
+       r=create_input({'type':'hidden', 'name': flimit_name, 'value':ln})
        if r['return']>0: return r
-       hm+=r['html']+'<br>\n'
+       hm=r['html']+'\n'
 
-    hm+='</form>\n'
+       # Prepare submit
+       if show_more:
+          r=create_button({'name': fmore_button_name, 'value':'Show more entries'})
+          if r['return']>0: return r
+          hm+=r['html']+'<br>\n'
+
+       hm+='</form>\n'
 
     h=h.replace('$#template_middle_finish#$', hm)
 
