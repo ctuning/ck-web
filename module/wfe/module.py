@@ -346,7 +346,7 @@ def index(i):
        rx=ck.access(ii)
        if rx['return']==0:
           hspec=rx.get('html','')
-          hstyle=rx.get('style','')
+          hstyle+=rx.get('style','')+'\n'
 
           # Process special vars
           rx=process_ck_page({'html':hspec})
@@ -388,7 +388,8 @@ def index(i):
        if rx['return']>0:
           hp+='<b>Error:</b> '+rx['error']
        else:
-          hp+=rx.get('html','')
+          hp+=rx.get('html','')+'\n'
+          hstyle+=rx.get('style','')+'\n'
 
        hp+='</div>\n'
 
@@ -977,7 +978,7 @@ def index(i):
 
     # Replace styles
     if hstyle!='':
-       hstyle='<style>\n'+hstyle+'</style>\n\n'
+       hstyle='<style>\n'+hstyle+'\n</style>\n\n'
     h=h.replace('$#ck_styles#$',hstyle)
 
     # Replace top if needed
