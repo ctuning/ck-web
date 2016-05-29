@@ -132,15 +132,10 @@ def index(i):
        cidx=cid
        if cruoa!='': cid=cruoa+cid
 
-    # Check host URL prefix and default module/action
-    url0=ck.cfg.get('wfe_url_prefix','')
-
-    # However, if using CK server - automatically substitute server_host and port!
-    if i.get('server_host','')!='':
-       url0='http://'+i['server_host']
-       if i.get('server_port','')!='':
-          url0+=':'+str(i['server_port'])
-       url0+='?'
+    # Check host/port and default module/action.
+    host=i.get('host',ck.cfg['default_wfe_host'])
+    port=i.get('port',ck.cfg['default_wfe_port'])
+    url0='http://%s:%s?' % (host, port) # FIXME: /web?
 
     template=i.get('template','')
     if template=='': 
@@ -150,8 +145,8 @@ def index(i):
        url0+='template='+template+'&'
 
     url00=url0
-    if ck.cfg.get('wfe_url_prefix_subst','')!='': 
-       url00=ck.cfg['wfe_url_prefix_subst']
+    # FIXME: no such key in cfg.
+    if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
     action=i.get('action','')
@@ -1490,17 +1485,13 @@ def webadd(i):
           if control.get('copyright','')!='': xcopyright=control['copyright']
           if control.get('license','')!='': xlicense=control['license']
 
-    # Check host URL prefix and default module/action
-    url0=ck.cfg.get('wfe_url_prefix','')
-
-    # However, if using CK server - automatically substitute server_host and port!
-    if i.get('server_host','')!='':
-       url0='http://'+i['server_host']
-       if i.get('server_port','')!='':
-          url0+=':'+str(i['server_port'])
-       url0+='?'
+    # Check host/port and default module/action.
+    host=i.get('host',ck.cfg['default_wfe_host'])
+    port=i.get('port',ck.cfg['default_wfe_port'])
+    url0='http://%s:%s?' % (host, port) # FIXME: /web?
 
     url00=url0
+    # FIXME: no such key in cfg.
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
@@ -1982,14 +1973,10 @@ def view_page(i):
     if os.environ.get('CK_WFE_URL_PREFIX_SKIP','')!='yes':
        rurl=os.environ.get('CK_WFE_URL_PREFIX','')
        if rurl=='':
-          rurl=ck.cfg.get('wfe_url_prefix','')
-
-          # However, if using CK server - automatically substitute server_host and port!
-          if i.get('server_host','')!='':
-             rurl='http://'+i['server_host']
-             if i.get('server_port','')!='':
-                rurl+=':'+str(i['server_port'])
-             rurl+='?'
+          # Check host/port and default module/action.
+          host=i.get('host',ck.cfg['default_wfe_host'])
+          port=i.get('port',ck.cfg['default_wfe_port'])
+          rurl='http://%s:%s?' % (host, port) # FIXME: /web?
 
     # Check if different template
     if temp_uoa!='':
