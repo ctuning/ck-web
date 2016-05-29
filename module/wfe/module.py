@@ -133,8 +133,8 @@ def index(i):
        if cruoa!='': cid=cruoa+cid
 
     # Check host/port and default module/action.
-    host=i.get('host',ck.cfg['default_wfe_host'])
-    port=i.get('port',ck.cfg['default_wfe_port'])
+    host=i.get('host',ck.cfg['default_host'])
+    port=i.get('port',ck.cfg['default_port'])
     url0='http://%s:%s?' % (host, port) # FIXME: /web?
 
     template=i.get('template','')
@@ -1486,8 +1486,8 @@ def webadd(i):
           if control.get('license','')!='': xlicense=control['license']
 
     # Check host/port and default module/action.
-    host=i.get('host',ck.cfg['default_wfe_host'])
-    port=i.get('port',ck.cfg['default_wfe_port'])
+    host=i.get('host',ck.cfg['default_host'])
+    port=i.get('port',ck.cfg['default_port'])
     url0='http://%s:%s?' % (host, port) # FIXME: /web?
 
     url00=url0
@@ -1974,8 +1974,8 @@ def view_page(i):
        rurl=os.environ.get('CK_WFE_URL_PREFIX','')
        if rurl=='':
           # Check host/port and default module/action.
-          host=i.get('host',ck.cfg['default_wfe_host'])
-          port=i.get('port',ck.cfg['default_wfe_port'])
+          host=i.get('host',ck.cfg['default_host'])
+          port=i.get('port',ck.cfg['default_port'])
           rurl='http://%s:%s?' % (host, port) # FIXME: /web?
 
     # Check if different template
