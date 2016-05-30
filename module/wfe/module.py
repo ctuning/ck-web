@@ -133,51 +133,29 @@ def index(i):
        if cruoa!='': cid=cruoa+cid
 
     # Check host/port and default module/action.
-    host=i.get('host',ck.cfg['default_host'])
-    port=i.get('port',ck.cfg['default_port'])
-    url0='http://%s:%s?' % (host, port) # FIXME: /web?
-
-    template=i.get('template','')
-    if template=='': 
-       template=ck.cfg.get('wfe_template','')
-
-    if template!='' and template!='default':
-       url0+='template='+template+'&'
+    rx=form_url_prefix(i)
+    if rx['return']>0: return rx
+    url0=rx['url']
+    template=rx['template']
+    d=rx['meta']
+    p=rx['path']
+    h=rx['html']
+    url_template_pull=rx['url_template_pull']
 
     url00=url0
-    # FIXME: no such key in cfg.
+    # wfe_url_prefix_subst is used to make "good" looking URL for referencing
+    # when CK server is behind some redirecting services such as no-ip. 
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
     action=i.get('action','')
     muoa=i.get('module_uoa','')
 
-    url_template_pull=url+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
-
     hstyle=''
-
-    # Load template
-    ii={'action':'load',
-        'module_uoa':work['self_module_uoa'],
-        'data_uoa':template}
-    r=ck.access(ii)
-    if r['return']>0: return r
-    d=r['dict']
-    p=r['path']
 
     top_menu=cfg['top_menu']
     if len(d.get('top_menu',{})): 
        top_menu=d['top_menu']
-
-    tf=d.get('template_file','')
-    if tf=='': tf='template.html'
-
-    px=os.path.join(p, tf)
-    if not os.path.isfile(px):
-       return {'return':1, 'error':'template file not found'}
-    r=ck.load_text_file({'text_file':px})
-    if r['return']>0: return r
-    h=r['string']
 
     # Prepare URL
     url+='action='+action+'&'+'module_uoa='+muoa
@@ -1486,38 +1464,24 @@ def webadd(i):
           if control.get('license','')!='': xlicense=control['license']
 
     # Check host/port and default module/action.
-    host=i.get('host',ck.cfg['default_host'])
-    port=i.get('port',ck.cfg['default_port'])
-    url0='http://%s:%s?' % (host, port) # FIXME: /web?
+    rx=form_url_prefix(i)
+    if rx['return']>0: return rx
+    url0=rx['url']
+    template=rx['template']
+    d=rx['meta']
+    p=rx['path']
+    h=rx['html']
+    url_template_pull=rx['url_template_pull']
 
     url00=url0
-    # FIXME: no such key in cfg.
+
+    # wfe_url_prefix_subst is used to make "good" looking URL for referencing
+    # when CK server is behind some redirecting services such as no-ip. 
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
     action=i.get('action','')
     muoa=i.get('module_uoa','')
-
-    template=i.get('template','')
-    if template=='': template=ck.cfg.get('wfe_template','')
-
-    url_template_pull=url+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
-
-    # Load template
-    ii={'action':'load',
-        'module_uoa':work['self_module_uoa'],
-        'data_uoa':template}
-    r=ck.access(ii)
-    if r['return']>0: return r
-    d=r['dict']
-    p=r['path']
-
-    px=os.path.join(p, 'template.html')
-    if not os.path.isfile(px):
-       return {'return':1, 'error':'template file not found'}
-    r=ck.load_text_file({'text_file':px})
-    if r['return']>0: return r
-    h=r['string']
 
     # Prepare URL
     url_add=url0+'action=webadd'
@@ -1860,12 +1824,17 @@ def webadd(i):
        hm+='</form>\n'
 
     # Replace top if needed
+    ht='<center><div id="ck_box_with_shadow">\n'+ht+'</div></center>\n'
+
+
     h=h.replace('$#template_top#$',ht)
 
     hp=''
     h=h.replace('$#template_middle#$',hp)
 
-    h=h.replace('$#template_middle_finish#$', hm)
+    h=h.replace('$#template_middle_finish#$',hm)
+
+    h=h.replace('$#ck_styles#$','')
 
     # Check if visits
     px=os.path.join(p, 'visits.html')
@@ -1974,9 +1943,9 @@ def view_page(i):
        rurl=os.environ.get('CK_WFE_URL_PREFIX','')
        if rurl=='':
           # Check host/port and default module/action.
-          host=i.get('host',ck.cfg['default_host'])
-          port=i.get('port',ck.cfg['default_port'])
-          rurl='http://%s:%s?' % (host, port) # FIXME: /web?
+          rx=form_url_prefix(i)
+          if rx['return']>0: return rx
+          rurl=rx['url']
 
     # Check if different template
     if temp_uoa!='':
@@ -2353,3 +2322,71 @@ def process_all_pages(i):
                if r['return']>0: return r
 
     return {'return':0}
+
+##############################################################################
+# form URL prefix (if used via CK web server or via third-party web server and PHP)
+#  together with host, port and template
+
+def form_url_prefix(i):
+    """
+    Input:  {
+              original input
+
+              (host)         - prepared by CK web server
+              (port)         - prepared by CK web server
+
+              (template)     - possible web template
+            }
+
+    Output: {
+              return       - return code =  0, if successful
+                                         >  0, if error
+              (error)      - error text if return > 0
+
+              url               - prepared URL
+              template          - template UOA (or default)
+              meta              - meta of a template
+              html              - html of a template
+              path              - path to template
+              url_template_pull - URL to pull resources from template entry
+            }
+
+    """
+
+    url0=''
+
+    # Check host/port and default module/action.
+    host=i.get('host','')
+    port=i.get('port','')
+    if host!='' and port!='':
+       url0='http://%s:%s/web?' % (host, port)
+    else:
+       url0=ck.cfg.get('wfe_url_prefix','')
+
+    template=i.get('template','')
+    if template=='': 
+       template=ck.cfg.get('wfe_template','')
+
+    url_template_pull=url0+'action=pull&common_func=yes&cid=wfe:'+template+'&filename='
+
+    if template!='' and template!='default':
+       url0+='template='+template+'&'
+
+    # Load template
+    ii={'action':'load',
+        'module_uoa':work['self_module_uoa'],
+        'data_uoa':template}
+    r=ck.access(ii)
+    if r['return']>0: return r
+    d=r['dict']
+    p=r['path']
+
+    px=os.path.join(p, 'template.html')
+    if not os.path.isfile(px):
+       return {'return':1, 'error':'template file not found'}
+
+    r=ck.load_text_file({'text_file':px})
+    if r['return']>0: return r
+    h=r['string']
+
+    return {'return':0, 'url':url0, 'template':template, 'html':h, 'meta':d, 'path':p, 'url_template_pull':url_template_pull}

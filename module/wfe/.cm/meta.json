@@ -15,6 +15,9 @@
     "create_selector": {
       "desc": "create html universal selector"
     }, 
+    "form_url_prefix": {
+      "desc": "form URL prefix (if used via CK web server or via third-party web server and PHP)"
+    }, 
     "index": {
       "desc": "browse CK repositories", 
       "for_web": "yes"
@@ -48,9 +51,9 @@
   "license": "See CK LICENSE.txt for licensing details", 
   "top_menu": [
     {
-      "url_extra": "action=index&module_uoa=wfe&native_action=show&native_module_uoa=program.optimization", 
-      "native_module_uoa":"program.optimization",
-      "name": "CrowdResults"
+      "name": "CrowdResults", 
+      "native_module_uoa": "program.optimization", 
+      "url_extra": "action=index&module_uoa=wfe&native_action=show&native_module_uoa=program.optimization"
     }, 
     {
       "module_uoa": "report", 
