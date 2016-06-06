@@ -245,6 +245,7 @@ def index(i):
         name=q['name']
         x=q.get('url','')
         y=q.get('url_extra','')
+        z=q.get('url_extra_browse','')
         muoas=q.get('module_uoas',[])
         xmuoa=q.get('module_uoa','')
 
@@ -260,9 +261,11 @@ def index(i):
               if nat=='' and q.get('native_action','')!='':
                  nat=q['native_action']
               native=True
-              
+
         if x=='' and y=='':
            x=url0+'wcid='+xmuoa+':'
+           if z!='':
+              x+='&'+z
         elif y!='':
            x=url0+y
 
