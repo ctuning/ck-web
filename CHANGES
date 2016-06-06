@@ -1,3 +1,5 @@
+* 2016.06.06 * fixed template parsing in some cases (when using internal CK server)
+
 * 2016.05.30 * support for new CK web server
 
 * 2016.05.20 * allowing style extensions from native modules 

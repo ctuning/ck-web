@@ -2381,10 +2381,13 @@ def form_url_prefix(i):
     d=r['dict']
     p=r['path']
 
-    px=os.path.join(p, 'template.html')
-    if not os.path.isfile(px):
-       return {'return':1, 'error':'template file not found'}
+    tf=d.get('template_file','')
+    if tf=='': tf='template.html'
 
+    px=os.path.join(p, tf)
+    if not os.path.isfile(px):
+       return {'return':1, 'error':'template file not found ('+px+')'}
+                                                                
     r=ck.load_text_file({'text_file':px})
     if r['return']>0: return r
     h=r['string']
