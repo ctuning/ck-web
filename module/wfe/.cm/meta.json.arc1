@@ -51,6 +51,11 @@
   "license": "See CK LICENSE.txt for licensing details", 
   "top_menu": [
     {
+      "name": "CrowdResults", 
+      "native_module_uoa": "program.optimization", 
+      "url_extra": "action=index&module_uoa=wfe&native_action=show&native_module_uoa=program.optimization"
+    }, 
+    {
       "module_uoa": "report", 
       "module_uoas": [
         "report", 
