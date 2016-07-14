@@ -269,7 +269,11 @@ def index(i):
         elif y!='':
            x=url0+y
 
-        ht+='<span id="'+style+'"><a href="'+x+'">'+name+'</a></span>\n'
+        xtb=''
+        if q.get('new_window','')=='yes':
+           xtb=' target="_blank"'
+
+        ht+='<span id="'+style+'"><a href="'+x+'"'+xtb+'>'+name+'</a></span>\n'
     ht+='</div></center>\n'
 
     # Check if show after menu text, such as number of shared artifacts
