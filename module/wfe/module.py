@@ -690,7 +690,7 @@ def index(i):
              hp+='<span id="ck_entries2"><b>Repo:</b> <i>'+ruoa+'</i></span><br>\n'
 
              hp+='<div id="ck_entries_space4"></div>\n'
-             hp+='<span id="ck_entries2"><b>CID:</b> <i><a href="'+urlself1+'">'+xcid+'</a></i></span><br>\n'
+             hp+='<span id="ck_entries2"><b>CID (DOI-like distributed ID):</b> <i><a href="'+urlself1+'">'+xcid+'</a></i></span><br>\n'
 
              if desc!='':
                 hp+='<div id="ck_entries_space8"></div>\n'
