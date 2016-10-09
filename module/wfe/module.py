@@ -1993,7 +1993,12 @@ def view_page(i):
             idx=mx.get('id','')
             name=mx.get('name','')
 
-            link=mx.get('link','')+add_html
+            if mx.get('external_link','')=='yes':
+                ah=''
+            else:
+                ah=add_html
+
+            link=mx.get('link','')+ah
 
             if idx==m: menu+='     '+md.get('html_on_start','')
             else:      menu+='     '+md.get('html_off_start','')
