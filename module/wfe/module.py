@@ -544,6 +544,8 @@ def index(i):
           dx=rx.get('desc',{})
           pp=rx['path']
 
+          skip_links=dd.get('skip_links','')
+
           info=q.get('info',{})
           control=info.get('control',{})
 
@@ -708,11 +710,12 @@ def index(i):
              if stags!='':
                 hp+='<center><b>Tags:</b> <i>'+stags+'</i></center>\n'
 
-             hp+='<div id="ck_downloads">\n'
-             if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
-             hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
-             hp+='<a href="'+url3+'">[Download entry as archive]</a>\n'
-             hp+='</div>\n'
+             if skip_links!='yes':
+                 hp+='<div id="ck_downloads">\n'
+                 if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
+                 hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
+                 hp+='<a href="'+url3+'">[Download entry as archive]</a>\n'
+                 hp+='</div>\n'
 
           # Check if has specialized html
           if hspec!='' and vr!='on':
