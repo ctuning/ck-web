@@ -2351,6 +2351,8 @@ def form_url_prefix(i):
               (port)         - prepared by CK web server
 
               (template)     - possible web template
+
+              (base_url)     - already prepared base url
             }
 
     Output: {
@@ -2373,10 +2375,15 @@ def form_url_prefix(i):
     # Check host/port and default module/action.
     host=i.get('host','')
     port=i.get('port','')
-    if host!='' and port!='':
+    burl=i.get('base_url','')
+
+    if burl!='':
+       url0=burl
+    elif host!='' and port!='':
        url0='http://%s:%s/web?' % (host, port)
     else:
        url0=ck.cfg.get('wfe_url_prefix','')
+
 
     template=i.get('template','')
     if template=='': 
