@@ -1,3 +1,5 @@
+* 2016.11.04 - making os.getcwd() safer
+
 * 2016.07.14 * added 'new_window' meta in top menu to add link in a new window
 
 * 2016.06.06 * fixed template parsing in some cases (when using internal CK server)

@@ -2286,7 +2286,12 @@ def process_all_pages(i):
     wd=i.get('web_dir','')
     if wd=='': wd='tmp-website'
 
-    cp=os.getcwd()
+    try:
+        cp=os.getcwd()
+    except OSError:
+        os.chdir('..')
+        cp=os.getcwd()
+
     cpw=os.path.join(cp, wd)
 
     if not os.path.isdir(cpw):
