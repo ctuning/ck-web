@@ -91,7 +91,11 @@ def index(i):
     fview_raw='view_raw'
 
     # Check filters
-    cid=i.get('wcid','').replace('_',':')
+    cid=i.get('wcid','')
+
+    # That was not a good thing but I was using _ in some refs 
+    if cid.find('_')>0 and cid.find(':')<0:
+       cid=cid.replace('_',':')
 
     cduoa=''
     cmuoa=''
