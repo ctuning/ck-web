@@ -1,15 +1,23 @@
-Implementing JSON based web-services in CK
-==========================================
+This repository contains Collective Knowledge extension modules
+to browse CK repositories, visualize interactive graphs and articles, 
+render CK-based websites, implement simple web services with JSON API 
+(for example to crowdsource experiments or unify access to DNN). 
 
-CK web front-end. It demonstrates how to implement
-various web services (browsing repository, viewing 
-entries, enabling intractive graphs and articles, etc).
+For example, it is used to power the following websites:
+* [public CK repository of optimization knowledge](http://cKnowledge.org/repo)
+* [cTuning foundation](http://cTuning.org)
+* [Artifact evaluation website for computer systems' conferences](http://cTuning.org/ae)
 
-We expect that users can use third-party web frameworks with CK
-such as Django, Mediawiki, Drupal, etc.
+You can reuse above example to build your own websites, JSON web services 
+(such as DNN-as-a-service), and [experiment crowd-sourcing web servers](http://cKnowledge.org/repo).
 
-Dependencies
-============
+These extensions help users integrate CK artifacts and research workflows
+with other frameworks includin Django, Mediawiki, Drupal and Apache.
+
+Prerequisites
+=============
+[Collective Knowledge Framework](http://github.com/ctuning/ck)
+
 Python Pillow or PIL module to generate QR images:
 
 You may need to install easysetup:
@@ -22,7 +30,7 @@ or
 Authors
 =======
 
-* Grigori Fursin, cTuning foundation (France) / dividiti (UK)
+* [Grigori Fursin](http://fursin.net/research.html), cTuning foundation (France) / dividiti (UK)
 
 License
 =======
@@ -31,7 +39,9 @@ License
 Installation
 ============
 
-> ck pull repo:ck-web
+```
+$ ck pull repo:ck-web
+```
 
 Modules with actions
 ====================
@@ -54,3 +64,44 @@ wfe - CK web front-end (browsing repository and entries, visualizing experiments
   * start_form - start html form
   * view_page - view a given CK page
   * webadd - add/update CK entries via html
+
+Publications
+============
+
+```
+@inproceedings{ck-date16,
+    title = {{Collective Knowledge}: towards {R\&D} sustainability},
+    author = {Fursin, Grigori and Lokhmotov, Anton and Plowman, Ed},
+    booktitle = {Proceedings of the Conference on Design, Automation and Test in Europe (DATE'16)},
+    year = {2016},
+    month = {March},
+    url = {https://www.researchgate.net/publication/304010295_Collective_Knowledge_Towards_RD_Sustainability}
+}
+
+@inproceedings{Fur2009,
+  author =    {Grigori Fursin},
+  title =     {{Collective Tuning Initiative}: automating and accelerating development and optimization of computing systems},
+  booktitle = {Proceedings of the GCC Developers' Summit},
+  year =      {2009},
+  month =     {June},
+  location =  {Montreal, Canada},
+  keys =      {http://www.gccsummit.org/2009}
+  url  =      {https://scholar.google.com/citations?view_op=view_citation&hl=en&user=IwcnpkwAAAAJ&cstart=20&citation_for_view=IwcnpkwAAAAJ:8k81kl-MbHgC}
+}
+```
+
+* http://arxiv.org/abs/1506.06256
+* http://hal.inria.fr/hal-01054763
+* https://hal.inria.fr/inria-00436029
+* http://arxiv.org/abs/1407.4075
+* https://scholar.google.com/citations?view_op=view_citation&hl=en&user=IwcnpkwAAAAJ&citation_for_view=IwcnpkwAAAAJ:LkGwnXOMwfcC
+
+Feedback
+========
+
+If you have problems, questions or suggestions, do not hesitate to get in touch
+via the following mailing lists:
+* https://groups.google.com/forum/#!forum/collective-knowledge
+* https://groups.google.com/forum/#!forum/ctuning-discussions
+
+![logo](https://github.com/ctuning/ck-guide-images/blob/master/logo-validated-by-the-community-simple.png)
