@@ -99,9 +99,6 @@ Publications
 Feedback
 ========
 
-If you have problems, questions or suggestions, do not hesitate to get in touch
-via the following mailing lists:
 * https://groups.google.com/forum/#!forum/collective-knowledge
-* https://groups.google.com/forum/#!forum/ctuning-discussions
 
 ![logo](https://github.com/ctuning/ck-guide-images/blob/master/logo-validated-by-the-community-simple.png)
