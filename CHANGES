@@ -1,3 +1,5 @@
+* 2017.04.02 - removed template from QR-code (nice URL)
+
 * 2016.11.04 - making os.getcwd() safer
 
 * 2016.07.14 * added 'new_window' meta in top menu to add link in a new window

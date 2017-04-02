@@ -140,13 +140,14 @@ def index(i):
     rx=form_url_prefix(i)
     if rx['return']>0: return rx
     url0=rx['url']
+    url0w=rx['url_without_template']
     template=rx['template']
     d=rx['meta']
     p=rx['path']
     h=rx['html']
     url_template_pull=rx['url_template_pull']
 
-    url00=url0
+    url00=url0w
     # wfe_url_prefix_subst is used to make "good" looking URL for referencing
     # when CK server is behind some redirecting services such as no-ip. 
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
@@ -583,7 +584,6 @@ def index(i):
 
           xcid=muid+':'+duid
           url2=url1+'&wcid='+xcid
-
           url3=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&all=yes&cid='+xcid
           url3x=url0+'&action=pull&common_func=yes&archive=yes&skip_tmp=yes&cid='+xcid
           url4=url0+'&action=load&out=json&cid='+xcid
@@ -1983,7 +1983,7 @@ def view_page(i):
 
     mdesc=dd.get('menu_desc',[])
     mn=dd.get('menu',[])
-    
+
     im=0
     st='' # subtitle, if needed
     for m in mn:
@@ -2019,7 +2019,7 @@ def view_page(i):
 
             if idx==m: menu+='     '+md.get('html_on_end','')+'\n'
             else:      menu+='     '+md.get('html_off_end','')+'\n'
-        
+
         menu+='   '+me+'\n'
 
         im+=1
@@ -2369,12 +2369,13 @@ def form_url_prefix(i):
                                          >  0, if error
               (error)      - error text if return > 0
 
-              url               - prepared URL
-              template          - template UOA (or default)
-              meta              - meta of a template
-              html              - html of a template
-              path              - path to template
-              url_template_pull - URL to pull resources from template entry
+              url                  - prepared URL (with template)
+              url_without_template - URL without template
+              template             - template UOA (or default)
+              meta                 - meta of a template
+              html                 - html of a template
+              path                 - path to template
+              url_template_pull    - URL to pull resources from template entry
             }
 
     """
@@ -2393,6 +2394,7 @@ def form_url_prefix(i):
     else:
        url0=ck.cfg.get('wfe_url_prefix','')
 
+    url0w=url0
 
     template=i.get('template','')
     if template=='': 
@@ -2418,9 +2420,9 @@ def form_url_prefix(i):
     px=os.path.join(p, tf)
     if not os.path.isfile(px):
        return {'return':1, 'error':'template file not found ('+px+')'}
-                                                                
+
     r=ck.load_text_file({'text_file':px})
     if r['return']>0: return r
     h=r['string']
 
-    return {'return':0, 'url':url0, 'template':template, 'html':h, 'meta':d, 'path':p, 'url_template_pull':url_template_pull}
+    return {'return':0, 'url':url0, 'url_without_template':url0w, 'template':template, 'html':h, 'meta':d, 'path':p, 'url_template_pull':url_template_pull}
