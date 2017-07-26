@@ -1,3 +1,5 @@
+* 2017.07.26 - improvements in interactive D3 graphs (multiple in the same report)
+
 * 2017.04.02 - removed template from QR-code (nice URL)
 
 * 2016.11.04 - making os.getcwd() safer

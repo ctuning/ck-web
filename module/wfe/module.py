@@ -2230,6 +2230,9 @@ def process_ck_page(i):
                 fh=params.get('html','')
                 fs=params.get('style','')
 
+                where=params.get('where','')
+                if where=='': where='body'
+
                 if cid!='':
                    rx=ck.access({'action':'load',
                                  'cid':cid})
@@ -2244,8 +2247,6 @@ def process_ck_page(i):
                             subst=r['string']
 
                          # Replace where to attach
-                         where=params.get('where','')
-                         if where=='': where='body'
                          subst=subst.replace('$#ck_where#$', where)
 
                       if fs!='':
@@ -2254,6 +2255,24 @@ def process_ck_page(i):
                             r=ck.load_text_file({'text_file':px})
                             if r['return']>0: return r
                             st=r['string']
+
+                if params.get('add_div','')=='yes':
+                   where1=where
+                   if where.startswith('div#'):
+                      where1=where[4:]
+                   subst='\n<div id="'+where1+'" style="text-align:center">\n'+subst+'\n</div>\n'
+
+                if params.get('add_box','')=='yes':
+                   wx=params.get('box_width','')
+                   if wx!='': wx=' style="width:'+str(wx)+'px;'
+                   subst='\n<div id="ck_box_with_shadow"'+wx+'">\n'+subst+'\n</div>\n'
+
+                if params.get('remove_script_src','')=='yes':
+                   k1=subst.find('<script src')
+                   if k1>=0:
+                      k2=subst.find('</script>', k1)
+                      if k2>0:
+                         subst=subst[:k1]+ha[k2+9:]
 
              h=h[:j1]+subst+h[j2+19:]
        
