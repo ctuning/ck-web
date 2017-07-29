@@ -2272,7 +2272,7 @@ def process_ck_page(i):
                    if k1>=0:
                       k2=subst.find('</script>', k1)
                       if k2>0:
-                         subst=subst[:k1]+ha[k2+9:]
+                         subst=subst[:k1]+subst[k2+9:]
 
              h=h[:j1]+subst+h[j2+19:]
        
