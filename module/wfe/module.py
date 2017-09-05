@@ -2016,7 +2016,11 @@ def view_page(i):
                x1='<b>'
                x2='</b>'
 
-            xm='<a href="'+link+'">'+x1+name+x2+'</a>'
+            x3=''
+            if mx.get('target_blank','')=='yes':
+               x3=' target="_blank"'
+
+            xm='<a href="'+link+'"'+x3+'>'+x1+name+x2+'</a>'
             menu+=xm
 
             if idx==m:
