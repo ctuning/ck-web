@@ -2010,7 +2010,13 @@ def view_page(i):
             if idx==m: menu+='     '+md.get('html_on_start','')
             else:      menu+='     '+md.get('html_off_start','')
 
-            xm='<a href="'+link+'">'+name+'</a>'
+            x1=''
+            x2=''
+            if mx.get('bold','')=='yes':
+               x1='<b>'
+               x2='</b>'
+
+            xm='<a href="'+link+'">'+x1+name+x2+'</a>'
             menu+=xm
 
             if idx==m:
