@@ -278,7 +278,12 @@ def index(i):
         if q.get('new_window','')=='yes':
            xtb=' target="_blank"'
 
-        ht+='<span id="'+style+'"><a href="'+x+'"'+xtb+'>'+name+'</a></span>\n'
+        line='<span id="'+style+'"><a href="'+x+'"'+xtb+'>'+name+'</a></span>'
+
+        if q.get('bold','')=='yes':
+           line='<b>'+line+'</b>'
+
+        ht+=line+'\n'
     ht+='</div></center>\n'
 
     # Check if show after menu text, such as number of shared artifacts
