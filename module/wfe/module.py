@@ -1045,7 +1045,7 @@ def create_selector(i):
 
     # Prepare header
     h='<select'
-    
+
     cl=i.get('class','')
     if cl!='':
        h+=' class="'+cl+'"'
