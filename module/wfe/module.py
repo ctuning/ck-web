@@ -46,13 +46,18 @@ def index(i):
     """
 
     Input:  {
-              (template)       - use different template uoa
-              (cid)            - direct CID
-              (search)         - search string
-              (search_by_tags) - search by tags (separated by commma)
+              (template)             - use different template uoa
+              (cid)                  - direct CID
+              (search)               - search string
+              (search_by_tags)       - search by tags (separated by comma or | for OR operator)
 
-              (native_action)  - if !='', use this instead of action and just show output 
-                                 (with menu but without query)
+              (native_action)        - if !='', use this instead of action and just show output 
+                                       (with menu but without query)
+
+              (aview)                - if 'yes', alternative view (module+data UOA) in title instead of data_name (since not all may have it and there is currently no standard)
+              (ignore_without_alias) - if 'yes', skip entries without alias (i.e. ignoring ENV when showing CK AI market entries)
+
+              (limit)                - limit number of CK entries to show
             }
 
     Output: {
@@ -85,6 +90,8 @@ def index(i):
     fsubmit_name='ck_top_prune'
     fadd_name='ck_top_add'
 
+    aview=(i.get('aview','')=='yes')
+
     flimit_name='ck_limit'
     fmore_button_name='ck_top_more'
 
@@ -107,7 +114,7 @@ def index(i):
     cst=i.get('search_by_tags','')
     if fsearch_tag_name in i: cst=i[fsearch_tag_name]
 
-    find_cid=False                                          
+    find_cid=False
     if cs!='' and cs.lower().startswith('cid='):
        find_cid=True
        cid=cs[4:].strip()
@@ -174,14 +181,20 @@ def index(i):
     lst=[]
 
     # Check limits
-    ln=i.get(flimit_name,'')
+    if i.get('force_limit','')!='':
+       ln=i['force_limit']
+    else:
+       ln=i.get(flimit_name,'')
+
     lnstep=15
     if ln=='': 
        ln=i.get('limit','')
     if ln=='':
        ln=str(lnstep)
+    if ln=='':
+       ln=str(lnstep)
+
     if fmore_button_name in i: ln=str(int(ln)+lnstep)
-    else: ln=str(lnstep)
 
     vr=i.get(fview_raw,'')
 
@@ -206,34 +219,40 @@ def index(i):
 #       view_entry=True
 
     if not native:
-       # Create pruned list 
-       ii={'action':'search',
-           'repo_uoa':cruoa,
-           'module_uoa':cmuoa,
-           'data_uoa':cduoa,
-           'add_info':'yes',
-           'add_meta':'yes',
-           'ignore_case':'yes',
-           'limit_size':ln}
-       if cs!='' and not find_cid:
-          ii['search_string']=cs
-       if cst!='' and not find_cid:
-          ii['tags']=cst
+       # Check if has | in string, then multiple searches
+       qcst=cst.split('|')
+       lst=[]
 
-       if datea!='' or dateb!='':
-          if datea==dateb:
-             ii['add_if_date']=datea
-          else:
-             if datea!='':
-                ii['add_if_date_after']=datea
-             if dateb!='':
-                ii['add_if_date_before']=dateb
+       for q in qcst:
+          # Create pruned list 
+          ii={'action':'search',
+              'repo_uoa':cruoa,
+              'module_uoa':cmuoa,
+              'data_uoa':cduoa,
+              'add_info':'yes',
+              'add_meta':'yes',
+              'ignore_case':'yes',
+              'limit_size':ln}
+          if cs!='' and not find_cid:
+             ii['search_string']=cs
+          if cst!='' and not find_cid:
+             ii['tags']=q
 
-       r=ck.access(ii)
-       if r['return']>0: # On some machines, some modules are not available - so do not process error to avoid crashing ...
-          r['lst']=[]
+          if datea!='' or dateb!='':
+             if datea==dateb:
+                ii['add_if_date']=datea
+             else:
+                if datea!='':
+                   ii['add_if_date_after']=datea
+                if dateb!='':
+                   ii['add_if_date_before']=dateb
 
-       lst=r['lst']
+          r=ck.access(ii)
+          if r['return']>0: # On some machines, some modules are not available - so do not process error to avoid crashing ...
+             r['lst']=[]
+
+          lst+=r['lst']
+
        if len(lst)==1:
           view_entry=True
 
@@ -873,7 +892,10 @@ def index(i):
        else:
           ######################################## View multiple entries ###############
           show_more=True
-          lst1=sorted(lst, key=lambda k: k.get('info',{}).get('data_name','').lower())
+          if aview:
+             lst1=sorted(lst, key=lambda k: (k['module_uoa']+':'+k['data_uoa']).lower())
+          else:
+             lst1=sorted(lst, key=lambda k: k.get('info',{}).get('data_name','').lower())
 
           hp=''
           iq=0
@@ -886,7 +908,7 @@ def index(i):
 
               muid=q['module_uid']
               ruid=q['repo_uid']
-    
+
               duoa=q['data_uoa']
               duid=q['data_uid']
 
@@ -930,8 +952,15 @@ def index(i):
                  if au!='': au+=', '
                  au+='<b>Tags:</b> '+stags
 
-              dn=info.get('data_name','')
-              if dn=='': dn=duoa
+              if aview:
+                 dn=muoa+':'+duoa
+              else:
+                 dn=info.get('data_name','')
+                 if dn=='': dn=duoa
+
+              if i.get('ignore_without_alias','')=='yes' and ck.is_uid(duoa):
+                 iq-=1
+                 continue
 
 #              xcid=muid+':'+duid
               xcid=ruid+':'+muid+':'+duid

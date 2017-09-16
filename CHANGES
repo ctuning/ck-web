@@ -1,3 +1,5 @@
+* 2017.09.16 - added possibility to search by tags with OR (|)
+
 * 2017.09.05 - added possibility for bold font in top menus & target="_blank"
 
 * 2017.07.26 - improvements in interactive D3 graphs (multiple in the same report)
