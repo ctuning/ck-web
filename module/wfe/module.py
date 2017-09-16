@@ -108,6 +108,10 @@ def index(i):
     cmuoa=''
     cruoa=''
 
+    clruoa=[]
+    x=i.get('repo_list','').strip()
+    if x!='': clruoa=x.split(',')
+
     cs=i.get('search', '').strip()
     if fsearch_name in i: cs=i[fsearch_name]
 
@@ -232,11 +236,13 @@ def index(i):
               'add_info':'yes',
               'add_meta':'yes',
               'ignore_case':'yes',
-              'limit_size':ln}
+              'limit_size':int(ln)}
           if cs!='' and not find_cid:
              ii['search_string']=cs
           if cst!='' and not find_cid:
              ii['tags']=q
+          if len(clruoa)>0:
+             ii['repo_uoa_list']=clruoa
 
           if datea!='' or dateb!='':
              if datea==dateb:
@@ -771,6 +777,12 @@ def index(i):
                    hp+='</div>\n'
 
                    hp+='<div id="ck_downloads">\n'
+
+                   if i.get('archive_all','')=='yes':
+                      x=url3
+                   else:
+                      x=url3x
+
                    hp+='<a href="'+url3x+'">[Download archive]</a>\n'
                    hp+='</div>\n'
 
