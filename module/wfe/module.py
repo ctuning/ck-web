@@ -55,9 +55,13 @@ def index(i):
                                        (with menu but without query)
 
               (aview)                - if 'yes', alternative view (module+data UOA) in title instead of data_name (since not all may have it and there is currently no standard)
+              (skip_links)           - if 'yes', do not show links (view meta, etc)
+              (skip_desc)            - if 'yes', do not show desc
               (ignore_without_alias) - if 'yes', skip entries without alias (i.e. ignoring ENV when showing CK AI market entries)
 
               (limit)                - limit number of CK entries to show
+              (force_limit)          - force limit number of CK entries to show
+              (no_limit)             - show all entries
             }
 
     Output: {
@@ -89,6 +93,9 @@ def index(i):
 
     fsubmit_name='ck_top_prune'
     fadd_name='ck_top_add'
+
+    xskip_links=i.get('skip_links','')
+    xskip_desc=i.get('skip_desc','')
 
     aview=(i.get('aview','')=='yes')
 
@@ -184,11 +191,15 @@ def index(i):
     view_entry=False
     lst=[]
 
-    # Check limits
-    if i.get('force_limit','')!='':
-       ln=i['force_limit']
+    no_limit=i.get('no_limit','')
+    if no_limit=='yes':
+       ln='-1'
     else:
-       ln=i.get(flimit_name,'')
+       # Check limits
+       if i.get('force_limit','')!='':
+          ln=i['force_limit']
+       else:
+          ln=i.get(flimit_name,'')
 
     lnstep=15
     if ln=='': 
@@ -235,8 +246,9 @@ def index(i):
               'data_uoa':cduoa,
               'add_info':'yes',
               'add_meta':'yes',
-              'ignore_case':'yes',
-              'limit_size':int(ln)}
+              'ignore_case':'yes'}
+          if ln!='' and int(ln)>0:
+             ii['limit_size']=int(ln)
           if cs!='' and not find_cid:
              ii['search_string']=cs
           if cst!='' and not find_cid:
@@ -415,6 +427,12 @@ def index(i):
        r=start_form(ii)
        if r['return']>0: return r
        hf=r['html']
+
+       # Some params
+       for k in ['no_limit','aview','skip_links','skip_desc']:
+           rx=create_input({'type':'hidden', 'name': k, 'value':i.get(k,'')})
+           if rx['return']>0: return rx
+           hf+=rx['html']+'\n'
 
        if view_entry:
           ht+='<script>\n'
@@ -990,22 +1008,22 @@ def index(i):
               hp+='<div id="ck_entries">\n'
 
               hp+='<small>'+str(iq)+') </small><span id="ck_entries1"><a href="'+url2+'">'+dn+' ('+muoa+')</a></span><br>\n'
-              if au!='':
+              if au!='' and xskip_desc!='yes':
                  hp+='<div id="ck_entries_space4"></div>\n'
                  hp+='<span id="ck_entries2"><i>'+au+'</i></span><br>\n'
 
-              if desc!='':
+              if desc!='' and xskip_desc!='yes':
                  hp+='<div id="ck_entries_space8"></div>\n'
                  hp+='<span id="ck_entries3">'+desc+'</span><br>\n'
 
-
-              hp+='<div id="ck_entries_space4"></div>\n'
-              hp+='<div id="ck_downloads">\n'
-              hp+='<a href="'+url4+'" target="_blank">[View meta]</a>&nbsp;\n'
-              if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
-              hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
-              hp+='<a href="'+url3x+'">[Download entry]</a>\n'
-              hp+='</div>\n'
+              if xskip_links!='yes':
+                 hp+='<div id="ck_entries_space4"></div>\n'
+                 hp+='<div id="ck_downloads">\n'
+                 hp+='<a href="'+url4+'" target="_blank">[View meta]</a>&nbsp;\n'
+                 if url5!='': hp+='<a href="'+url5+'" target="_blank">[Discuss (wiki)]</a>&nbsp;\n'
+                 hp+='<a href="'+url7+'" target="_blank">[Update]</a>&nbsp;\n'
+                 hp+='<a href="'+url3x+'">[Download entry]</a>\n'
+                 hp+='</div>\n'
 
               hp+='</div>\n'
 
@@ -1026,7 +1044,7 @@ def index(i):
     h=h.replace('$#template_middle#$',hp)
 
     hm=''
-    if not native:
+    if not native and not no_limit=='yes':
        # Show more
        r=create_input({'type':'hidden', 'name': flimit_name, 'value':ln})
        if r['return']>0: return r
