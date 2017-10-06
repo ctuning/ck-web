@@ -1138,7 +1138,13 @@ def create_selector(i):
         h+='<option value="'+v+'"'
         if sv!='' and sv==v:
            h+=' SELECTED'
-        h+='>'+str(n)+'</option>\n'
+        x=n
+        try:
+           x=str(n)
+        except:
+           pass
+
+        h+='>'+x+'</option>\n'
 
     # Finish
     h+='</select>\n'
