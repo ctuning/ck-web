@@ -1131,9 +1131,13 @@ def create_selector(i):
     if i.get('skip_sort','')!='yes':
        d=sorted(d, key=lambda k: k['name'])
 
+    first=True
     for q in d:
         n=q['name']
         v=q['value']
+
+        if first and sv=='' and v!='':
+           sv=v
 
         h+='<option value="'+v+'"'
         if sv!='' and sv==v:
@@ -1146,10 +1150,13 @@ def create_selector(i):
 
         h+='>'+x+'</option>\n'
 
+        if first:
+           first=False
+
     # Finish
     h+='</select>\n'
 
-    return {'return':0, 'html':h}
+    return {'return':0, 'html':h, 'selected_value':sv}
 
 ##############################################################################
 # 
