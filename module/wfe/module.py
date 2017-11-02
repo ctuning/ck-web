@@ -1081,15 +1081,15 @@ def index(i):
 def create_selector(i):
     """
     Input:  {
-              (class)          - if !='', add this class
-              (name)           - if !='', add this name
-              (onchange)       - if !='', add this onchange function
-              (style)          - if !='', use this style
+              (class)           - if !='', add this class
+              (name)            - if !='', add this name
+              (onchange)        - if !='', add this onchange function
+              (style)           - if !='', use this style
 
-              (data)           - [{'name':name, 'value': uid}, ...]
-              (selected_value) - if !='', select this item
+              (data)            - [{'name':name, 'value': uid}, ...]
+              (selected_value)  - if !='', select this item
 
-              (skip_sort)      - if 'yes', do not sort
+              (skip_sort)       - if 'yes', do not sort
             }
 
     Output: {
@@ -2115,7 +2115,10 @@ def view_page(i):
     html=html.replace('$#ck_menu#$', menu)
 
     # Load page
-    r=ck.load_text_file({'text_file':p}) 
+    ii={'text_file':p}
+    if not (p.endswith('.txt') or p.endswith('.html') or p.endswith('.htm') or p.endswith('.json')):
+       return {'return':1, 'error':'can view only pages'}
+    r=ck.load_text_file(ii) 
     if r['return']>0: return r
     template=r['string']
 
