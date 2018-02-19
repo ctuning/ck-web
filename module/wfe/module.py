@@ -614,7 +614,7 @@ def index(i):
              stags=''
              for q in tags:
                  if stags!='': stags+=','
-                 stags+=q
+                 stags+=str(q)
 
           desc=info.get('description','')
 
@@ -957,7 +957,7 @@ def index(i):
                  stags=''
                  for q in tags:
                      if stags!='': stags+=','
-                     stags+=q
+                     stags+=str(q)
 
               desc=info.get('description','')
 

@@ -1,3 +1,5 @@
+* 2018.02.19 - fixing possible issue if tag is not a string in CK entry
+
 * 2017.10.06 - minor fix to HTML selector
 
 * 2017.09.16 - added possibility to search by tags with OR (|)
