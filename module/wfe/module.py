@@ -174,8 +174,8 @@ def index(i):
     if ck.cfg.get('wfe_url_prefix_subst','')!='': url00=ck.cfg['wfe_url_prefix_subst']
 
     url=url0
-    action=i.get('action','')
-    muoa=i.get('module_uoa','')
+    action=i.get('action','').replace('<','').replace('%22','').replace('%3E','').replace('%3C','')
+    muoa=i.get('module_uoa','').replace('<','').replace('%22','').replace('%3E','').replace('%3C','')
 
     hstyle=''
 
@@ -194,7 +194,7 @@ def index(i):
     view_entry=False
     lst=[]
 
-    no_limit=i.get('no_limit','')
+    no_limit=i.get('no_limit','').replace('<','').replace('%22','').replace('%3E','').replace('%3C','')
     if no_limit=='yes':
        ln='-1'
     else:
@@ -206,7 +206,7 @@ def index(i):
 
     lnstep=15
     if ln=='': 
-       ln=i.get('limit','')
+       ln=i.get('limit','').replace('<','').replace('%22','').replace('%3E','').replace('%3C','')
     if ln=='':
        ln=str(lnstep)
     if ln=='':
