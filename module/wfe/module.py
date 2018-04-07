@@ -111,6 +111,9 @@ def index(i):
     if cid.find('_')>0 and cid.find(':')<0:
        cid=cid.replace('_',':')
 
+    # Remove HTML characters to avoid hacking
+    cid=cid.replace('<','').replace('%22','').replace('%3E','').replace('%3C','')
+
     cduoa=''
     cmuoa=''
     cruoa=''
