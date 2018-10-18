@@ -2,8 +2,10 @@
 /*
 Assan main style file
 */
-@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,800");
+/* Downloaded locally
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,600,700,800"); 
 @import url("https://fonts.googleapis.com/css?family=Raleway:700,800");
+*/
 @font-face {
   font-family: 'FontAwesome';
   src: url("../bower_components/fontawesome/webfonts/fa-brands-400.eot") format("embedded-opentype"), url("../bower_components/font-awesome/webfonts/fa-brands-400.woff2") format("woff2"), url("../bower_components/font-awesome/webfonts/fa-brands-400.woff") format("woff"), url("../bower_components/font-awesome/webfonts/fa-brands-400.ttf") format("truetype"), url("../bower_components/font-awesome/webfonts/fa-brands-400.svg") format("svg");

@@ -5,10 +5,41 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Results</title>
-  <link href="$#ck_url_template_pull#$css/plugins/plugins.css" rel="stylesheet">
-  <link href="$#ck_url_template_pull#$css/style.css" rel="stylesheet">
-  
   <style>
+    /** Roboto font **/
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      src: local('Roboto'), local('Roboto-Regular'), url($#ck_url_template_pull#$fonts/roboto/Roboto-Regular.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 500;
+      src: local('Roboto Medium'), local('Roboto-Medium'), url($#ck_url_template_pull#$fonts/roboto/Roboto-Medium.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 700;
+      src: local('Roboto Bold'), local('Roboto-Bold'), url($#ck_url_template_pull#$fonts/roboto/Roboto-Bold.ttf) format('truetype');
+    }
+
+    /** Raleway font **/
+    @font-face {
+      font-family: 'Raleway';
+      font-style: normal;
+      font-weight: 700;
+      src: local('Raleway Bold'), local('Raleway-Bold'), url($#ck_url_template_pull#$fonts/raleway/Raleway-Bold.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Raleway';
+      font-style: normal;
+      font-weight: 800;
+      src: local('Raleway ExtraBold'), local('Raleway-ExtraBold'), url($#ck_url_template_pull#$fonts/raleway/Raleway-ExtraBold.ttf) format('truetype');
+    }
+
     /** Dividiti custom style **/
     @font-face {
       font-family: 'League Spartan';
@@ -17,8 +48,10 @@
       font-style: normal; 
     }
   </style>
-
-  <script src="https://d3js.org/d3.v5.min.js"></script>
+  
+  <link href="$#ck_url_template_pull#$css/plugins/plugins.css" rel="stylesheet">
+  <link href="$#ck_url_template_pull#$css/style.css" rel="stylesheet">
+  <script src="$#ck_url_template_pull#$js/d3.v5.min.js"></script>
   <script src="$#ck_url_template_pull#$ck-repo-widget/widget.js"></script>
   <link rel="stylesheet" type="text/css" href="$#ck_url_template_pull#$ck-repo-widget/widget.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
