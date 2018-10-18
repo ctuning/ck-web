@@ -43,7 +43,7 @@ def init(i):
 ##############################################################################
 # display webpage with interactive dashboard widget
 
-def display(i):
+def display(args):
     """
     Input:  {
               (host)        - Internal web server host
@@ -63,10 +63,15 @@ def display(i):
 
     """
 
-    i['action']='start'
-    i['module_uoa']='web'
-    i['browser']='yes'
-    i['template']='dashboard'
-    i['cid']=''
+    # Filter and pass some arguments from command line to browser
+    extra_url = { key:args[key] for key in args if key in ['scenario'] }
+    extra_url = "&".join("{0}={1}".format(key, extra_url[key]) for key in extra_url)
 
-    return ck.access(i)
+    args['action'] = 'start'
+    args['module_uoa'] = 'web'
+    args['browser'] = 'yes'
+    args['template'] = 'dashboard'
+    args['cid'] = ''
+    args['extra_url'] = extra_url
+
+    return ck.access(args)

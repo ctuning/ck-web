@@ -1691,7 +1691,20 @@ var CkRepoWdiget = function () {
                 },
                 colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
             })];
+            
             var defaultWorkflow = workflows[3];
+            if (this.scenario != null) {
+                for (let wIdx = 0; wIdx < workflows.length; wIdx++) {
+                    if (workflows[wIdx].moduleUoa === this.scenario) {
+                        defaultWorkflow = workflows[wIdx];
+                        
+                        // Clear combobox, so no other workflows could be selected
+                        workflows = [workflows[wIdx]];
+
+                        break;
+                    }
+                }
+            }
 
             var showWorkflow = function showWorkflow(workflow) {
                 _this9.selectedWorkflow = workflow;
@@ -2210,6 +2223,11 @@ var CkRepoWdiget = function () {
             dom.plotSelectorContainer.selectAll('*').remove();
             dom.plotTooltipContainer.selectAll('*').remove();
             dom.tableContainer.selectAll('*').remove();
+        }
+    }, {
+        key: 'setScenario',
+        value: function setScenario(scenario_name) {
+            this.scenario = scenario_name;
         }
     }, {
         key: '_getInfoHtml',

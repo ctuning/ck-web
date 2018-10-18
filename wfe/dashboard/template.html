@@ -89,7 +89,11 @@
   <script src="$#ck_url_template_pull#$js/plugins/plugins.js"></script>
 
   <script type="text/javascript">
+    let url = new URL(window.location.href);
+    let scenario = url.searchParams.get("scenario");
+
     const widget = new CkRepoWdiget();
+    widget.setScenario(scenario);
     widget.init(
         '#ck-repo-widget',
         '#ck-repo-widget-header',
