@@ -1691,20 +1691,12 @@ var CkRepoWdiget = function () {
                 },
                 colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
             })];
-            
-            var defaultWorkflow = workflows[3];
-            if (this.scenario != null) {
-                for (let wIdx = 0; wIdx < workflows.length; wIdx++) {
-                    if (workflows[wIdx].moduleUoa === this.scenario) {
-                        defaultWorkflow = workflows[wIdx];
-                        
-                        // Clear combobox, so no other workflows could be selected
-                        workflows = [workflows[wIdx]];
 
-                        break;
-                    }
-                }
+            // Scenario filters available workflows            
+            if (this.scenario != null) {
+                workflows = workflows.filter(w => w.moduleUoa == this.scenario);
             }
+            var defaultWorkflow = workflows[0];
 
             var showWorkflow = function showWorkflow(workflow) {
                 _this9.selectedWorkflow = workflow;
