@@ -1450,9 +1450,11 @@ var CkRepoWdiget = function () {
         value: function init(rootId, headerId, loadingLayerId) {
             var _this9 = this;
 
-            // dev url
-            //const kApiUrl = 'http://localhost:3344/';
-            var kApiUrl = 'http://cknowledge.org/repo/json.php';
+            // If this widget is running on local machine, e.g. launched through `ck widget nntest`
+            this.isLocalRun = true;
+
+            // Url where to get data from
+            const kApiUrl = (this.isLocalRun ? 'http://localhost:3344/' : 'http://cknowledge.org/repo/json.php');
             var kActionGetData = 'get_raw_data';
             var kActionGetConfig = 'get_raw_config';
 
@@ -1951,9 +1953,11 @@ var CkRepoWdiget = function () {
             this.dom.sidePanelFiltersTabBtn.on('click', function () {
                 return _this9._openSidePanelFiltersTab();
             });
-            this.dom.sidePanelInfoTabBtn.on('click', function () {
-                return _this9._openSidePanelInfoTab();
-            });
+            if (!this.isLocalRun) {
+                this.dom.sidePanelInfoTabBtn.on('click', function () {
+                    return _this9._openSidePanelInfoTab();
+                });
+            }
             this.dom.sidePanelCloseBtn.on('click', function () {
                 return _this9._hideSidePanel();
             });
@@ -2007,8 +2011,10 @@ var CkRepoWdiget = function () {
     }, {
         key: '_openSidePanelFiltersTab',
         value: function _openSidePanelFiltersTab() {
-            this.dom.sidePanelFiltersTabBtn.attr('class', 'ck-repo-widget-side-panel-header-tab-btn ck-repo-widget-side-panel-header-tab-btn_active');
-            this.dom.sidePanelInfoTabBtn.attr('class', 'ck-repo-widget-side-panel-header-tab-btn');
+            if (!this.isLocalRun) {
+                this.dom.sidePanelFiltersTabBtn.attr('class', 'ck-repo-widget-side-panel-header-tab-btn ck-repo-widget-side-panel-header-tab-btn_active');
+                this.dom.sidePanelInfoTabBtn.attr('class', 'ck-repo-widget-side-panel-header-tab-btn');
+            }
             this.dom.sidePanelFiltersBody.style('display', 'block');
             this.dom.sidePanelInfoBody.style('display', 'none');
 
@@ -2145,20 +2151,26 @@ var CkRepoWdiget = function () {
                 return _this11._openSidePanelFiltersTab();
             });
 
-            root.append('div').attr('class', 'ck-repo-widget-side-panel-btn ck-repo-widget-side-panel-btn_info').html('<i class="fas fa-info"></i>').on('click', function () {
-                return _this11._openSidePanelInfoTab();
-            });
+            if (!this.isLocalRun) {
+                root.append('div').attr('class', 'ck-repo-widget-side-panel-btn ck-repo-widget-side-panel-btn_info').html('<i class="fas fa-info"></i>').on('click', function () {
+                    return _this11._openSidePanelInfoTab();
+                });
+            }
 
             return select;
         }
     }, {
         key: '_initDom',
         value: function _initDom(root, header, loadingLayer) {
+            let sidePanelButtonStyle = (this.isLocalRun ? 'ck-repo-widget-side-panel-header-tab' : 'ck-repo-widget-side-panel-header-tab-btn');
+
             var sidePanel = root.append('div').attr('class', 'ck-repo-widget-side-panel');
             var sidePanelHeader = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-header');
             var sidePanelTabsLayout = sidePanelHeader.append('div').attr('class', 'ck-repo-widget-side-panel-header-tabs-layout');
-            var sidePanelFiltersTabBtn = sidePanelTabsLayout.append('div').attr('class', 'ck-repo-widget-side-panel-header-tab-btn').text('Filters');
-            var sidePanelInfoTabBtn = sidePanelTabsLayout.append('div').attr('class', 'ck-repo-widget-side-panel-header-tab-btn').text('Info');
+            var sidePanelFiltersTabBtn = sidePanelTabsLayout.append('div').attr('class', sidePanelButtonStyle).text('Filters');
+            if (!this.isLocalRun) {
+                var sidePanelInfoTabBtn = sidePanelTabsLayout.append('div').attr('class', sidePanelButtonStyle).text('Info');
+            }
             var sidePanelCloseBtn = sidePanelHeader.append('div').attr('class', 'ck-repo-widget-side-panel-header-close-btn').html('<i class="fa fa-times"></i>');
             var sidePanelFiltersBody = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-body');
             var sidePanelInfoBody = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-body').html(this._getInfoHtml());

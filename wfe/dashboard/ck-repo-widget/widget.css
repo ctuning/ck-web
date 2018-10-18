@@ -225,6 +225,14 @@ thead th {
     flex-direction: row;
 }
 
+.ck-repo-widget-side-panel-header-tab {
+    font-family: League Spartan;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    line-height: 16px;
+    text-transform: uppercase;
+}
+
 .ck-repo-widget-side-panel-header-tab-btn {
     color: #1F5A9F;
     font-family: League Spartan;
