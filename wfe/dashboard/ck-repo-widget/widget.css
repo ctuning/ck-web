@@ -1,0 +1,598 @@
+.ck-repo-widget-plot-axis path, .ck-repo-widget-plot-axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.ck-repo-widget-plot-dot {
+    cursor: pointer;
+}
+
+.ck-repo-widget-plot-tooltip {
+    position: absolute;
+    pointer-events: none;
+    border: 0.5px solid gray;
+    border-radius: 5px;
+    padding: 5px;
+    background: white;
+}
+
+.ck-repo-widget {
+    font: 12px sans-serif;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-bottom: 74px;
+}
+
+.ck-repo-widget-selectors-container {
+    margin-bottom: 10px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.ck-repo-widget-plot-container {
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 24px;
+    margin-bottom: 48px;
+}
+
+@media screen and (max-width: 960px) {
+    .ck-repo-widget-plot-container {
+        display: none;
+    }
+}
+
+.ck-repo-widget-selectors-container_filters {
+    margin-bottom: 40px;
+}
+
+.ck-repo-widget-selectors-container_filters:last-child {}
+
+/*
+.ck-repo-widget-plot-center-btn {
+    background: #fff;
+    border-radius: 15px;
+    border: 1px solid lightgray;
+    height: 30px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 30px;
+}
+*/
+
+/*
+thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: -1px;
+    z-index: 1;
+}
+*/
+
+.ck-repo-widget-table-container {
+    overflow: auto;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+.ck-repo-widget-table {
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.ck-repo-widget-thead {}
+
+.ck-repo-widget-tbody {}
+
+.ck-repo-widget-tr {}
+
+.ck-repo-widget-th {
+    background: rgb(244, 247, 250);
+    border: 1px solid #E0E0E0;
+    color: #383838;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    line-height: 16px;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.ck-repo-widget-th:not(:first-child) {
+    min-width: 80px;
+}
+
+.ck-repo-widget-td {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    color: #383838;
+    font-family: Roboto;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 20px;
+    padding: 10px;
+    vertical-align: top;
+}
+
+/*
+.ck-repo-widget-tr td:first-child {
+    position: -webkit-sticky;
+    position: sticky;
+    left: -1px;
+}
+*/
+
+.ck-repo-widget-filter {
+    display: inline-block;
+    margin-right: 25px;
+    margin-bottom: 16px;
+}
+
+.ck-repo-widget-th:first-child, .ck-repo-widget-td:first-child {
+    border-left: none;
+}
+
+.ck-repo-widget-th:last-child, .ck-repo-widget-td:last-child {
+    border-right: none;
+}
+
+.ck-repo-widget-plot-variation-x, .ck-repo-widget-plot-variation-y {
+    stroke-width: 1px;
+}
+
+.ck-repo-widget-plot-line {
+    fill: none;
+    stroke: black;
+}
+
+.ck-repo-widget-cmd-btn {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    font-size: 14px;
+    color: #1F5A9F;
+    cursor: pointer;
+}
+
+.ck-repo-widget-cmd-btn-label {
+    border-bottom: 1px dotted #1F5A9F;
+    margin-left: 8px;
+}
+
+.ck-repo-widget-side-panel {
+    width: 368px;
+    height: 100%;
+    background: #FFFFFF;
+    -webkit-box-shadow: -4px 0px 0px rgba(56, 56, 56, 0.2), -1px 0px 0px rgba(0, 0, 0, 0.08);
+    box-shadow: -4px 0px 0px rgba(56, 56, 56, 0.2), -1px 0px 0px rgba(0, 0, 0, 0.08);
+    position: fixed;
+    right: -372px;
+    top: 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    z-index: 2000;
+    -webkit-transform: translate(0px, 0px);
+    transform: translate(0px, 0px);
+}
+
+.ck-repo-widget-side-panel-header {
+    height: 68px;
+    min-height: 68px;
+    background: #FFFFFF;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.ck-repo-widget-side-panel-header-tabs-layout {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+
+.ck-repo-widget-side-panel-header-tab-btn {
+    color: #1F5A9F;
+    font-family: League Spartan;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    line-height: 16px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.ck-repo-widget-side-panel-header-tab-btn_active {
+    color: #EF4E4E;
+    border-bottom: 1px solid #EF4E4E;
+}
+
+.ck-repo-widget-side-panel-header-tab-btn:not(:first-child) {
+    margin-left: 32px;
+}
+
+.ck-repo-widget-side-panel-header-close-btn {
+    color: #383838;
+    opacity: 0.7;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ck-repo-widget-side-panel-body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-bottom: 8px;
+    padding: 24px;
+}
+
+.ck-repo-widget-filter-title {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 16px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: #383838;
+    margin-bottom: 6px;
+}
+
+.ck-repo-widget-select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #FFFFFF;
+    background-image: url("data:image/svg+xml;utf8,<svg width='10' height='18' viewBox='0 0 10 18' fill='none' xmlns='http://www.w3.org/2000/svg'><g opacity='0.7'><path d='M8 4L4 0L0 4' transform='translate(1 1.99977)' stroke='#383838' stroke-width='2'/><path d='M8 4L4 0L0 4' transform='translate(9 15.9998) rotate(-180)' stroke='#383838' stroke-width='2'/></g></svg>");
+    background-position: calc(100% - 8px) center;
+    background-repeat: no-repeat;
+    border-radius: 0;
+    border: 1px solid #C4C4C4;
+    -webkit-box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #383838;
+    font-family: Roboto;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: normal;
+    height: 32px;
+    line-height: normal;
+    max-width: 320px;
+    min-width: 120px;
+    overflow: hidden;
+    padding-left: 8px;
+    padding-right: 24px;
+    text-overflow: ellipsis;
+}
+
+.ck-repo-widget-select_number {
+    background-image: none;
+    padding-right: 8px;
+    width: 120px;
+}
+
+.ck-repo-widget-select_workflow-container {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+}
+
+.ck-repo-widget-select_workflow {
+    font-size: 13px;
+    width: 100%;
+    min-width: 100%;
+}
+
+.ck-repo-widget-filter-variation {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-top: 12px;
+    cursor: pointer;
+}
+
+.ck-repo-widget-filter-variation input {
+    margin-right: 8px;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.ck-repo-widget-side-panel-btn {
+    color: #1F5A9F;
+    cursor: pointer;
+    display: block;
+    font-size: 22px;
+    height: 22px;
+    margin-left: 24px;
+    min-height: 22px;
+    min-width: 22px;
+    width: 22px;
+    margin-bottom:6px;
+}
+
+.ck-repo-widget-side-panel-btn_info {
+    border: 2px solid #1F5A9F;
+    border-radius: 22px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    font-size: 12px;
+}
+
+.ck-repo-widget-side-panel-btn_info i {
+    padding-left: 1px;
+}
+
+.ck-repo-widget-workflow-panel {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: flex-end;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    margin-bottom: 10px;
+    margin-top: 16px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 880px;
+    width: 100%;
+}
+
+.ck-repo-widget-info-section {
+    margin-bottom: 32px;
+}
+
+.ck-repo-widget-info-title-container {
+    margin-bottom: 12px;
+}
+
+.ck-repo-widget-info-title {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 16px;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    color: #383838;
+}
+
+.ck-repo-widget-info-link {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px;
+    font-size: 14px;
+    color: #1F5A9F;
+    text-decoration: underline;
+    cursor: pointer;
+    display: block;
+}
+
+.ck-repo-widget-info-link_small {
+    line-height: 16px;
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.ck-repo-widget-info-link_divided {
+    margin-bottom: 20px;
+}
+
+.ck-repo-widget-info-value-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.ck-repo-widget-info-value {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 20px;
+    font-size: 14px;
+    text-align: right;
+    color: #383838;
+    opacity: 0.5;
+}
+
+.ck-repo-widget-info-github-link-container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #1F5A9F;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#ck-repo-widget-loading-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    left: 0;
+    top: 0;
+}
+
+/* loading animation */
+
+.lds-ellipsis {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+}
+
+.lds-ellipsis div {
+    position: absolute;
+    top: 27px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #4782d3;
+    -webkit-animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+
+.lds-ellipsis div:nth-child(1) {
+    left: 6px;
+    -webkit-animation: lds-ellipsis1 0.6s infinite;
+    animation: lds-ellipsis1 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(2) {
+    left: 6px;
+    -webkit-animation: lds-ellipsis2 0.6s infinite;
+    animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(3) {
+    left: 26px;
+    -webkit-animation: lds-ellipsis2 0.6s infinite;
+    animation: lds-ellipsis2 0.6s infinite;
+}
+
+.lds-ellipsis div:nth-child(4) {
+    left: 45px;
+    -webkit-animation: lds-ellipsis3 0.6s infinite;
+    animation: lds-ellipsis3 0.6s infinite;
+}
+
+@-webkit-keyframes lds-ellipsis1 {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@keyframes lds-ellipsis1 {
+    0% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+    100% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+@-webkit-keyframes lds-ellipsis3 {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+}
+
+@keyframes lds-ellipsis3 {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+    100% {
+        -webkit-transform: scale(0);
+        transform: scale(0);
+    }
+}
+
+@-webkit-keyframes lds-ellipsis2 {
+    0% {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+    100% {
+        -webkit-transform: translate(19px, 0);
+        transform: translate(19px, 0);
+    }
+}
+
+@keyframes lds-ellipsis2 {
+    0% {
+        -webkit-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+    100% {
+        -webkit-transform: translate(19px, 0);
+        transform: translate(19px, 0);
+    }
+}
