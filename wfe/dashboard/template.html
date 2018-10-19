@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Results</title>
+  <style>
+    /** Roboto font **/
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 400;
+      src: local('Roboto'), local('Roboto-Regular'), url($#ck_url_template_pull#$fonts/roboto/Roboto-Regular.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 500;
+      src: local('Roboto Medium'), local('Roboto-Medium'), url($#ck_url_template_pull#$fonts/roboto/Roboto-Medium.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Roboto';
+      font-style: normal;
+      font-weight: 700;
+      src: local('Roboto Bold'), local('Roboto-Bold'), url($#ck_url_template_pull#$fonts/roboto/Roboto-Bold.ttf) format('truetype');
+    }
+
+    /** Raleway font **/
+    @font-face {
+      font-family: 'Raleway';
+      font-style: normal;
+      font-weight: 700;
+      src: local('Raleway Bold'), local('Raleway-Bold'), url($#ck_url_template_pull#$fonts/raleway/Raleway-Bold.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Raleway';
+      font-style: normal;
+      font-weight: 800;
+      src: local('Raleway ExtraBold'), local('Raleway-ExtraBold'), url($#ck_url_template_pull#$fonts/raleway/Raleway-ExtraBold.ttf) format('truetype');
+    }
+
+    /** Dividiti custom style **/
+    @font-face {
+      font-family: 'League Spartan';
+      src: url("$#ck_url_template_pull#$fonts/LeagueSpartan-Bold.otf");
+      font-weight: bold;
+      font-style: normal; 
+    }
+  </style>
+  
+  <link href="$#ck_url_template_pull#$css/plugins/plugins.css" rel="stylesheet">
+  <link href="$#ck_url_template_pull#$css/style.css" rel="stylesheet">
+  <script src="$#ck_url_template_pull#$js/d3.v5.min.js"></script>
+  <script src="$#ck_url_template_pull#$ck-repo-widget/widget.js"></script>
+  <link rel="stylesheet" type="text/css" href="$#ck_url_template_pull#$ck-repo-widget/widget.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+    crossorigin="anonymous">
+</head>
+
+
+<body>
+  <div id="preloader">
+      <div id="preloader-inner"></div>
+  </div>
+
+  <div class="site-overlay"></div>
+  
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container-fluid mw-1440">
+      <a class="navbar-brand ml-0 mr-auto" href="http://cknowledge.org/index.html">
+        <img class="logo" src="$#ck_url_template_pull#$images/dividiti/logo.png">
+        <div class="logo2">Collective<br><br>Knowledge</div>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="navbarNav" class="navbar-collapse collapse">
+        <ul class="navbar-nav ml-auto mr-0">
+          <li class="nav-item" >
+            <a class="nav-link-dark div-nav-link" href="http://cknowledge.org/index.html">
+              About
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link-dark div-nav-link" href="http://cknowledge.org/partners.html">
+              Partners
+            </a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link-dark visible div-nav-link" href="https://github.com/ctuning/ck/wiki/News-archive">
+              News
+            </a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link-dark visible div-nav-link" href="http://cknowledge.org/contacts.html">
+              Contact us
+            </a>
+          </li>
+          <li class="nav-item" >
+            <a class="nav-link-dark div-nav-link" href="https://github.com/ctuning/ck">
+              GitHub
+            </a>
+          </li>
+          <li  class="nav-item active" >
+            <a class="nav-link-dark div-nav-link div-nav-link-CTA" href="http://cknowledge.org/repo.html">
+              Crowd results
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div id="ck-repo-widget-header"></div>
+  </nav>
+
+  <div id="ck-repo-widget"></div>
+  <div id="ck-repo-widget-loading-layer">
+      <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+  </div>
+
+  <script src="$#ck_url_template_pull#$js/plugins/plugins.js"></script>
+
+  <script type="text/javascript">
+    let url = new URL(window.location.href);
+    let scenario = url.searchParams.get("scenario");
+
+    const widget = new CkRepoWdiget();
+    widget.setScenario(scenario);
+    widget.init(
+        '#ck-repo-widget',
+        '#ck-repo-widget-header',
+        '#ck-repo-widget-loading-layer'
+    );
+  </script>
+</body>
+</html>
