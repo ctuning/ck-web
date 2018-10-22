@@ -84,7 +84,9 @@ var CkRepoWidgetUtils = {
 
             values.sort();
 
-            values.unshift(CkRepoWidgetConstants.kFilterAllValue);
+            if (typeof selector['filter_by_all'] == "undefined" || selector['filter_by_all'] == true) {
+                values.unshift(CkRepoWidgetConstants.kFilterAllValue);
+            }
 
             selector['values'] = values;
         });
