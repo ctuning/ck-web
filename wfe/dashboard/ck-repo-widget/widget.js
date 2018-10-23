@@ -473,7 +473,7 @@ var CkRepoWidgetFilter = function () {
                 }
             }
 
-            return CkRepoWidgetConstants.kFilterAllValue;
+            return selector.values[0];
         }
     }]);
 
@@ -1873,6 +1873,14 @@ var CkRepoWdiget = function () {
                     }
 
                     table.build(data.table);
+
+                    // Apply default filters
+                    workflow.config.selector2.forEach(function (selector, i) {
+                        if (selector.values.length > 1) {
+                            let value = workflow.filter.getSelectorValue(selector);
+                            _this9._applyFilterValue(selector, value);
+                        }
+                    });
 
                     _this9._hideLoadingLayer();
                 };
