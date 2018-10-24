@@ -581,17 +581,20 @@ var CkRepoWidgetTable = function () {
                     .attr('class', 'ck-repo-widget-tr')
                     .attr('id', CkRepoWidgetUtils.getRowId);
 
-            let sortRowsBy = function(key, isAscending) {
+            let sortRowsBy = function(column, isAscending) {
                 gRows.sort(function(a, b) {
-                    return isAscending ? (a[key] > b[key]) : (a[key] < b[key]);
+                    let aVal = _this._getCellValue(a, column);
+                    let bVal = _this._getCellValue(b, column);
+                    if (!!aVal.cmd) { aVal = aVal.title; }
+                    if (!!bVal.cmd) { bVal = bVal.title; }
+                    return isAscending ? (aVal > bVal) : (aVal < bVal);
                 });
-                gHeaders.classed('ck-repo-widget-th-sort', function(d) { return d.key !== key; });
-                gHeaders.classed('ck-repo-widget-th-sort-down', function(d) { return d.key === key && isAscending; });
-                gHeaders.classed('ck-repo-widget-th-sort-up', function(d) { return d.key === key && !isAscending; });
+                gHeaders.classed('ck-repo-widget-th-sort', function(d) { return d.key !== column.key; });
+                gHeaders.classed('ck-repo-widget-th-sort-down', function(d) { return d.key === column.key && isAscending; });
+                gHeaders.classed('ck-repo-widget-th-sort-up', function(d) { return d.key === column.key && !isAscending; });
             };
 
             gHeaders
-                // .classed('ck-repo-widget-th-sort', true)
                 .on('click', function(c) {
                     let cl = this.classList;
                     let isSortOff = cl.contains('ck-repo-widget-th-sort');
@@ -599,7 +602,7 @@ var CkRepoWidgetTable = function () {
                     let isSortUp = cl.contains('ck-repo-widget-th-sort-up');
 
                     let newSortAscending = isSortOff || isSortUp;
-                    sortRowsBy(c.key, newSortAscending);
+                    sortRowsBy(c, newSortAscending);
                 });
 
             // create a cell in each row for each column
