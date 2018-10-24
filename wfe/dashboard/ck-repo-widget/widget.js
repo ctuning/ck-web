@@ -44,8 +44,42 @@ var CkRepoWidgetConstants = {
 };
 
 var CkRepoWidgetUtils = {
-    copyToClipboard: function copyToClipboard(text) {
-        window.prompt('Copy to clipboard: Ctrl+C, Enter', text);
+    showMessageBox: function showMessageBox(text) {
+        let new_window = d3.select('body').append('div')
+            .attr('class', 'ck-repo-widget-dialog-wnd')
+            .style('z-index', '2');
+
+        let background = d3.select('body').append('div');
+
+        let codeArea = new_window.append('div').append('textarea')
+            .attr('readonly', 'readonly')
+            .attr('class', 'ck-repo-widget-dialog-code')
+            .html(text);
+
+        // Ok button
+        new_window.append('input')
+            .attr('type', 'button')
+            .attr('value', 'OK')
+            .attr('class', 'ck-repo-widget-dialog-btn')
+            .on('click', function() {
+                new_window.remove();
+                background.remove();
+            });
+
+        // Copy button
+        new_window.append('input')
+            .attr('type', 'button')
+            .attr('value', 'Copy')
+            .attr('class', 'ck-repo-widget-dialog-btn')
+            .on('click', function() {
+                codeArea.node().select();
+                document.execCommand('copy');
+            });
+
+        // Black background
+        background
+            .attr('style', 'height:100%;width:100%;position:absolute;top:0;left:0;display:block;background-color:#000;opacity:0.5;')
+            .style('z-index', '1');
     },
 
     getAxisKey: function getAxisKey(dimension) {
@@ -719,7 +753,7 @@ var CkRepoWidgetTable = function () {
             }
 
             if (!!item.cmd) {
-                return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.copyToClipboard("' + CkRepoWidgetUtils.encode(item.cmd) + '");\'><i class="far fa-copy"></i><span class=\'ck-repo-widget-cmd-btn-label\'>' + item.title + '</span></div>';
+                return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.cmd) + '");\'><i class="far fa-copy"></i><span class=\'ck-repo-widget-cmd-btn-label\'>' + item.title + '</span></div>';
             }
 
             if (!!item.key) {
@@ -728,7 +762,7 @@ var CkRepoWidgetTable = function () {
 
             if (!!item.list) {
                 if (!!item.json) {
-                    return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'alert("' + CkRepoWidgetUtils.encode(item.json) + '");\'><i class="far fa-copy"></i><span class=\'ck-repo-widget-cmd-btn-label\'>View JSON</span></div><br>' + this._getCellHtml(item.list);
+                    return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.json) + '");\'><i class="far fa-copy"></i><span class=\'ck-repo-widget-cmd-btn-label\'>View JSON</span></div><br>' + this._getCellHtml(item.list);
                 }
 
                 return this._getCellHtml(item.list);
