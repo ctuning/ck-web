@@ -566,12 +566,41 @@ var CkRepoWidgetTable = function () {
             var tbody = table.append('tbody').attr('class', 'ck-repo-widget-tbody');
 
             // append the header row
-            thead.append('tr').selectAll('th').data(columns).enter().append('th').attr('class', 'ck-repo-widget-th').html(function (column) {
-                return column.name;
-            });
+            let gHeaders = thead.append('tr')
+                .selectAll('th').data(columns)
+                .enter().append('th')
+                    .attr('class', 'ck-repo-widget-th')
+                    .html(function (column) {
+                        return column.name;
+                    });
 
             // create a row for each object in the data
-            var gRows = tbody.selectAll('tr').data(rows).enter().append('tr').attr('class', 'ck-repo-widget-tr').attr('id', CkRepoWidgetUtils.getRowId);
+            let gRows = tbody
+                .selectAll('tr').data(rows)
+                .enter().append('tr')
+                    .attr('class', 'ck-repo-widget-tr')
+                    .attr('id', CkRepoWidgetUtils.getRowId);
+
+            let sortRowsBy = function(key, isAscending) {
+                gRows.sort(function(a, b) {
+                    return isAscending ? (a[key] > b[key]) : (a[key] < b[key]);
+                });
+                gHeaders.classed('ck-repo-widget-th-sort', function(d) { return d.key !== key; });
+                gHeaders.classed('ck-repo-widget-th-sort-down', function(d) { return d.key === key && isAscending; });
+                gHeaders.classed('ck-repo-widget-th-sort-up', function(d) { return d.key === key && !isAscending; });
+            };
+
+            gHeaders
+                // .classed('ck-repo-widget-th-sort', true)
+                .on('click', function(c) {
+                    let cl = this.classList;
+                    let isSortOff = cl.contains('ck-repo-widget-th-sort');
+                    let isSortDown = cl.contains('ck-repo-widget-th-sort-down');
+                    let isSortUp = cl.contains('ck-repo-widget-th-sort-up');
+
+                    let newSortAscending = isSortOff || isSortUp;
+                    sortRowsBy(c.key, newSortAscending);
+                });
 
             // create a cell in each row for each column
             var gCells = gRows.selectAll('td').data(function (row) {
@@ -581,6 +610,8 @@ var CkRepoWidgetTable = function () {
             }).enter().append('td').attr('class', 'ck-repo-widget-td').html(function (item) {
                 return _this._getCellHtml(item);
             });
+
+            sortRowsBy('__number', true);
 
             return table;
         }
