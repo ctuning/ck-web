@@ -1429,11 +1429,14 @@ var CkRepoWidgetPlot = function () {
 
             var gC = this.svg.append('g').attr('class', 'ck-repo-widget-plot-axis ck-repo-widget-plot-axis_color').attr('transform', 'translate(' + axisWidth + ',' + -rectHeight + ')').call(cAxis);
 
-            var rects = gC.selectAll(".ck-repo-widget-color-rect").data(d3.range(rectCount)).enter().append("rect").attr("y", 0).attr("height", rectHeight).attr("x", function (_, i) {
-                return i * rectWidth;
-            }).attr("width", rectWidth).attr("fill", function (d) {
-                return colors(d * rectColorStep);
-            }).attr("class", "ck-repo-widget-color-rect");
+            var rects = gC.selectAll(".ck-repo-widget-color-rect")
+                .data(d3.range(minValue, maxValue + rectColorStep, rectColorStep))
+                .enter().append("rect")
+                    .attr("y", 0)
+                    .attr("height", rectHeight)
+                    .attr("x", function (_, i) { return i * rectWidth; })
+                    .attr("width", rectWidth).attr("fill", function (d) { return colors(d); })
+                    .attr("class", "ck-repo-widget-color-rect");
         }
     }]);
 
