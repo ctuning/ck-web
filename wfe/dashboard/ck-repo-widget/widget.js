@@ -297,7 +297,23 @@ var CkRepoWidgetUtils = {
         domain.push(max);
 
         return domain;
-    }
+    },
+
+    isNaN: function isNaN(input) {
+        if (input === 'NaN' || Number.isNaN(input)) {
+            return true;
+        }
+        return false;
+    },
+
+    isNumberAndFinite: function isNumberAndFinite(input) {
+        if (CkRepoWidgetUtils.isNaN(input)) {
+            return false;
+        }
+        if (!isNaN(Number(input))) {
+            return true;
+        }
+    },
 };
 
 var CkRepoWidgetFilter = function () {
@@ -566,12 +582,63 @@ var CkRepoWidgetTable = function () {
             var tbody = table.append('tbody').attr('class', 'ck-repo-widget-tbody');
 
             // append the header row
-            thead.append('tr').selectAll('th').data(columns).enter().append('th').attr('class', 'ck-repo-widget-th').html(function (column) {
-                return column.name;
-            });
+            let gHeaders = thead.append('tr')
+                .selectAll('th').data(columns)
+                .enter().append('th')
+                    .attr('class', 'ck-repo-widget-th')
+                    .html(function (column) {
+                        return column.name;
+                    });
 
             // create a row for each object in the data
-            var gRows = tbody.selectAll('tr').data(rows).enter().append('tr').attr('class', 'ck-repo-widget-tr').attr('id', CkRepoWidgetUtils.getRowId);
+            let gRows = tbody
+                .selectAll('tr').data(rows)
+                .enter().append('tr')
+                    .attr('class', 'ck-repo-widget-tr')
+                    .attr('id', CkRepoWidgetUtils.getRowId);
+
+            let sortRowsBy = function(column, isAscending) {
+                gRows.sort(function(a, b) {
+                    let sortKey = function(row, column) {
+                        let res = _this._getCellValue(row, column);
+
+                        // This is code? sort by title
+                        if (!!res.cmd) {
+                            res = res.title;
+                        }
+
+                        if (CkRepoWidgetUtils.isNumberAndFinite(res)) {
+                            res = Number(res);
+                        }
+
+                        if (CkRepoWidgetUtils.isNaN(res)) {
+                            res = null;
+                        }
+
+                        return res;
+                    };
+
+                    if (isAscending) {
+                        return d3.ascending(sortKey(a, column), sortKey(b, column));
+                    } else {
+                        return d3.descending(sortKey(a, column), sortKey(b, column));
+                    }
+                });
+                gHeaders.classed('ck-repo-widget-th-sort', function(d) { return d.key !== column.key; });
+                gHeaders.classed('ck-repo-widget-th-sort-down', function(d) { return d.key === column.key && isAscending; });
+                gHeaders.classed('ck-repo-widget-th-sort-up', function(d) { return d.key === column.key && !isAscending; });
+            };
+
+            gHeaders
+                .on('click', function(c) {
+                    let cl = this.classList;
+                    let isSortOff = cl.contains('ck-repo-widget-th-sort');
+                    let isSortDown = cl.contains('ck-repo-widget-th-sort-down');
+                    let isSortUp = cl.contains('ck-repo-widget-th-sort-up');
+
+                    let newSortAscending = isSortOff || isSortUp;
+                    sortRowsBy(c, newSortAscending);
+                });
 
             // create a cell in each row for each column
             var gCells = gRows.selectAll('td').data(function (row) {
@@ -581,6 +648,8 @@ var CkRepoWidgetTable = function () {
             }).enter().append('td').attr('class', 'ck-repo-widget-td').html(function (item) {
                 return _this._getCellHtml(item);
             });
+
+            sortRowsBy(columns[0], true);
 
             return table;
         }
