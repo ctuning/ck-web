@@ -297,7 +297,23 @@ var CkRepoWidgetUtils = {
         domain.push(max);
 
         return domain;
-    }
+    },
+
+    isNaN: function isNaN(input) {
+        if (input === 'NaN' || Number.isNaN(input)) {
+            return true;
+        }
+        return false;
+    },
+
+    isNumberAndFinite: function isNumberAndFinite(input) {
+        if (CkRepoWidgetUtils.isNaN(input)) {
+            return false;
+        }
+        if (!isNaN(Number(input))) {
+            return true;
+        }
+    },
 };
 
 var CkRepoWidgetFilter = function () {
@@ -583,11 +599,30 @@ var CkRepoWidgetTable = function () {
 
             let sortRowsBy = function(column, isAscending) {
                 gRows.sort(function(a, b) {
-                    let aVal = _this._getCellValue(a, column);
-                    let bVal = _this._getCellValue(b, column);
-                    if (!!aVal.cmd) { aVal = aVal.title; }
-                    if (!!bVal.cmd) { bVal = bVal.title; }
-                    return isAscending ? (aVal > bVal) : (aVal < bVal);
+                    let sortKey = function(row, column) {
+                        let res = _this._getCellValue(row, column);
+
+                        // This is code? sort by title
+                        if (!!res.cmd) {
+                            res = res.title;
+                        }
+
+                        if (CkRepoWidgetUtils.isNumberAndFinite(res)) {
+                            res = Number(res);
+                        }
+
+                        if (CkRepoWidgetUtils.isNaN(res)) {
+                            res = null;
+                        }
+
+                        return res;
+                    };
+
+                    if (isAscending) {
+                        return d3.ascending(sortKey(a, column), sortKey(b, column));
+                    } else {
+                        return d3.descending(sortKey(a, column), sortKey(b, column));
+                    }
                 });
                 gHeaders.classed('ck-repo-widget-th-sort', function(d) { return d.key !== column.key; });
                 gHeaders.classed('ck-repo-widget-th-sort-down', function(d) { return d.key === column.key && isAscending; });
