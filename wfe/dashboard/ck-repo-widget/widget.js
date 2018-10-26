@@ -649,7 +649,7 @@ var CkRepoWidgetTable = function () {
                 return _this._getCellHtml(item);
             });
 
-            sortRowsBy('__number', true);
+            sortRowsBy(columns[0], true);
 
             return table;
         }
