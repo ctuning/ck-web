@@ -522,6 +522,41 @@ thead th {
     top: 0;
 }
 
+/* Dialog window */
+.ck-repo-widget-dialog-wnd {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #C4C4C4;
+    margin: auto;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    background: #ffffff;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+.ck-repo-widget-dialog-code {
+    font-family: monospace;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+    border: 1px solid #ccc;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    color: #333;
+    width: 80ch;
+    height: 15em;
+}
+
+.ck-repo-widget-dialog-btn {
+    float: right;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08);
+    border: 1px solid #C4C4C4;
+    padding: 5px;
+    margin: 0 0 10px 10px;
+    right: 10px;
+}
+
 /* loading animation */
 
 .lds-ellipsis {
