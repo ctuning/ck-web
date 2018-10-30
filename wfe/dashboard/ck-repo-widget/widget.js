@@ -277,9 +277,9 @@ var CkRepoWidgetUtils = {
         }
     },
 
-    getColorDomain: function getColorDomain(length, data, valueMapper) {
-        var min = d3.min(data, valueMapper);
-        var max = d3.max(data, valueMapper);
+    getColorDomain: function getColorDomain(length, bounds) {
+        var min = bounds[0];
+        var max = bounds[1];
 
         var domain = [];
 
@@ -290,7 +290,7 @@ var CkRepoWidgetUtils = {
             var step = distance / (length - 1);
 
             for (var i = 1; i < length - 1; ++i) {
-                domain.push(i * step);
+                domain.push(min + i * step);
             }
         }
 
@@ -872,7 +872,7 @@ var CkRepoWidgetPlot = function () {
 
             this.filter = this.plotConfig.filter;
 
-            this.getPointsData = function (data) {
+            this.getRawPointsData = function (data) {
                 var result = [];
 
                 var _iteratorNormalCompletion7 = true;
@@ -882,10 +882,6 @@ var CkRepoWidgetPlot = function () {
                 try {
                     for (var _iterator7 = data[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
                         var row = _step7.value;
-
-                        if (!_this3.filter.isRowVisible(row)) {
-                            continue;
-                        }
 
                         var xKey = CkRepoWidgetUtils.getAxisKey(_this3.xDimension);
                         var yKey = CkRepoWidgetUtils.getAxisKey(_this3.yDimension);
@@ -932,6 +928,17 @@ var CkRepoWidgetPlot = function () {
 
                 return result;
             };
+
+            this.filterPointsData = function (data) {
+                return data.filter(row => _this3.filter.isRowVisible(row));
+            }
+
+            this.getColorBounds = function (data) {
+                let colorValues = data.map( row => this.cValue(row) )
+                    .filter( val => !Number.isNaN(val) );
+
+                return [Math.min(...colorValues), Math.max(...colorValues)];
+            }
 
             this.getLinesData = function (data) {
                 var result = [];
@@ -1038,7 +1045,10 @@ var CkRepoWidgetPlot = function () {
             this.yHasher.reset();
             this.cHasher.reset();
 
-            this.pointsData = this.getPointsData(data);
+            this.rawPointsData = this.getRawPointsData(data);
+            this.pointsData = this.filterPointsData(this.rawPointsData);
+            this.colorBounds = this.getColorBounds(this.rawPointsData);
+
             this.linesData = this.getLinesData(data);
             this.xVariationData = this.getXVariationData(this.pointsData);
             this.yVariationData = this.getYVariationData(this.pointsData);
@@ -1052,9 +1062,11 @@ var CkRepoWidgetPlot = function () {
 
             this.xHasher.reset();
 
-            this.pointsData = this.getPointsData(this.data);
+            this.rawPointsData = this.getRawPointsData(this.data);
+            this.pointsData = this.filterPointsData(this.rawPointsData);
             this.linesData = this.getLinesData(this.data);
             this.xVariationData = this.getXVariationData(this.pointsData);
+            this.colorBounds = this.getColorBounds(this.rawPointsData);
 
             this._build();
         }
@@ -1070,9 +1082,11 @@ var CkRepoWidgetPlot = function () {
 
             this.yHasher.reset();
 
-            this.pointsData = this.getPointsData(this.data);
+            this.rawPointsData = this.getPointsData(this.data);
+            this.pointsData = this.filterPointsData(this.rawPointsData);
             this.linesData = this.getLinesData(this.data);
             this.yVariationData = this.getYVariationData(this.pointsData);
+            this.colorBounds = this.getColorBounds(this.rawPointsData);
 
             this._build();
         }
@@ -1087,6 +1101,8 @@ var CkRepoWidgetPlot = function () {
             this.cDimension = dimension;
 
             this.cHasher.reset();
+
+            this.colorBounds = this.getColorBounds(this.rawPointsData);
 
             this._applyColorDimension();
         }
@@ -1314,7 +1330,7 @@ var CkRepoWidgetPlot = function () {
         }
     }, {
         key: '_applyColorDimension',
-        value: function _applyColorDimension() {
+        value: function () {
             var svg = this.svg,
                 pointsData = this.pointsData,
                 linesData = this.linesData,
@@ -1323,7 +1339,7 @@ var CkRepoWidgetPlot = function () {
                 cValue = this.cValue,
                 colorRange = this.colorRange;
 
-            var color = d3.scaleLinear().domain(CkRepoWidgetUtils.getColorDomain(colorRange.length, pointsData, cValue)).range(colorRange);
+            var color = d3.scaleLinear().domain(CkRepoWidgetUtils.getColorDomain(colorRange.length, this.colorBounds)).range(colorRange);
 
             svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).style('fill', function (row) {
                 return color(cValue(row));
@@ -1401,10 +1417,10 @@ var CkRepoWidgetPlot = function () {
     }, {
         key: '_renderCDimensionLegend',
         value: function _renderCDimensionLegend() {
-            var colorDomain = CkRepoWidgetUtils.getColorDomain(this.colorRange.length, this.pointsData, this.cValue);
+            var colorDomain = CkRepoWidgetUtils.getColorDomain(this.colorRange.length, this.colorBounds);
 
-            var minValue = colorDomain[0];
-            var maxValue = colorDomain[colorDomain.length - 1];
+            var minValue = this.colorBounds[0];
+            var maxValue = this.colorBounds[1];
 
             var axisWidth = this.plotConfig.width / 2;
 
