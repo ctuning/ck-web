@@ -351,7 +351,7 @@ var CkRepoWidgetUtils = {
         if (!isNaN(Number(input))) {
             return true;
         }
-    },
+    }
 };
 
 var CkRepoWidgetFilter = function () {
@@ -1772,7 +1772,7 @@ var CkRepoWdiget = function () {
                     '__fun_key': 'fun_exact',
                     '__time_key': 'total_q_shots',
                     '__delta': 0.01,
-                    '__prob': 0.8,
+                    '__prob': 0.8
                 },
                 tableProcessor: function tableProcessor(table, props) {
                     CkRepoWidgetUtils.prepareTable(table);
@@ -2039,7 +2039,7 @@ var CkRepoWdiget = function () {
                         filter: workflow.filter,
                         colorRange: workflow.colorRange,
                         sizeRange: workflow.sizeRange,
-                        isSDimensionEnabled: workflow.isSDimensionEnabled,
+                        isSDimensionEnabled: workflow.isSDimensionEnabled
                     }, config);
 
                     table.init({
@@ -2109,13 +2109,13 @@ var CkRepoWdiget = function () {
 
                     plot.build(data.table);
 
-                    let plotDimX = _this9._createPlotSelector('x-axis-selector','Plot dimension X',
+                    _this9._createPlotSelector('x-axis-selector','Plot dimension X',
                         _this9.dom.plotSelectorContainer, plot.getXDimension(), dimension => plot.setXDimension(dimension),
                         // Variation
                         isVisible => plot.setXVariationVisibility(isVisible), plot.getXVariationVisibility()
                     );
 
-                    var plotDimY = _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
+                    _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
                         _this9.dom.plotSelectorContainer, plot.getYDimension(), dimension => plot.setYDimension(dimension),
                         // Variation
                         isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility(),
