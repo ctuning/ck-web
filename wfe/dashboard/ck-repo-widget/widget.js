@@ -1268,13 +1268,13 @@ var CkRepoWidgetPlot = function () {
     }, {
         key: 'refLinesVisibilityShowDelta',
         value: function refLinesVisibilityShowDelta(refLineName, vis) {
+            let foundIdx = this._refLinesVisibilityShowDelta.findIndex(r => r === refLineName);
+
             if (typeof vis === 'undefined') {
                 // get
-                return this._refLinesVisibilityShowDelta.findIndex(v => v === refLineName) >= 0;
+                return foundIdx >= 0;
             } else {
                 // set
-                let foundIdx = this._refLinesVisibilityShowDelta.findIndex(r => r === refLineName);
-
                 if (vis && foundIdx < 0) {
                     this._refLinesVisibilityShowDelta.push(refLineName);
                 } else if (!vis && foundIdx >= 0) {
@@ -1287,13 +1287,13 @@ var CkRepoWidgetPlot = function () {
     }, {
         key: 'refLineVisibility',
         value: function refLineVisibility(refLineName, vis) {
+            let foundIdx = this._refLinesVisibility.findIndex(r => r === refLineName);
+
             if (typeof vis === 'undefined') {
                 // get
-                return this._refLinesVisibility.findIndex(v => v === refLineName) >= 0;
+                return foundIdx >= 0;
             } else {
                 // set
-                let foundIdx = this._refLinesVisibility.findIndex(r => r === refLineName);
-
                 if (vis && foundIdx < 0) {
                     this._refLinesVisibility.push(refLineName);
                 } else if (!vis && foundIdx >= 0) {
