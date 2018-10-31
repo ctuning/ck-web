@@ -2058,7 +2058,7 @@ var CkRepoWdiget = function () {
                             let refLine = workflow.refLines[refLineId];
                             refLine.value = refLine.get_value(data.table);
                             if (workflow.props) {
-                                refLine.delta = () => workflow.props['__delta'];
+                                refLine.delta = () => Number(workflow.props['__delta']);
                             }
                             refLine.visible = false;
                             refLine.delta_visible = false;
