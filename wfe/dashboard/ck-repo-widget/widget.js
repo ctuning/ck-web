@@ -2305,23 +2305,12 @@ var CkRepoWdiget = function () {
             var defaultChecked = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
             var refLine =        arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : null;
 
-            var changeHandler = function changeHandler() {
-                var selectDimensionIndex = d3.select('#' + id).property('value');
-                var selectedDimension = _this10.selectedWorkflow.config.dimensions[selectDimensionIndex];
-
-                onChange(selectedDimension);
-
-                let showRefLines = (refLine && refLine.dimension === selectedDimension.key);
-                d3.select('#' + id + '-refline').style('display', (showRefLines ? 'flex' : 'none'));
-                let showRefLineDelta = showRefLines && refLine.visible;
-                d3.select('#' + id + '-refline-delta').style('display', (showRefLineDelta ? 'flex' : 'none'));
-            };
-
             var div = root.append('div').attr('class', 'ck-repo-widget-filter');
 
             var title = div.append('div').attr('class', 'ck-repo-widget-filter-title').text(name);
 
-            var select = div.append('select').attr('id', id).attr('class', 'ck-repo-widget-select').on('change', changeHandler);
+            var select = div.append('select').attr('id', id).attr('class', 'ck-repo-widget-select');
+            let onChangeHooks = [onChange];
 
             select.selectAll('option').data(this.selectedWorkflow.config.dimensions)
                 .enter().append('option')
@@ -2344,50 +2333,71 @@ var CkRepoWdiget = function () {
                 variation.append('div').text('Variation');
             }
 
+
             if (refLine) {
-                let refLineDiv = div.append('div')
-                    .attr('class', 'ck-repo-widget-filter-variation')
-                    .attr('id', id + '-refline');
-                let refLineInput = refLineDiv.append('input')
-                    .attr('type', 'checkbox')
-                    .attr('id', id + '-refline-check')
-                    .property('checked', refLine.visible);
-                refLineDiv.append('div').text(refLine.name);
+                this._createRefLineCheckboxesForPlotSelector(div, refLine, onChangeHooks, defaultDimension);
+            }
 
-                let refLineDeltaDiv = div.append('div')
-                    .attr('class', 'ck-repo-widget-filter-variation')
-                    .attr('id', id + '-refline-delta');
-                let refLineDeltaInput = refLineDeltaDiv.append('input')
-                    .attr('type', 'checkbox')
-                    .attr('id', id + '-refline-delta-check')
-                    .property('checked', refLine.delta_visible);
-                refLineDeltaDiv.append('div').text('Show ± Delta');
+            var changeHandler = function changeHandler() {
+                var selectDimensionIndex = d3.select('#' + id).property('value');
+                var selectedDimension = _this10.selectedWorkflow.config.dimensions[selectDimensionIndex];
 
-                let showRefLines = (refLine.dimension === defaultDimension.key);
+                for(let hook of onChangeHooks) {
+                    hook(selectedDimension);
+                }
+            };
+
+            select.on('change', changeHandler);
+
+            return select;
+        }
+    }, {
+        key: '_createRefLineCheckboxesForPlotSelector',
+        value: function _createValueSelector(div, refLine, onChangeHooks, defaultDimension) {
+            let refLineDiv = div.append('div')
+                .attr('class', 'ck-repo-widget-filter-variation');
+
+            let refLineInput = refLineDiv.append('input')
+                .attr('type', 'checkbox')
+                .property('checked', refLine.visible);
+
+            refLineDiv.append('div').text(refLine.name);
+
+            let refLineDeltaDiv = div.append('div')
+                .attr('class', 'ck-repo-widget-filter-variation');
+
+            let refLineDeltaInput = refLineDeltaDiv.append('input')
+                .attr('type', 'checkbox')
+                .property('checked', refLine.delta_visible);
+
+            refLineDeltaDiv.append('div').text('Show ± Delta');
+
+            let onChangeRefLineHook = function(dimension) {
+                let showRefLines = (refLine.dimension === dimension.key);
                 refLineDiv.style('display', (showRefLines ? 'flex' : 'none'));
                 let showRefLineDelta = showRefLines && refLine.visible;
                 refLineDeltaDiv.style('display', (showRefLineDelta ? 'flex' : 'none'));
-
-                refLineDiv.on('click', function() {
-                    let newChecked = !refLineInput.property('checked');
-                    refLineInput.property('checked', newChecked);
-
-                    refLine.visible = newChecked;
-                    refLine.apply();
-
-                    refLineDeltaDiv.style('display', (newChecked ? 'flex' : 'none'));
-                });
-
-                refLineDeltaDiv.on('click', function() {
-                    let newChecked = !refLineDeltaInput.property('checked');
-                    refLineDeltaInput.property('checked', newChecked);
-
-                    refLine.delta_visible = newChecked;
-                    refLine.apply();
-                });
             }
+            onChangeRefLineHook(defaultDimension);
+            onChangeHooks.push(onChangeRefLineHook);
 
-            return select;
+            refLineDiv.on('click', function() {
+                let newChecked = !refLineInput.property('checked');
+                refLineInput.property('checked', newChecked);
+
+                refLine.visible = newChecked;
+                refLine.apply();
+
+                refLineDeltaDiv.style('display', (newChecked ? 'flex' : 'none'));
+            });
+
+            refLineDeltaDiv.on('click', function() {
+                let newChecked = !refLineDeltaInput.property('checked');
+                refLineDeltaInput.property('checked', newChecked);
+
+                refLine.delta_visible = newChecked;
+                refLine.apply();
+            });
         }
     }, {
         key: '_createValueSelector',
