@@ -1631,30 +1631,40 @@ var CkRepoWidgetPlot = function () {
                     .selectAll('.ck-repo-widget-plot-line-classical-energy')
                     .data(this.refLines)
                     .enter().append("line")
+                        .attr('class', 'ck-repo-widget-plot-line-classical-energy')
+                        .attr('x1', 0)
                         .style('stroke', 'black');
-                        // .attr('class', 'ck-repo-widget-plot-line-classical-energy');
 
                 this.refLinesNodes.label = this.gPoints
                     .selectAll('.ck-repo-widget-plot-label-classical-energy')
                     .data(this.refLines)
                         .enter().append('text')
-                            // .attr('class', 'ck-repo-widget-plot-axis-label')
-                            .attr('dy', '-0.71em');
+                            .attr('class', 'ck-repo-widget-plot-axis-label')
+                            .attr('dy', '-0.71em')
+                            .attr('x', d => this.plotConfig.width)
+                            .style('text-anchor', 'end')
+                            .text(d => d.name);
 
                 this.refLinesNodes.shadeUpper = this.gPoints
                     .selectAll('.ck-repo-widget-plot-shadebar-upper')
                     .data(this.refLines)
                         .enter().append('rect')
-                            // .attr('style', 'ck-repo-widget-plot-shadebar-upper')
+                            .attr('style', 'ck-repo-widget-plot-shadebar-upper')
                             .style('fill', 'black')
                             .style('opacity', '0.3')
-                            .style('pointer-events', 'none');
+                            .style('pointer-events', 'none')
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('width', this.plotConfig.width);
+
 
                 this.refLinesNodes.shadeLower = this.gPoints
                     .selectAll('.ck-repo-widget-plot-shadebar-lower')
                     .data(this.refLines)
                         .enter().append('rect')
-                            // .attr('style', 'ck-repo-widget-plot-shadebar-lower')
+                            .attr('style', 'ck-repo-widget-plot-shadebar-lower')
+                            .attr('x', 0)
+                            .attr('width', this.plotConfig.width)
                             .style('fill', 'black')
                             .style('opacity', '0.3')
                             .style('pointer-events', 'none');
@@ -1662,30 +1672,21 @@ var CkRepoWidgetPlot = function () {
 
             // Update
             this.refLinesNodes.line
-                .attr('x1', 0)
                 .attr('y1', d => this.yScale(d.val))
                 .attr('x2', d => this.plotConfig.width)
                 .attr('y2', d => this.yScale(d.val))
                 .style('visibility', refLineIsVisible);
 
             this.refLinesNodes.label
-                .attr('x', d => this.plotConfig.width)
                 .attr('y', d => this.yScale(d.val))
-                .style('text-anchor', 'end')
-                .text(d => d.name)
                 .style('visibility', refLineIsVisible);
 
             this.refLinesNodes.shadeUpper
-                .attr('x', 0)
-                .attr('y', 0)
-                .attr('width', this.plotConfig.width)
                 .attr('height', d => this.yScale(d.val + d.delta))
                 .style('visibility', refLineDeltaIsVisible);
 
             this.refLinesNodes.shadeLower
-                .attr('x', 0)
                 .attr('y', d => this.yScale(d.val - d.delta))
-                .attr('width', this.plotConfig.width)
                 .attr('height', d => this.plotConfig.height - this.yScale(d.val - d.delta))
                 .style('visibility', refLineDeltaIsVisible);
         }
