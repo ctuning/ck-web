@@ -2298,7 +2298,7 @@ var CkRepoWdiget = function () {
         }
     }, {
         key: '_createPlotSelector',
-        value: function _createPlotSelector(id, name, root, defalutDimension, onChange) {
+        value: function _createPlotSelector(id, name, root, defaultDimension, onChange) {
             var _this10 = this;
 
             var onChecked =      arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
@@ -2326,7 +2326,7 @@ var CkRepoWdiget = function () {
             select.selectAll('option').data(this.selectedWorkflow.config.dimensions)
                 .enter().append('option')
                     .attr('value', (_, i) => i)
-                    .property('selected', (d) => d === defalutDimension)
+                    .property('selected', (d) => d === defaultDimension)
                     .text(d => d.name);
 
             if (onChecked) {
@@ -2363,7 +2363,7 @@ var CkRepoWdiget = function () {
                     .property('checked', refLine.delta_visible);
                 refLineDeltaDiv.append('div').text('Show ± Delta');
 
-                let showRefLines = (refLine.dimension === defalutDimension.key);
+                let showRefLines = (refLine.dimension === defaultDimension.key);
                 refLineDiv.style('display', (showRefLines ? 'flex' : 'none'));
                 let showRefLineDelta = showRefLines && refLine.visible;
                 refLineDeltaDiv.style('display', (showRefLineDelta ? 'flex' : 'none'));
