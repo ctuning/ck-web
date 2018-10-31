@@ -1147,6 +1147,7 @@ var CkRepoWidgetPlot = function () {
             this.refLines = [];
             this._refLinesVisibility = [];
             this._refLinesVisibilityShowDelta = [];
+            this.refLinesNodes = {};
 
             this.colorRange = plotConfig.colorRange || ['lightblue', 'darkblue'];
             this.sizeRange = plotConfig.sizeRange || [2.5, 4.5];
@@ -1280,7 +1281,7 @@ var CkRepoWidgetPlot = function () {
                     this._refLinesVisibilityShowDelta.splice(foundIdx, 1);
                 }
 
-                this._build();
+                this._applyRefLines();
             }
         }
     }, {
@@ -1299,7 +1300,7 @@ var CkRepoWidgetPlot = function () {
                     this._refLinesVisibility.splice(foundIdx, 1);
                 }
 
-                this._build();
+                this._applyRefLines();
             }
         }
     }, {
@@ -1370,12 +1371,16 @@ var CkRepoWidgetPlot = function () {
             yScale.domain([yMin - dy, yMax + dy]);
 
             // clear chart
+            this.refLineNodes = null;
             svg.selectAll('*').remove();
 
             // setup clipping region
             svg.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('width', width).attr('height', height);
 
             var applyScale = function applyScale(xScale, yScale) {
+                _this4.xScale = xScale;
+                _this4.yScale = yScale;
+
                 // update axes
                 gX.call(xAxis.scale(xScale));
                 gY.call(yAxis.scale(yScale));
@@ -1415,36 +1420,7 @@ var CkRepoWidgetPlot = function () {
                     return xScale(xValue(d));
                 });
 
-                let refLineIsVisible = d => (_this4.yDimension.key === d.dimension && _this4.refLineVisibility(d.name) ? 'visible' : 'hidden');
-                let refLineDeltaIsVisible = d => (_this4.yDimension.key === d.dimension && _this4.refLineVisibility(d.name) && _this4.refLinesVisibilityShowDelta(d.name) ? 'visible' : 'hidden');
-
-                energyClassicalLine
-                    .attr('x1', 0)
-                    .attr('y1', d => yScale(d.val))
-                    .attr('x2', d => _plotConfig2.width)
-                    .attr('y2', d => yScale(d.val))
-                    .style('visibility', refLineIsVisible);
-
-                energyClassicalText
-                    .attr('x', d => _plotConfig2.width)
-                    .attr('y', d => yScale(d.val))
-                    .style('text-anchor', 'end')
-                    .text(d => d.name)
-                    .style('visibility', refLineIsVisible);
-
-                energyClassicalBarUpper
-                    .attr('x', 0)
-                    .attr('y', 0)
-                    .attr('width', _plotConfig2.width)
-                    .attr('height', d => yScale(d.val + d.delta))
-                    .style('visibility', refLineDeltaIsVisible);
-
-                energyClassicalBarLower
-                    .attr('x', 0)
-                    .attr('y', d => yScale(d.val - d.delta))
-                    .attr('width', _plotConfig2.width)
-                    .attr('height', d => _plotConfig2.height - yScale(d.val - d.delta))
-                    .style('visibility', refLineDeltaIsVisible);
+                _this4._applyRefLines();
             };
 
             // Pan and zoom
@@ -1468,6 +1444,7 @@ var CkRepoWidgetPlot = function () {
 
             // points & lines container
             var gPoints = svg.append('g').attr('clip-path', 'url(#clip)');
+            this.gPoints = gPoints;
 
             // x-variation lines
             var xVariations = gPoints.selectAll('.ck-repo-widget-plot-variation-x').data(xVariationData).enter().append('line').attr('class', 'ck-repo-widget-plot-variation-x');
@@ -1503,37 +1480,6 @@ var CkRepoWidgetPlot = function () {
 
             gY.append('text').attr('class', 'ck-repo-widget-plot-axis-label').attr('transform', 'rotate(-90)').attr('y', 6).attr('dy', '.71em').style('text-anchor', 'end').style('fill', 'black').text(this.yDimension.name);
 
-            var energyClassicalLine = gPoints
-                .selectAll('.ck-repo-widget-plot-line-classical-energy')
-                .data(this.refLines)
-                .enter().append("line")
-                    .attr('class', 'ck-repo-widget-plot-line-classical-energy');
-
-            var energyClassicalText = gPoints
-                .selectAll('.ck-repo-widget-plot-label-classical-energy')
-                .data(this.refLines)
-                    .enter().append('text')
-                        .attr('class', 'ck-repo-widget-plot-axis-label')
-                        .attr('dy', '-0.71em');
-
-            var energyClassicalBarUpper = gPoints
-                .selectAll('.ck-repo-widget-plot-shadebar-upper')
-                .data(this.refLines)
-                    .enter().append('rect')
-                        .attr('style', 'ck-repo-widget-plot-shadebar-upper')
-                        .style('fill', 'black')
-                        .style('opacity', '0.3')
-                        .style('pointer-events', 'none');
-
-            var energyClassicalBarLower = gPoints
-                .selectAll('.ck-repo-widget-plot-shadebar-lower')
-                .data(this.refLines)
-                    .enter().append('rect')
-                        .attr('style', 'ck-repo-widget-plot-shadebar-lower')
-                        .style('fill', 'black')
-                        .style('opacity', '0.3')
-                        .style('pointer-events', 'none');
-
             applyScale(xScale, yScale);
 
             this._applyColorDimension();
@@ -1542,6 +1488,7 @@ var CkRepoWidgetPlot = function () {
             this._applyYVariationVisibility();
             this._applyDotVisibility();
             this._applyLinesVisibility();
+            this._applyRefLines();
         }
     }, {
         key: '_applyColorDimension',
@@ -1571,8 +1518,6 @@ var CkRepoWidgetPlot = function () {
             svg.selectAll('.ck-repo-widget-plot-variation-y').data(yVariationData).style('stroke', function (row) {
                 return color(cValue(row));
             });
-
-            svg.selectAll('.ck-repo-widget-plot-line-classical-energy').style('stroke', 'black');
 
             if (!!this.plotConfig.colorRange) {
                 this._renderCDimensionLegend();
@@ -1670,6 +1615,79 @@ var CkRepoWidgetPlot = function () {
                     .attr("x", function (_, i) { return i * rectWidth; })
                     .attr("width", rectWidth).attr("fill", function (d) { return colors(d); })
                     .attr("class", "ck-repo-widget-color-rect");
+        }
+    }, {
+        key: '_applyRefLines',
+        value: function _applyRefLines() {
+            let yDimension = this.yDimension.key;
+            let thisPlot = this;
+            let refLineIsVisible = d => (yDimension === d.dimension && thisPlot.refLineVisibility(d.name) ? 'visible' : 'hidden');
+            let refLineDeltaIsVisible = d => (yDimension === d.dimension && thisPlot.refLineVisibility(d.name) && thisPlot.refLinesVisibilityShowDelta(d.name) ? 'visible' : 'hidden');
+
+            // Create
+            if (!this.refLineNodes) {
+                this.refLineNodes = {};
+                this.refLinesNodes.line = this.gPoints
+                    .selectAll('.ck-repo-widget-plot-line-classical-energy')
+                    .data(this.refLines)
+                    .enter().append("line")
+                        .style('stroke', 'black');
+                        // .attr('class', 'ck-repo-widget-plot-line-classical-energy');
+
+                this.refLinesNodes.label = this.gPoints
+                    .selectAll('.ck-repo-widget-plot-label-classical-energy')
+                    .data(this.refLines)
+                        .enter().append('text')
+                            // .attr('class', 'ck-repo-widget-plot-axis-label')
+                            .attr('dy', '-0.71em');
+
+                this.refLinesNodes.shadeUpper = this.gPoints
+                    .selectAll('.ck-repo-widget-plot-shadebar-upper')
+                    .data(this.refLines)
+                        .enter().append('rect')
+                            // .attr('style', 'ck-repo-widget-plot-shadebar-upper')
+                            .style('fill', 'black')
+                            .style('opacity', '0.3')
+                            .style('pointer-events', 'none');
+
+                this.refLinesNodes.shadeLower = this.gPoints
+                    .selectAll('.ck-repo-widget-plot-shadebar-lower')
+                    .data(this.refLines)
+                        .enter().append('rect')
+                            // .attr('style', 'ck-repo-widget-plot-shadebar-lower')
+                            .style('fill', 'black')
+                            .style('opacity', '0.3')
+                            .style('pointer-events', 'none');
+            }
+
+            // Update
+            this.refLinesNodes.line
+                .attr('x1', 0)
+                .attr('y1', d => this.yScale(d.val))
+                .attr('x2', d => this.plotConfig.width)
+                .attr('y2', d => this.yScale(d.val))
+                .style('visibility', refLineIsVisible);
+
+            this.refLinesNodes.label
+                .attr('x', d => this.plotConfig.width)
+                .attr('y', d => this.yScale(d.val))
+                .style('text-anchor', 'end')
+                .text(d => d.name)
+                .style('visibility', refLineIsVisible);
+
+            this.refLinesNodes.shadeUpper
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('width', this.plotConfig.width)
+                .attr('height', d => this.yScale(d.val + d.delta))
+                .style('visibility', refLineDeltaIsVisible);
+
+            this.refLinesNodes.shadeLower
+                .attr('x', 0)
+                .attr('y', d => this.yScale(d.val - d.delta))
+                .attr('width', this.plotConfig.width)
+                .attr('height', d => this.plotConfig.height - this.yScale(d.val - d.delta))
+                .style('visibility', refLineDeltaIsVisible);
         }
     }]);
 
@@ -2323,7 +2341,7 @@ var CkRepoWdiget = function () {
 
                 let showRefLines = (refLinesData && refLinesData.dimension === selectedDimension.key);
                 d3.select('#' + id + '-refline').style('display', (showRefLines ? 'flex' : 'none'));
-                let showRefLineDelta = showRefLines && d3.select('#' + id + '-refline-delta-check').property('checked');
+                let showRefLineDelta = showRefLines && d3.select('#' + id + '-refline-check').property('checked');
                 d3.select('#' + id + '-refline-delta').style('display', (showRefLineDelta ? 'flex' : 'none'));
             };
 
@@ -2356,16 +2374,16 @@ var CkRepoWdiget = function () {
 
             if (refLinesData) {
                 let refLineDiv = div.append('div').attr('class', 'ck-repo-widget-filter-variation').attr('id', id + '-refline');
-                let refLineInput = refLineDiv.append('input').attr('type', 'checkbox').property('checked', false);
+                let refLineInput = refLineDiv.append('input').attr('type', 'checkbox').attr('id', id + '-refline-check').property('checked', refLinesData.defChecked);
                 refLineDiv.append('div').text(refLinesData.name);
 
                 let refLineDeltaDiv = div.append('div').attr('class', 'ck-repo-widget-filter-variation').attr('id', id + '-refline-delta');
-                let refLineDeltaInput = refLineDeltaDiv.append('input').attr('type', 'checkbox').attr('id', id + '-refline-delta-check').property('checked', false);
+                let refLineDeltaInput = refLineDeltaDiv.append('input').attr('type', 'checkbox').attr('id', id + '-refline-delta-check').property('checked', refLinesData.defDeltaChecked);
                 refLineDeltaDiv.append('div').text('Show ± Delta');
 
                 let showRefLines = (refLinesData && refLinesData.dimension === defalutDimension.key);
                 refLineDiv.style('display', (showRefLines ? 'flex' : 'none'));
-                let showRefLineDelta = showRefLines && refLineDeltaInput.property('checked');
+                let showRefLineDelta = showRefLines && refLinesData.defChecked;
                 refLineDeltaDiv.style('display', (showRefLineDelta ? 'flex' : 'none'));
 
                 refLineDiv.on('click', function() {
