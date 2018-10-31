@@ -2373,12 +2373,22 @@ var CkRepoWdiget = function () {
             }
 
             if (refLinesData) {
-                let refLineDiv = div.append('div').attr('class', 'ck-repo-widget-filter-variation').attr('id', id + '-refline');
-                let refLineInput = refLineDiv.append('input').attr('type', 'checkbox').attr('id', id + '-refline-check').property('checked', refLinesData.defChecked);
+                let refLineDiv = div.append('div')
+                    .attr('class', 'ck-repo-widget-filter-variation')
+                    .attr('id', id + '-refline');
+                let refLineInput = refLineDiv.append('input')
+                    .attr('type', 'checkbox')
+                    .attr('id', id + '-refline-check')
+                    .property('checked', refLinesData.defChecked);
                 refLineDiv.append('div').text(refLinesData.name);
 
-                let refLineDeltaDiv = div.append('div').attr('class', 'ck-repo-widget-filter-variation').attr('id', id + '-refline-delta');
-                let refLineDeltaInput = refLineDeltaDiv.append('input').attr('type', 'checkbox').attr('id', id + '-refline-delta-check').property('checked', refLinesData.defDeltaChecked);
+                let refLineDeltaDiv = div.append('div')
+                    .attr('class', 'ck-repo-widget-filter-variation')
+                    .attr('id', id + '-refline-delta');
+                let refLineDeltaInput = refLineDeltaDiv.append('input')
+                    .attr('type', 'checkbox')
+                    .attr('id', id + '-refline-delta-check')
+                    .property('checked', refLinesData.defDeltaChecked);
                 refLineDeltaDiv.append('div').text('Show ± Delta');
 
                 let showRefLines = (refLinesData && refLinesData.dimension === defalutDimension.key);
