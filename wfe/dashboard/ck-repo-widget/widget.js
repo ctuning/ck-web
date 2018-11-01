@@ -1622,26 +1622,43 @@ var CkRepoWidgetPlot = function () {
                 this.refLineNodes.shadeUpper = this.gPoints
                     .selectAll('.ck-repo-widget-plot-refline-shadebar-upper')
                     .data(data)
-                        .enter().append('rect')
-                            .attr('style', 'ck-repo-widget-plot-refline-shadebar-upper')
-                            .style('fill', 'black')
-                            .style('opacity', '0.3')
-                            .style('pointer-events', 'none')
-                            .attr('x', 0)
-                            .attr('y', 0)
-                            .attr('width', this.plotConfig.width);
+                        .enter().append("line")
+                            .attr('class', 'ck-repo-widget-plot-refline-shadebar-upper')
+                            .attr('x1', 0)
+                            .attr('x2', this.plotConfig.width)
+                            .style('stroke', 'black')
+                            .attr('stroke-dasharray', '10');
+
+                this.refLineNodes.labelUpper = this.gPoints
+                    .selectAll('.ck-repo-widget-plot-label-refline-upper')
+                    .data(data)
+                        .enter().append('text')
+                            .attr('class', 'ck-repo-widget-plot-label-refline-upper')
+                            .attr('dy', '-0.71em')
+                            .attr('x', d => this.plotConfig.width)
+                            .style('text-anchor', 'end')
+                            .text(d => '+Δ');
+
+                this.refLineNodes.labelLower = this.gPoints
+                    .selectAll('.ck-repo-widget-plot-label-refline-lower')
+                    .data(data)
+                        .enter().append('text')
+                            .attr('class', 'ck-repo-widget-plot-label-refline-lower')
+                            .attr('dy', '1em')
+                            .attr('x', d => this.plotConfig.width)
+                            .style('text-anchor', 'end')
+                            .text(d => '-Δ');
 
 
                 this.refLineNodes.shadeLower = this.gPoints
                     .selectAll('.ck-repo-widget-plot-refline-shadebar-lower')
                     .data(data)
-                        .enter().append('rect')
-                            .attr('style', 'ck-repo-widget-plot-refline-shadebar-lower')
-                            .attr('x', 0)
-                            .attr('width', this.plotConfig.width)
-                            .style('fill', 'black')
-                            .style('opacity', '0.3')
-                            .style('pointer-events', 'none');
+                        .enter().append("line")
+                            .attr('class', 'ck-repo-widget-plot-refline-shadebar-lower')
+                            .attr('x1', 0)
+                            .attr('x2', this.plotConfig.width)
+                            .style('stroke', 'black')
+                            .attr('stroke-dasharray', '10');
             }
 
             // Update
@@ -1655,14 +1672,28 @@ var CkRepoWidgetPlot = function () {
                 .attr('y', d => this.yScale(d.value))
                 .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
 
+            let showDeltaAfterScale = 10;
+            if (this.refLineNodes.label.node()) {
+                parseFloat(window.getComputedStyle(this.refLineNodes.label.node()).fontSize) * 2;
+            }
+            let scaleDelta = (v) => Math.abs(this.yScale(0) - this.yScale(v.delta())) > showDeltaAfterScale;
+
+            this.refLineNodes.labelUpper
+                .attr('y', d => this.yScale(d.value + d.delta()))
+                .style('visibility', d => toVisibility(isDimOk(d) && d.visible && scaleDelta(d) ));
+            this.refLineNodes.labelLower
+                .attr('y', d => this.yScale(d.value - d.delta()))
+                .style('visibility', d => toVisibility(isDimOk(d) && d.visible && scaleDelta(d) ));
+
             this.refLineNodes.shadeUpper
-                .attr('height', d => this.yScale(d.value + d.delta()))
-                .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible));
+                .attr('y1', d => this.yScale(d.value + d.delta()))
+                .attr('y2', d => this.yScale(d.value + d.delta()))
+                .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible ));
 
             this.refLineNodes.shadeLower
-                .attr('y', d => this.yScale(d.value - d.delta()))
-                .attr('height', d => this.plotConfig.height - this.yScale(d.value - d.delta()))
-                .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible));
+                .attr('y1', d => this.yScale(d.value - d.delta()))
+                .attr('y2', d => this.yScale(d.value - d.delta()))
+                .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible ));
         }
     }]);
 
