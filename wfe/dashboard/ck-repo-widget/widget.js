@@ -1569,14 +1569,20 @@ var CkRepoWdiget = function () {
 
     _createClass(CkRepoWdiget, [{
         key: 'init',
-        value: function init(rootId, headerId, loadingLayerId) {
+        value: function init(argsMap) {
             var _this9 = this;
 
             // If this widget is running on local machine, e.g. launched through `ck widget nntest`
-            this.isLocalRun = true;
+            this.isLocalRun = (typeof argsMap.isLocalRun === 'undefined' ? true : argsMap.isLocalRun);
+            // Scenario filters available workflows
+            this.scenario = argsMap.scenario || '';
+
+            let rootId = argsMap.rootId || '#ck-repo-widget';
+            let headerId = argsMap.headerId || '#ck-repo-widget-header';
+            let loadingLayerId = argsMap.loadingLayerId || '#ck-repo-widget-loading-layer';
 
             // Url where to get data from
-            const kApiUrl = (this.isLocalRun ? 'http://localhost:3344/' : 'http://cknowledge.org/repo/json.php');
+            const kApiUrl = argsMap.apiUrlPrefix || (this.isLocalRun ? '/web' : 'http://cknowledge.org/repo/json.php');
             var kActionGetData = 'get_raw_data';
             var kActionGetConfig = 'get_raw_config';
 
@@ -1814,11 +1820,11 @@ var CkRepoWdiget = function () {
                 colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
             })];
 
-            // Scenario filters available workflows            
-            if (this.scenario != null) {
+            // Scenario filters available workflows
+            if (this.scenario !== '') {
                 workflows = workflows.filter(w => w.moduleUoa == this.scenario);
             }
-            var defaultWorkflow = workflows[0];
+            var defaultWorkflow = workflows[3] || workflows[0];
 
             var showWorkflow = function showWorkflow(workflow) {
                 _this9.selectedWorkflow = workflow;
@@ -2337,11 +2343,6 @@ var CkRepoWdiget = function () {
             dom.plotSelectorContainer.selectAll('*').remove();
             dom.plotTooltipContainer.selectAll('*').remove();
             dom.tableContainer.selectAll('*').remove();
-        }
-    }, {
-        key: 'setScenario',
-        value: function setScenario(scenario_name) {
-            this.scenario = scenario_name;
         }
     }, {
         key: '_getInfoHtml',
