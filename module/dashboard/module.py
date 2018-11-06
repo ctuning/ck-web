@@ -64,7 +64,7 @@ def display(args):
     """
 
     # Filter and pass some arguments from command line to browser
-    extra_url = { key:args[key] for key in args if key in ['scenario'] }
+    extra_url = { key:args[key] for key in args if key in ['scenario', 'global'] }
     extra_url = "&".join("{0}={1}".format(key, extra_url[key]) for key in extra_url)
 
     args['action'] = 'start'
