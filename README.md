@@ -68,6 +68,13 @@ wfe - CK web front-end (browsing repository and entries, visualizing experiments
   * view_page - view a given CK page
   * webadd - add/update CK entries via html
 
+dashboard - new CK web front-end. Provides more modern Look and Feel and targets to replace wfe module.
+
+  * display - start web service and open web-browser with widget. Arguments:
+
+    * --global - data will be retrieved from cKnowledge.org. Example: `ck display dashboard --global` - show web-page with data retrieved from global repository
+    * --scenario - specify scenario as module_uoa. Only workflows with this module will be shown in this scenario. Example: `ck display dashboard --scenario=hackathon.20181006` - show web-page with Quantum Hackathon 2018-10-06 workflows only
+
 Publications
 ============
 
