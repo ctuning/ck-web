@@ -1867,7 +1867,7 @@ var CkRepoWdiget = function () {
                 },
                 refLines: {
                     "classical_energy": {
-                        name: "Classical Energy",
+                        name: "Exact Answer",
                         dimension: "__energies",
                         get_value: CkRepoWidgetUtils.quantum.get_classical_energy,
                         value: null,
@@ -2091,8 +2091,8 @@ var CkRepoWdiget = function () {
                             if (workflow.props) {
                                 refLine.delta = () => Number(workflow.props['__delta']);
                             }
-                            refLine.visible = false;
-                            refLine.delta_visible = false;
+                            refLine.visible = true;
+                            refLine.delta_visible = true;
                         }
                         plot.setRefLines(workflow.refLines);
                     }
