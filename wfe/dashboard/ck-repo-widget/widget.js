@@ -1595,10 +1595,20 @@ var CkRepoWidgetPlot = function () {
 
             let data = Object.values(this.refLines);
 
+            let nodeRoot = this.svg;
+
+            function rectsIntersects(a, b) {
+                if (typeof a === 'undefined' || typeof b === 'undefined') return false;
+                let res = (
+                    Math.max(a.x, b.x) < Math.min(a.x + a.width, b.x + b.width) &&
+                    Math.max(a.y, b.y) < Math.min(a.y + a.height, b.y + b.height) );
+                return res;
+            };
+
             // Line
             {
                 let className = '-line';
-                let line = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let line = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 line.enter().append("line")
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('x1', 0)
@@ -1611,20 +1621,65 @@ var CkRepoWidgetPlot = function () {
                 line.exit().remove();
             }
 
+            // Label-background
+            let labelBg = null;
+            {
+                let className = '-label-bg';
+                labelBg = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                labelBg.enter().append('rect')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('fill', 'white')
+                        .attr('stroke', 'black')
+                    .merge(labelBg)
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
+                labelBg.exit().remove();
+            }
+
+            // Upper label background
+            let upperLabelBg = null;
+            {
+                let className = '-upper-label-bg';
+                upperLabelBg = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                upperLabelBg.enter().append('rect')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('fill', 'white')
+                        .attr('stroke', 'black')
+                    .merge(upperLabelBg)
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && deltaIsReadable(d) ));
+                upperLabelBg.exit().remove();
+            }
+
+            // Lower label background
+            let lowerLabelBg = null;
+            {
+                let className = '-lower-label-bg';
+                lowerLabelBg = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                lowerLabelBg.enter().append('rect')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('fill', 'white')
+                        .attr('stroke', 'black')
+                    .merge(lowerLabelBg)
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && deltaIsReadable(d) ));
+                lowerLabelBg.exit().remove();
+            }
+
             // Label
+            var labelBBoxes = null;
             {
                 let className = '-label';
-                let label = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let label = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 label.enter().append('text')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
-                        .attr('dy', '-0.71em')
-                        .attr('x', d => this.plotConfig.width)
+                        .attr('dy', '0.5em')
+                        .attr('x', d => 0)
                         .style('text-anchor', 'end')
                         .text(d => d.name)
                     .merge(label)
                         .attr('y', d => this.yScale(d.value))
                         .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
                 label.exit().remove();
+
+                labelBBoxes = label.nodes().map(n => n.getBBox());
 
                 // Calc size
                 if (label.node()) {
@@ -1638,7 +1693,7 @@ var CkRepoWidgetPlot = function () {
             // Upper line
             {
                 let className = '-upper-line';
-                let upperLine = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let upperLine = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 upperLine.enter().append("line")
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('x1', 0)
@@ -1655,7 +1710,7 @@ var CkRepoWidgetPlot = function () {
             // Lower line
             {
                 let className = '-lower-line';
-                let lowerLine = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let lowerLine = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 lowerLine.enter().append("line")
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('x1', 0)
@@ -1670,36 +1725,60 @@ var CkRepoWidgetPlot = function () {
             }
 
             // Upper label
+            let upperLabelBBoxes = null;
             {
                 let className = '-upper-label';
-                let upperLabel = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let upperLabel = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 upperLabel.enter().append('text')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
-                        .attr('dy', '-0.71em')
-                        .attr('x', d => this.plotConfig.width)
+                        .attr('dy', '0.5em')
+                        .attr('x', 0)
                         .style('text-anchor', 'end')
                         .text(d => '+Δ')
                     .merge(upperLabel)
                         .attr('y', d => this.yScale(d.value + d.delta()))
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible && deltaIsReadable(d) ));
+                        .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && d.visible && d.delta_visible && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
                 upperLabel.exit().remove();
+
+                upperLabelBBoxes = upperLabel.nodes().map(n => n.getBBox());
             }
 
             // Lower label
+            let lowerLabelBBoxes = null;
             {
                 let className = '-lower-label';
-                let lowerLabel = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let lowerLabel = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 lowerLabel.enter().append('text')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
-                        .attr('dy', '1em')
-                        .attr('x', d => this.plotConfig.width)
+                        .attr('dy', '0.5em')
+                        .attr('x', 0)
                         .style('text-anchor', 'end')
                         .text(d => '-Δ')
                     .merge(lowerLabel)
                         .attr('y', d => this.yScale(d.value - d.delta()))
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible && deltaIsReadable(d) ));
+                        .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && d.visible && d.delta_visible && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); });
                 lowerLabel.exit().remove();
+
+                lowerLabelBBoxes = lowerLabel.nodes().map(n => n.getBBox());
             }
+
+            labelBg
+                .attr('x', (_,i) => labelBBoxes[i].x)
+                .attr('y', (_,i) => labelBBoxes[i].y)
+                .attr('width', (_,i) => labelBBoxes[i].width)
+                .attr('height', (_,i) => labelBBoxes[i].height);
+
+            upperLabelBg
+                .attr('x', (_,i) => upperLabelBBoxes[i].x)
+                .attr('y', (_,i) => upperLabelBBoxes[i].y)
+                .attr('width', (_,i) => upperLabelBBoxes[i].width)
+                .attr('height', (_,i) => upperLabelBBoxes[i].height);
+
+            lowerLabelBg
+                .attr('x', (_,i) => lowerLabelBBoxes[i].x)
+                .attr('y', (_,i) => lowerLabelBBoxes[i].y)
+                .attr('width', (_,i) => lowerLabelBBoxes[i].width)
+                .attr('height', (_,i) => lowerLabelBBoxes[i].height);
         }
     }]);
 
@@ -1730,8 +1809,8 @@ var CkRepoWdiget = function () {
             var kActionGetData = 'get_raw_data';
             var kActionGetConfig = 'get_raw_config';
 
-            var kPlotMargin = { top: 30, right: 20, bottom: 30, left: 40 };
-            var kPlotWidth = 960 - kPlotMargin.left - kPlotMargin.right;
+            var kPlotMargin = { top: 30, right: 70, bottom: 30, left: 90 };
+            var kPlotWidth = 1060 - kPlotMargin.left - kPlotMargin.right;
             var kPlotHeight = 500 - kPlotMargin.top - kPlotMargin.bottom;
 
             var plot = new CkRepoWidgetPlot();
