@@ -1594,6 +1594,7 @@ var CkRepoWidgetPlot = function () {
             let whiteBg = '#f7f9fa'; // todo: hack, this is background-color of body
             let textXOffsetFromAxis = -5;
             let deltaLineVisible = d => d.visible && d.delta_visible;
+            let linesIsInBounds = v => 0 < this.yScale(v) && this.yScale(v) < this.plotConfig.height;
 
             let data = Object.values(this.refLines);
 
@@ -1669,7 +1670,7 @@ var CkRepoWidgetPlot = function () {
                         .text(d => d.name)
                     .merge(label)
                         .attr('y', d => this.yScale(d.value))
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && linesIsInBounds(d.value) ));
                 label.exit().remove();
 
                 labelBBoxes = label.nodes().map(n => n.getBBox());
@@ -1722,7 +1723,7 @@ var CkRepoWidgetPlot = function () {
                         .text(d => '+Δ')
                     .merge(upperLabel)
                         .attr('y', d => this.yScale(d.value + d.delta()))
-                        .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
+                        .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value + d.delta()) ); } );
                 upperLabel.exit().remove();
 
                 upperLabelBBoxes = upperLabel.nodes().map(n => n.getBBox());
@@ -1741,7 +1742,7 @@ var CkRepoWidgetPlot = function () {
                         .text(d => '-Δ')
                     .merge(lowerLabel)
                         .attr('y', d => this.yScale(d.value - d.delta()))
-                        .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); });
+                        .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta()) ); });
                 lowerLabel.exit().remove();
 
                 lowerLabelBBoxes = lowerLabel.nodes().map(n => n.getBBox());
@@ -1758,14 +1759,14 @@ var CkRepoWidgetPlot = function () {
                 .attr('y', (_,i) => upperLabelBBoxes[i].y)
                 .attr('width', (_,i) => upperLabelBBoxes[i].width)
                 .attr('height', (_,i) => upperLabelBBoxes[i].height)
-                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
+                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value + d.delta()) ); } );
 
             lowerLabelBg
                 .attr('x', (_,i) => lowerLabelBBoxes[i].x)
                 .attr('y', (_,i) => lowerLabelBBoxes[i].y)
                 .attr('width', (_,i) => lowerLabelBBoxes[i].width)
                 .attr('height', (_,i) => lowerLabelBBoxes[i].height)
-                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
+                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta())); } );
         }
     }]);
 
