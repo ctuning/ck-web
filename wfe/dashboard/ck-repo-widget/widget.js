@@ -1202,7 +1202,7 @@ var CkRepoWidgetPlot = function () {
 
             this.yHasher.reset();
 
-            this.rawPointsData = this.getPointsData(this.data);
+            this.rawPointsData = this.getRawPointsData(this.data);
             this.pointsData = this.filterPointsData(this.rawPointsData);
             this.linesData = this.getLinesData(this.data);
             this.yVariationData = this.getYVariationData(this.pointsData);
@@ -2234,9 +2234,7 @@ var CkRepoWdiget = function () {
                     _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
                         _this9.dom.plotSelectorContainer, plot.getYDimension(), dimension => plot.setYDimension(dimension),
                         // Variation
-                        isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility(),
-                        // RefLine
-                        plot.getRefLine(Object.keys(workflow.refLines)[0])
+                        isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility()
                     );
 
                     _this9._createPlotSelector('c-axis-selector', 'Plot color dimension',
@@ -2419,14 +2417,12 @@ var CkRepoWdiget = function () {
 
             var onChecked =      arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
             var defaultChecked = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
-            var refLine =        arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : null;
 
             var div = root.append('div').attr('class', 'ck-repo-widget-filter');
 
             var title = div.append('div').attr('class', 'ck-repo-widget-filter-title').text(name);
 
             var select = div.append('select').attr('id', id).attr('class', 'ck-repo-widget-select');
-            let onChangeHooks = [onChange];
 
             select.selectAll('option').data(this.selectedWorkflow.config.dimensions)
                 .enter().append('option')
@@ -2450,70 +2446,16 @@ var CkRepoWdiget = function () {
             }
 
 
-            if (refLine) {
-                this._createRefLineCheckboxesForPlotSelector(div, refLine, onChangeHooks, defaultDimension);
-            }
-
             var changeHandler = function changeHandler() {
                 var selectDimensionIndex = d3.select('#' + id).property('value');
                 var selectedDimension = _this10.selectedWorkflow.config.dimensions[selectDimensionIndex];
 
-                for(let hook of onChangeHooks) {
-                    hook(selectedDimension);
-                }
+                onChange(selectedDimension);
             };
 
             select.on('change', changeHandler);
 
             return select;
-        }
-    }, {
-        key: '_createRefLineCheckboxesForPlotSelector',
-        value: function _createValueSelector(div, refLine, onChangeHooks, defaultDimension) {
-            let refLineDiv = div.append('div')
-                .attr('class', 'ck-repo-widget-filter-variation');
-
-            let refLineInput = refLineDiv.append('input')
-                .attr('type', 'checkbox')
-                .property('checked', refLine.visible);
-
-            refLineDiv.append('div').text(refLine.name);
-
-            let refLineDeltaDiv = div.append('div')
-                .attr('class', 'ck-repo-widget-filter-variation');
-
-            let refLineDeltaInput = refLineDeltaDiv.append('input')
-                .attr('type', 'checkbox')
-                .property('checked', refLine.delta_visible);
-
-            refLineDeltaDiv.append('div').text('Show ± Delta');
-
-            let onChangeRefLineHook = function(dimension) {
-                let showRefLines = (refLine.dimension === dimension.key);
-                refLineDiv.style('display', (showRefLines ? 'flex' : 'none'));
-                let showRefLineDelta = showRefLines && refLine.visible;
-                refLineDeltaDiv.style('display', (showRefLineDelta ? 'flex' : 'none'));
-            }
-            onChangeRefLineHook(defaultDimension);
-            onChangeHooks.push(onChangeRefLineHook);
-
-            refLineDiv.on('click', function() {
-                let newChecked = !refLineInput.property('checked');
-                refLineInput.property('checked', newChecked);
-
-                refLine.visible = newChecked;
-                refLine.apply();
-
-                refLineDeltaDiv.style('display', (newChecked ? 'flex' : 'none'));
-            });
-
-            refLineDeltaDiv.on('click', function() {
-                let newChecked = !refLineDeltaInput.property('checked');
-                refLineDeltaInput.property('checked', newChecked);
-
-                refLine.delta_visible = newChecked;
-                refLine.apply();
-            });
         }
     }, {
         key: '_createValueSelector',
