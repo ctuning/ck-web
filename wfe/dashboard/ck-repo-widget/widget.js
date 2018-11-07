@@ -1591,11 +1591,11 @@ var CkRepoWidgetPlot = function () {
         value: function _applyRefLines() {
             let isDimOk = d => this.yDimension.key === d.dimension;
             let toVisibility = b => (b ? 'visible' : 'hidden');
-            let deltaIsReadable = v => true; // default value, see reassignment below
+            let whiteBg = '#f7f9fa'; // todo: hack, this is background-color of body
+            let textXOffsetFromAxis = -5;
+            let deltaLineVisible = d => d.visible && d.delta_visible;
 
             let data = Object.values(this.refLines);
-
-            let nodeRoot = this.svg;
 
             function rectsIntersects(a, b) {
                 if (typeof a === 'undefined' || typeof b === 'undefined') return false;
@@ -1608,7 +1608,7 @@ var CkRepoWidgetPlot = function () {
             // Line
             {
                 let className = '-line';
-                let line = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let line = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 line.enter().append("line")
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('x1', 0)
@@ -1625,11 +1625,10 @@ var CkRepoWidgetPlot = function () {
             let labelBg = null;
             {
                 let className = '-label-bg';
-                labelBg = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                labelBg = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 labelBg.enter().append('rect')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
-                        .attr('fill', 'white')
-                        .attr('stroke', 'black')
+                        .attr('fill', whiteBg)
                     .merge(labelBg)
                         .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
                 labelBg.exit().remove();
@@ -1639,13 +1638,10 @@ var CkRepoWidgetPlot = function () {
             let upperLabelBg = null;
             {
                 let className = '-upper-label-bg';
-                upperLabelBg = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                upperLabelBg = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 upperLabelBg.enter().append('rect')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
-                        .attr('fill', 'white')
-                        .attr('stroke', 'black')
-                    .merge(upperLabelBg)
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && deltaIsReadable(d) ));
+                        .attr('fill', whiteBg)
                 upperLabelBg.exit().remove();
             }
 
@@ -1653,13 +1649,10 @@ var CkRepoWidgetPlot = function () {
             let lowerLabelBg = null;
             {
                 let className = '-lower-label-bg';
-                lowerLabelBg = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                lowerLabelBg = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 lowerLabelBg.enter().append('rect')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
-                        .attr('fill', 'white')
-                        .attr('stroke', 'black')
-                    .merge(lowerLabelBg)
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && deltaIsReadable(d) ));
+                        .attr('fill', whiteBg)
                 lowerLabelBg.exit().remove();
             }
 
@@ -1667,11 +1660,11 @@ var CkRepoWidgetPlot = function () {
             var labelBBoxes = null;
             {
                 let className = '-label';
-                let label = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let label = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 label.enter().append('text')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('dy', '0.5em')
-                        .attr('x', d => 0)
+                        .attr('x', d => textXOffsetFromAxis)
                         .style('text-anchor', 'end')
                         .text(d => d.name)
                     .merge(label)
@@ -1680,20 +1673,12 @@ var CkRepoWidgetPlot = function () {
                 label.exit().remove();
 
                 labelBBoxes = label.nodes().map(n => n.getBBox());
-
-                // Calc size
-                if (label.node()) {
-                    let fontSize = window.getComputedStyle(label.node()).fontSize;
-                    let lineCount = 2;
-                    let deltaVisibilityRange = parseFloat(fontSize) * lineCount;
-                    deltaIsReadable = (v) => Math.abs(this.yScale(0) - this.yScale(v.delta())) > deltaVisibilityRange;
-                }
             }
 
             // Upper line
             {
                 let className = '-upper-line';
-                let upperLine = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let upperLine = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 upperLine.enter().append("line")
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('x1', 0)
@@ -1703,14 +1688,14 @@ var CkRepoWidgetPlot = function () {
                     .merge(upperLine)
                         .attr('y1', d => this.yScale(d.value + d.delta()))
                         .attr('y2', d => this.yScale(d.value + d.delta()))
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible ));
+                        .style('visibility', d => toVisibility(isDimOk(d) && deltaLineVisible(d) ));
                 upperLine.exit().remove();
             }
 
             // Lower line
             {
                 let className = '-lower-line';
-                let lowerLine = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let lowerLine = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 lowerLine.enter().append("line")
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('x1', 0)
@@ -1720,7 +1705,7 @@ var CkRepoWidgetPlot = function () {
                     .merge(lowerLine)
                         .attr('y1', d => this.yScale(d.value - d.delta()))
                         .attr('y2', d => this.yScale(d.value - d.delta()))
-                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && d.delta_visible ));
+                        .style('visibility', d => toVisibility(isDimOk(d) && deltaLineVisible(d) ));
                 lowerLine.exit().remove();
             }
 
@@ -1728,16 +1713,16 @@ var CkRepoWidgetPlot = function () {
             let upperLabelBBoxes = null;
             {
                 let className = '-upper-label';
-                let upperLabel = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let upperLabel = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 upperLabel.enter().append('text')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('dy', '0.5em')
-                        .attr('x', 0)
+                        .attr('x', textXOffsetFromAxis)
                         .style('text-anchor', 'end')
                         .text(d => '+Δ')
                     .merge(upperLabel)
                         .attr('y', d => this.yScale(d.value + d.delta()))
-                        .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && d.visible && d.delta_visible && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
+                        .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
                 upperLabel.exit().remove();
 
                 upperLabelBBoxes = upperLabel.nodes().map(n => n.getBBox());
@@ -1747,16 +1732,16 @@ var CkRepoWidgetPlot = function () {
             let lowerLabelBBoxes = null;
             {
                 let className = '-lower-label';
-                let lowerLabel = nodeRoot.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                let lowerLabel = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
                 lowerLabel.enter().append('text')
                         .attr('class', 'ck-repo-widget-plot-refline' + className)
                         .attr('dy', '0.5em')
-                        .attr('x', 0)
+                        .attr('x', textXOffsetFromAxis)
                         .style('text-anchor', 'end')
                         .text(d => '-Δ')
                     .merge(lowerLabel)
                         .attr('y', d => this.yScale(d.value - d.delta()))
-                        .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && d.visible && d.delta_visible && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); });
+                        .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); });
                 lowerLabel.exit().remove();
 
                 lowerLabelBBoxes = lowerLabel.nodes().map(n => n.getBBox());
@@ -1772,13 +1757,15 @@ var CkRepoWidgetPlot = function () {
                 .attr('x', (_,i) => upperLabelBBoxes[i].x)
                 .attr('y', (_,i) => upperLabelBBoxes[i].y)
                 .attr('width', (_,i) => upperLabelBBoxes[i].width)
-                .attr('height', (_,i) => upperLabelBBoxes[i].height);
+                .attr('height', (_,i) => upperLabelBBoxes[i].height)
+                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
 
             lowerLabelBg
                 .attr('x', (_,i) => lowerLabelBBoxes[i].x)
                 .attr('y', (_,i) => lowerLabelBBoxes[i].y)
                 .attr('width', (_,i) => lowerLabelBBoxes[i].width)
-                .attr('height', (_,i) => lowerLabelBBoxes[i].height);
+                .attr('height', (_,i) => lowerLabelBBoxes[i].height)
+                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) ); } );
         }
     }]);
 
