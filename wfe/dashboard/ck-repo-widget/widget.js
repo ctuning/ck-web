@@ -2325,15 +2325,16 @@ var CkRepoWdiget = function () {
             let plotSelectorContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
             let plotSelectorLinkArrow = plotSelectorLink.append('i').attr('class', 'far fa-caret-square-down').style('margin-right', '0.5em').lower();
 
+            // More options...
             plotSelectorLink.on('click', function() {
                 let wasVis = plotSelectorContainer.style('display') === 'block';
                 plotSelectorContainer.style('display', (wasVis ? 'none' : 'block'));
-                plotSelectorLink.text(wasVis ? 'More options' : 'More options');
-                plotSelectorLink.append('i').attr('class', wasVis ? 'far fa-caret-square-down' : 'far fa-caret-square-up').style('margin-right', '0.5em').lower();
+                plotSelectorLinkArrow.attr('class', wasVis ? 'far fa-caret-square-down' : 'far fa-caret-square-up');
 
             });
             plotSelectorContainer.style('display', 'none');
 
+            // Close side panel on click outside of it
             root.on('mousedown.hidefilters', _ => { if (this.dom.sidePanelVisible) { this._hideSidePanel(); } }, true);
 
             this.dom = {
