@@ -2321,12 +2321,16 @@ var CkRepoWdiget = function () {
             let filterSContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
             let filterMetaContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
 
-            let plotSelectorLink = sidePanelFiltersBody.append('div').text('More...');
+            let plotSelectorLink = sidePanelFiltersBody.append('div').text('More options').attr('class', 'ck-repo-widget-filter-title-link');
             let plotSelectorContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+            let plotSelectorLinkArrow = plotSelectorLink.append('i').attr('class', 'far fa-caret-square-down').style('margin-right', '0.5em').lower();
 
             plotSelectorLink.on('click', function() {
                 let wasVis = plotSelectorContainer.style('display') === 'block';
                 plotSelectorContainer.style('display', (wasVis ? 'none' : 'block'));
+                plotSelectorLink.text(wasVis ? 'More options' : 'More options');
+                plotSelectorLink.append('i').attr('class', wasVis ? 'far fa-caret-square-down' : 'far fa-caret-square-up').style('margin-right', '0.5em').lower();
+
             });
             plotSelectorContainer.style('display', 'none');
 

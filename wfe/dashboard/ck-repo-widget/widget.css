@@ -305,6 +305,19 @@ thead th {
     margin-bottom: 6px;
 }
 
+.ck-repo-widget-filter-title-link {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 16px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: #1F5A9F;
+    margin-bottom: 16px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .ck-repo-widget-select {
     -moz-appearance: none;
     -webkit-appearance: none;
