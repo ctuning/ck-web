@@ -218,6 +218,7 @@ thead th {
     z-index: 2000;
     -webkit-transform: translate(0px, 0px);
     transform: translate(0px, 0px);
+    font: 12px sans-serif;
 }
 
 .ck-repo-widget-side-panel-header {

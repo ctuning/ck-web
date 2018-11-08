@@ -2133,7 +2133,9 @@ var CkRepoWdiget = function () {
 
             this.dom.sidePanel.transition().styleTween('transform', function () {
                 return translateInterpolator;
-            }).duration(750);
+            }).duration(750).on('end', _ => {
+                this.dom.sidePanelVisible = true
+            });
         }
     }, {
         key: '_hideSidePanel',
@@ -2142,7 +2144,9 @@ var CkRepoWdiget = function () {
 
             this.dom.sidePanel.transition().styleTween('transform', function () {
                 return translateInterpolator;
-            }).duration(750);
+            }).duration(750).on('start', _ => {
+                this.dom.sidePanelVisible = false
+            });
         }
     }, {
         key: '_openSidePanelFiltersTab',
@@ -2300,7 +2304,9 @@ var CkRepoWdiget = function () {
         value: function _initDom(root, header, loadingLayer) {
             let sidePanelButtonStyle = (this.isLocalRun ? 'ck-repo-widget-side-panel-header-tab' : 'ck-repo-widget-side-panel-header-tab-btn');
 
-            var sidePanel = root.append('div').attr('class', 'ck-repo-widget-side-panel');
+            let sidePanelContainer = d3.select(root.node().parentNode).append('div');
+
+            var sidePanel = sidePanelContainer.append('div').attr('class', 'ck-repo-widget-side-panel');
             var sidePanelHeader = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-header');
             var sidePanelTabsLayout = sidePanelHeader.append('div').attr('class', 'ck-repo-widget-side-panel-header-tabs-layout');
             var sidePanelFiltersTabBtn = sidePanelTabsLayout.append('div').attr('class', sidePanelButtonStyle).text('Filters');
@@ -2324,6 +2330,8 @@ var CkRepoWdiget = function () {
             });
             plotSelectorContainer.style('display', 'none');
 
+            root.on('mousedown.hidefilters', _ => { if (this.dom.sidePanelVisible) { this._hideSidePanel(); } });
+
             this.dom = {
                 root: root.attr('class', 'ck-repo-widget'),
                 loadingLayer: loadingLayer,
@@ -2336,6 +2344,7 @@ var CkRepoWdiget = function () {
                 sidePanelCloseBtn: sidePanelCloseBtn,
                 sidePanelFiltersBody: sidePanelFiltersBody,
                 sidePanelInfoBody: sidePanelInfoBody,
+                sidePanelVisible: false,
 
                 workflowSelectContainer: header.attr('class', 'ck-repo-widget-workflow-panel'),
                 plotSelectorContainer: plotSelectorContainer,
