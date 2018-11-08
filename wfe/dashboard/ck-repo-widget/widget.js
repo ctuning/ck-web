@@ -2334,7 +2334,7 @@ var CkRepoWdiget = function () {
             });
             plotSelectorContainer.style('display', 'none');
 
-            root.on('mousedown.hidefilters', _ => { if (this.dom.sidePanelVisible) { this._hideSidePanel(); } });
+            root.on('mousedown.hidefilters', _ => { if (this.dom.sidePanelVisible) { this._hideSidePanel(); } }, true);
 
             this.dom = {
                 root: root.attr('class', 'ck-repo-widget'),
