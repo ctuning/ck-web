@@ -218,6 +218,7 @@ thead th {
     z-index: 2000;
     -webkit-transform: translate(0px, 0px);
     transform: translate(0px, 0px);
+    font: 12px sans-serif;
 }
 
 .ck-repo-widget-side-panel-header {
@@ -302,6 +303,19 @@ thead th {
     letter-spacing: 0.03em;
     color: #383838;
     margin-bottom: 6px;
+}
+
+.ck-repo-widget-filter-title-link {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 16px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: #1F5A9F;
+    margin-bottom: 16px;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .ck-repo-widget-select {

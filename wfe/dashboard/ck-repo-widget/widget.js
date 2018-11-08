@@ -1946,6 +1946,7 @@ var CkRepoWdiget = function () {
                             });
                         }
                     });
+                    _this9.dom.filterMetaContainer.style('display', (workflow.config.selector.length > 0 ? 'block' : 'none'));
 
                     workflow.config.selector2.forEach(function (selector, i) {
                         if (selector.values.length > 1) {
@@ -1958,6 +1959,7 @@ var CkRepoWdiget = function () {
                             });
                         }
                     });
+                    _this9.dom.filter2Container.style('display', (workflow.config.selector2.length > 0 ? 'block' : 'none'));
 
                     if (workflow.config.selector_s) {
                         workflow.config.selector_s.forEach(function (selector, i) {
@@ -1973,6 +1975,7 @@ var CkRepoWdiget = function () {
                             }
                         });
                     }
+                    _this9.dom.filterSContainer.style('display', ((workflow.config.selector_s && workflow.config.selector_s.length > 0) ? 'block' : 'none'));
 
                     plot.build(data.table);
 
@@ -2130,7 +2133,9 @@ var CkRepoWdiget = function () {
 
             this.dom.sidePanel.transition().styleTween('transform', function () {
                 return translateInterpolator;
-            }).duration(750);
+            }).duration(750).on('end', _ => {
+                this.dom.sidePanelVisible = true
+            });
         }
     }, {
         key: '_hideSidePanel',
@@ -2139,7 +2144,9 @@ var CkRepoWdiget = function () {
 
             this.dom.sidePanel.transition().styleTween('transform', function () {
                 return translateInterpolator;
-            }).duration(750);
+            }).duration(750).on('start', _ => {
+                this.dom.sidePanelVisible = false
+            });
         }
     }, {
         key: '_openSidePanelFiltersTab',
@@ -2297,7 +2304,9 @@ var CkRepoWdiget = function () {
         value: function _initDom(root, header, loadingLayer) {
             let sidePanelButtonStyle = (this.isLocalRun ? 'ck-repo-widget-side-panel-header-tab' : 'ck-repo-widget-side-panel-header-tab-btn');
 
-            var sidePanel = root.append('div').attr('class', 'ck-repo-widget-side-panel');
+            let sidePanelContainer = d3.select(root.node().parentNode).append('div');
+
+            var sidePanel = sidePanelContainer.append('div').attr('class', 'ck-repo-widget-side-panel');
             var sidePanelHeader = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-header');
             var sidePanelTabsLayout = sidePanelHeader.append('div').attr('class', 'ck-repo-widget-side-panel-header-tabs-layout');
             var sidePanelFiltersTabBtn = sidePanelTabsLayout.append('div').attr('class', sidePanelButtonStyle).text('Filters');
@@ -2307,6 +2316,26 @@ var CkRepoWdiget = function () {
             var sidePanelCloseBtn = sidePanelHeader.append('div').attr('class', 'ck-repo-widget-side-panel-header-close-btn').html('<i class="fa fa-times"></i>');
             var sidePanelFiltersBody = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-body');
             var sidePanelInfoBody = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-body').html(this._getInfoHtml());
+
+            let filter2Container = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+            let filterSContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+            let filterMetaContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+
+            let plotSelectorLink = sidePanelFiltersBody.append('div').text('More options').attr('class', 'ck-repo-widget-filter-title-link');
+            let plotSelectorContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+            let plotSelectorLinkArrow = plotSelectorLink.append('i').attr('class', 'far fa-caret-square-down').style('margin-right', '0.5em').lower();
+
+            // More options...
+            plotSelectorLink.on('click', function() {
+                let wasVis = plotSelectorContainer.style('display') === 'block';
+                plotSelectorContainer.style('display', (wasVis ? 'none' : 'block'));
+                plotSelectorLinkArrow.attr('class', wasVis ? 'far fa-caret-square-down' : 'far fa-caret-square-up');
+
+            });
+            plotSelectorContainer.style('display', 'none');
+
+            // Close side panel on click outside of it
+            root.on('mousedown.hidefilters', _ => { if (this.dom.sidePanelVisible) { this._hideSidePanel(); } }, true);
 
             this.dom = {
                 root: root.attr('class', 'ck-repo-widget'),
@@ -2320,12 +2349,13 @@ var CkRepoWdiget = function () {
                 sidePanelCloseBtn: sidePanelCloseBtn,
                 sidePanelFiltersBody: sidePanelFiltersBody,
                 sidePanelInfoBody: sidePanelInfoBody,
+                sidePanelVisible: false,
 
                 workflowSelectContainer: header.attr('class', 'ck-repo-widget-workflow-panel'),
-                plotSelectorContainer: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
-                filterSContainer: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
-                filterMetaContainer: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
-                filter2Container: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
+                plotSelectorContainer: plotSelectorContainer,
+                filterSContainer: filterSContainer,
+                filterMetaContainer: filterMetaContainer,
+                filter2Container: filter2Container,
                 plotContainer: root.append('div').attr('class', 'ck-repo-widget-plot-container'),
                 plotTooltipContainer: root.append('div').attr('class', 'ck-repo-widget-plot-tooltip-container'),
                 tableContainer: root.append('div').attr('class', 'ck-repo-widget-table-container')
