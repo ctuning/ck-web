@@ -1946,6 +1946,7 @@ var CkRepoWdiget = function () {
                             });
                         }
                     });
+                    _this9.dom.filterMetaContainer.style('display', (workflow.config.selector.length > 0 ? 'block' : 'none'));
 
                     workflow.config.selector2.forEach(function (selector, i) {
                         if (selector.values.length > 1) {
@@ -1958,6 +1959,7 @@ var CkRepoWdiget = function () {
                             });
                         }
                     });
+                    _this9.dom.filter2Container.style('display', (workflow.config.selector2.length > 0 ? 'block' : 'none'));
 
                     if (workflow.config.selector_s) {
                         workflow.config.selector_s.forEach(function (selector, i) {
@@ -1973,6 +1975,7 @@ var CkRepoWdiget = function () {
                             }
                         });
                     }
+                    _this9.dom.filterSContainer.style('display', ((workflow.config.selector_s && workflow.config.selector_s.length > 0) ? 'block' : 'none'));
 
                     plot.build(data.table);
 
@@ -2308,6 +2311,19 @@ var CkRepoWdiget = function () {
             var sidePanelFiltersBody = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-body');
             var sidePanelInfoBody = sidePanel.append('div').attr('class', 'ck-repo-widget-side-panel-body').html(this._getInfoHtml());
 
+            let filter2Container = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+            let filterSContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+            let filterMetaContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+
+            let plotSelectorLink = sidePanelFiltersBody.append('div').text('More...');
+            let plotSelectorContainer = sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters');
+
+            plotSelectorLink.on('click', function() {
+                let wasVis = plotSelectorContainer.style('display') === 'block';
+                plotSelectorContainer.style('display', (wasVis ? 'none' : 'block'));
+            });
+            plotSelectorContainer.style('display', 'none');
+
             this.dom = {
                 root: root.attr('class', 'ck-repo-widget'),
                 loadingLayer: loadingLayer,
@@ -2322,10 +2338,10 @@ var CkRepoWdiget = function () {
                 sidePanelInfoBody: sidePanelInfoBody,
 
                 workflowSelectContainer: header.attr('class', 'ck-repo-widget-workflow-panel'),
-                plotSelectorContainer: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
-                filterSContainer: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
-                filterMetaContainer: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
-                filter2Container: sidePanelFiltersBody.append('div').attr('class', 'ck-repo-widget-selectors-container ck-repo-widget-selectors-container_filters'),
+                plotSelectorContainer: plotSelectorContainer,
+                filterSContainer: filterSContainer,
+                filterMetaContainer: filterMetaContainer,
+                filter2Container: filter2Container,
                 plotContainer: root.append('div').attr('class', 'ck-repo-widget-plot-container'),
                 plotTooltipContainer: root.append('div').attr('class', 'ck-repo-widget-plot-tooltip-container'),
                 tableContainer: root.append('div').attr('class', 'ck-repo-widget-table-container')
