@@ -83,14 +83,17 @@ var CkRepoWidgetUtils = {
     },
 
     getAxisKey: function getAxisKey(dimension) {
+        if (typeof dimension === 'undefined') { return null; }
         return dimension.from_meta ? dimension.key : dimension.view_key || (dimension.reverse ? dimension.key + '#max' : dimension.key + '#min');
     },
 
     getVariationMinKey: function getVariationMinKey(dimension) {
+        if (typeof dimension === 'undefined') { return null; }
         return dimension.key + '#min';
     },
 
     getVariationMaxKey: function getVariationMaxKey(dimension) {
+        if (typeof dimension === 'undefined') { return null; }
         return dimension.key + '#max';
     },
 
@@ -434,6 +437,19 @@ var CkRepoWidgetUtils = {
         if (!isNaN(Number(input))) {
             return true;
         }
+    },
+
+    filterByPrefix: function filterByPrefix(obj, prefix) {
+        if (!prefix) {
+            return obj;
+        }
+        var res = {};
+        for (var key in obj) {
+            if (key.startsWith(prefix)) {
+                res[key.substr(prefix.length)] = obj[key];
+            }
+        }
+        return res;
     }
 };
 
@@ -1001,10 +1017,10 @@ var CkRepoWidgetPlot = function () {
                 });
             */
 
-            this.xDimension = this.dataConfig.dimensions[this.plotConfig.defaultXDimensionIndex];
-            this.yDimension = this.dataConfig.dimensions[this.plotConfig.defaultYDimensionIndex];
-            this.cDimension = this.dataConfig.dimensions[this.plotConfig.defaultCDimensionIndex];
-            this.sDimension = this.dataConfig.dimensions[this.plotConfig.defaultSDimensionIndex];
+            this.xDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.xDimension);
+            this.yDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.yDimension);
+            this.cDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.colorDimension);
+            this.sDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.sizeDimension);
 
             this.xHasher = new CkRepoWidgetHasher();
             this.yHasher = new CkRepoWidgetHasher();
@@ -1038,7 +1054,11 @@ var CkRepoWidgetPlot = function () {
 
             var valueToDisplay = function valueToDisplay(dimension, value) {
                 var tView = _this3.dataConfig.table_view.find(function (view) {
-                    return view.key.startsWith(dimension.key);
+                    if (dimension) {
+                        return view.key.startsWith(dimension.key);
+                    } else {
+                        return false;
+                    }
                 });
 
                 if (!!tView && tView.format) {
@@ -1507,7 +1527,7 @@ var CkRepoWidgetPlot = function () {
 
             var mouseoverHandler = function mouseoverHandler(d) {
                 tooltip.transition().duration(200).style('opacity', .9);
-                var hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.isSDimensionEnabled ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
+                var hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.sDimension !== '' ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
                 tooltip.html(hint).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
             };
             var mouseoutHandler = function mouseoutHandler(d) {
@@ -1583,15 +1603,13 @@ var CkRepoWidgetPlot = function () {
                 pointsData = this.pointsData,
                 sValue = this.sValue;
 
-            if (this.plotConfig.isSDimensionEnabled) {
-                var sizeMapper = d3.scaleLinear().domain([d3.min(pointsData, sValue), d3.max(pointsData, sValue)]).range(this.sizeRange);
+            var sizeMapper = d3.scaleLinear().domain([d3.min(pointsData, sValue), d3.max(pointsData, sValue)]).range(this.sizeRange);
+            let pointSize = ( this.plotConfig.sDimension
+                ? (row => sizeMapper(sValue(row)))
+                : (row => CkRepoWidgetConstants.kDefaultPointRadius)
+            );
 
-                svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).attr('r', function (row) {
-                    return sizeMapper(sValue(row));
-                });
-            } else {
-                svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).attr('r', CkRepoWidgetConstants.kDefaultPointRadius);
-            }
+            svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).attr('r', pointSize);
         }
     }, {
         key: '_applyXVariationVisibility',
@@ -1968,23 +1986,23 @@ var CkRepoWdiget = function () {
                             "__prob": 0.8
                         },
                         "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
-                        "refLines": {
-                            "exact_answer_qiskit_hydrogen": {
+                        "refLines": [
+                            {
                                 "name": "H₂*",
                                 "dimension": "__energies",
                                 "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen",
                             },
-                            "exact_answer_hydrogen": {
+                            {
                                 "name": "H₂",
                                 "dimension": "__energies",
                                 "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen",
                             },
-                            "exact_answer_helium": {
+                            {
                                 "name": "He",
                                 "dimension": "__energies",
                                 "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_helium",
                             }
-                        }
+                        ]
                     },
                     {
                         "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Solution Convergence",
@@ -2118,12 +2136,12 @@ var CkRepoWdiget = function () {
                         width: kPlotWidth,
                         height: kPlotHeight,
                         margin: kPlotMargin,
-                        defaultXDimensionIndex: workflow.defaultXDimensionIndex,
-                        defaultYDimensionIndex: workflow.defaultYDimensionIndex,
-                        defaultCDimensionIndex: workflow.defaultCDimensionIndex,
-                        defaultSDimensionIndex: workflow.defaultSDimensionIndex,
-                        isVariationXVisible: workflow.defaultXVariationVisible,
-                        isVariationYVisible: workflow.defaultYVariationVisible,
+                        xDimension: workflow.xDimension,
+                        yDimension: workflow.yDimension,
+                        colorDimension: workflow.colorDimension,
+                        sizeDimension: workflow.sizeDimension,
+                        isVariationXVisible: workflow.xVariationVisible,
+                        isVariationYVisible: workflow.yVariationVisible,
                         filter: workflow.filter,
                         colorRange: workflow.colorRange,
                         sizeRange: workflow.sizeRange,
@@ -2314,7 +2332,7 @@ var CkRepoWdiget = function () {
         value: function _prepareWorkflows(rawWorkflowDesc) {
             let defaultTableProcessor = (table => CkRepoWidgetUtils.prepareTable(table));
 
-            let makeTableProcessor = function(name) {
+            let makeFunctionFromStr = function(name) {
                 if (typeof name === 'undefined') {
                     return undefined;
                 }
@@ -2341,7 +2359,7 @@ var CkRepoWdiget = function () {
                     moduleUoa: wf.moduleUoa || '',
                     dataPrefix: wf.dataPrefix || '',
                     configPrefix: wf.configPrefix|| '',
-                    tableProcessor: makeTableProcessor(wf.tableProcessor) || defaultTableProcessor,
+                    tableProcessor: makeFunctionFromStr(wf.tableProcessor) || defaultTableProcessor,
                     config: null,
                     data: null,
                     xDimension: wf.xDimension || '',
@@ -2353,7 +2371,12 @@ var CkRepoWdiget = function () {
                     yVariationVisible: wf.yVariationVisible || false,
                     filter: makeFilters(wf.filters || {}),
                     props: wf.props || {},
+                    refLines: wf.refLines || [],
                 };
+
+                for (let refLine of newWf.refLines) {
+                    refLine.get_value = makeFunctionFromStr(refLine.get_value) || (d => null);
+                }
 
                 // Scenario filters available workflows
                 if (this.scenario !== '' && newWf.moduleUoa !== this.scenario) {
