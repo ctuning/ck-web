@@ -1748,24 +1748,25 @@ var CkRepoWidgetPlot = function () {
                 lowerLabelBBoxes = lowerLabel.nodes().map(n => n.getBBox());
             }
 
+            let labelMargin = {left: 5, right: 5, top: 5, bottom: 5};
             labelBg
-                .attr('x', (_,i) => labelBBoxes[i].x)
-                .attr('y', (_,i) => labelBBoxes[i].y)
-                .attr('width', (_,i) => labelBBoxes[i].width)
-                .attr('height', (_,i) => labelBBoxes[i].height);
+                .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
+                .attr('y', (_,i) => labelBBoxes[i].y - labelMargin.top)
+                .attr('width', (_,i) => this.plotConfig.margin.left) //labelBBoxes[i].x + labelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => labelBBoxes[i].height + labelMargin.bottom + labelMargin.top);
 
             upperLabelBg
-                .attr('x', (_,i) => upperLabelBBoxes[i].x)
-                .attr('y', (_,i) => upperLabelBBoxes[i].y)
-                .attr('width', (_,i) => upperLabelBBoxes[i].width)
-                .attr('height', (_,i) => upperLabelBBoxes[i].height)
+                .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
+                .attr('y', (_,i) => upperLabelBBoxes[i].y - labelMargin.top)
+                .attr('width', (_,i) => this.plotConfig.margin.left) //upperLabelBBoxes[i].x + upperLabelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => upperLabelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
                 .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value + d.delta()) ); } );
 
             lowerLabelBg
-                .attr('x', (_,i) => lowerLabelBBoxes[i].x)
-                .attr('y', (_,i) => lowerLabelBBoxes[i].y)
-                .attr('width', (_,i) => lowerLabelBBoxes[i].width)
-                .attr('height', (_,i) => lowerLabelBBoxes[i].height)
+                .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
+                .attr('y', (_,i) => lowerLabelBBoxes[i].y - labelMargin.top)
+                .attr('width', (_,i) => lowerLabelBBoxes[i].x + lowerLabelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => this.plotConfig.margin.left) //lowerLabelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
                 .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta())); } );
         }
     }]);
@@ -1940,7 +1941,7 @@ var CkRepoWdiget = function () {
                 },
                 refLines: {
                     "classical_energy": {
-                        name: "Exact Answer",
+                        name: "H₂*",
                         dimension: "__energies",
                         get_value: CkRepoWidgetUtils.quantum.get_classical_energy,
                         value: null,
