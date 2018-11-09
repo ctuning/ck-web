@@ -310,8 +310,29 @@ var CkRepoWidgetUtils = {
             }
         },
 
-        get_classical_energy: function get_classical_energy(data) {
-            return data[0]["runs"][0]["vqe_input"]["classical_energy"];
+        get_exact_answer_molecule: function get_exact_answer_molecule(data, molecule) {
+            let values = [];
+            for(let d of data) {
+                if (d["_molecule"] != molecule) {
+                    continue;
+                }
+
+                for(let r of d["runs"]) {
+                    return r["vqe_input"]["classical_energy"];
+                }
+            }
+        },
+
+        get_exact_answer_qiskit_hydrogen: function get_exact_answer_qiskit_hydrogen(data) {
+            return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "qiskit_hydrogen")
+        },
+
+        get_exact_answer_hydrogen: function get_exact_answer_qiskit_hydrogen(data) {
+            return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "hydrogen")
+        },
+
+        get_exact_answer_helium: function get_exact_answer_qiskit_hydrogen(data) {
+            return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "helium")
         }
     },
 
@@ -1940,12 +1961,20 @@ var CkRepoWdiget = function () {
                     }
                 },
                 refLines: {
-                    "classical_energy": {
+                    "exact_answer_qiskit_hydrogen": {
                         name: "H₂*",
                         dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_classical_energy,
-                        value: null,
-                        delta: () => -1
+                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen,
+                    },
+                    "hydrogen": {
+                        name: "H₂",
+                        dimension: "__energies",
+                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen,
+                    },
+                    "helium": {
+                        name: "He",
+                        dimension: "__energies",
+                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_helium,
                     }
                 },
                 colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
@@ -2159,16 +2188,26 @@ var CkRepoWdiget = function () {
 
                     // Set reference lines
                     {
+                        let refLines = [];
                         for (let refLineId in workflow.refLines) {
-                            let refLine = workflow.refLines[refLineId];
-                            refLine.value = refLine.get_value(data.table);
-                            if (workflow.props) {
-                                refLine.delta = () => Number(workflow.props['__delta']);
-                            }
-                            refLine.visible = true;
-                            refLine.delta_visible = true;
+                            try {
+                                let refLine = workflow.refLines[refLineId];
+                                refLine.value = refLine.get_value(data.table);
+                                if (typeof refLine.value === 'undefined') {
+                                    continue;
+                                }
+
+                                if (workflow.props) {
+                                    refLine.delta = () => Number(workflow.props['__delta']);
+                                } else {
+                                    refLine.delta = () => 0;
+                                }
+                                refLine.visible = true;
+                                refLine.delta_visible = true;
+                                refLines.push(refLine);
+                            } catch (err) { /* todo: log */ }
                         }
-                        plot.setRefLines(workflow.refLines);
+                        plot.setRefLines(refLines);
                     }
 
                     workflow.config.selector.forEach(function (selector, i) {
