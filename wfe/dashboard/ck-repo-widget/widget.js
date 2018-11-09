@@ -1911,115 +1911,125 @@ var CkRepoWdiget = function () {
             defaultQuantumFilterIBM.setSelector({ key: '_platform' }, 'local_qasm_simulator');
             defaultQuantumFilterIBM.setSelector({ key: '_minimizer_method' }, 'my_cobyla');
 
-            var workflows = [_extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'ReQuEST @ ASPLOS\'18 tournament (Pareto-efficient image classification)',
-                moduleUoa: 'request.asplos18',
-                defaultXDimensionIndex: 3,
-                defaultYDimensionIndex: 4,
-                defaultCDimensionIndex: 0,
-                defaultSDimensionIndex: 6,
-                defaultXVariationVisible: true,
-                defaultYVariationVisible: false
-            }), _extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'NNTest (collaboratively benchmarking and optimizing neural network operations)',
-                moduleUoa: 'nntest',
-                defaultXDimensionIndex: 0,
-                defaultYDimensionIndex: 1,
-                defaultCDimensionIndex: 0,
-                defaultSDimensionIndex: 3,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                isSDimensionEnabled: false
-            }), _extends({}, workflowBase, {
-                filter: defaultQuantumFilterIBM,
-                name: 'Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Solution Convergence',
-                moduleUoa: 'hackathon.20181006',
-                defaultXDimensionIndex: 2,
-                defaultYDimensionIndex: 1,
-                defaultCDimensionIndex: 3,
-                defaultSDimensionIndex: 5,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'full_',
-                configPrefix: 'full_'
-            }), _extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Time To Solution',
-                moduleUoa: 'hackathon.20181006',
-                defaultXDimensionIndex: 3,
-                defaultYDimensionIndex: 2,
-                defaultCDimensionIndex: 4,
-                defaultSDimensionIndex: 6,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'metrics_',
-                configPrefix: 'metrics_',
-                props: {
-                    '__fun_key': 'fun_exact',
-                    '__time_key': 'total_q_shots',
-                    '__delta': 0.01,
-                    '__prob': 0.8
-                },
-                tableProcessor: CkRepoWidgetUtils.quantum.benchmarkTableProcessor,
-                refLines: {
-                    "exact_answer_qiskit_hydrogen": {
-                        name: "H₂*",
-                        dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen,
+            let workflowsDesc = {
+                "defaultWorkflowIndex": 3,
+                "workflows": [
+                    {
+                        "name": "ReQuEST @ ASPLOS'18 tournament (Pareto-efficient image classification)",
+                        "moduleUoa": "request.asplos18",
+                        "xDimension": "##characteristics#run#inference_throughput",
+                        "yDimension": "##characteristics#run#accuracy_top1",
+                        "colorDimension": "__number",
+                        "sizeDimension": "##features#model_size",
+                        "xVariationVisible": true,
+                        "yVariationVisible": false
                     },
-                    "hydrogen": {
-                        name: "H₂",
-                        dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen,
+                    {
+                        "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
+                        "moduleUoa": "nntest",
+                        "xDimension": "experiment",
+                        "yDimension": "##characteristics#run#execution_time",
+                        "colorDimension": "experiment",
+                        "xVariationVisible": false,
+                        "yVariationVisible": false
                     },
-                    "helium": {
-                        name: "He",
-                        dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_helium,
+                    {
+                        "name": "Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Solution Convergence",
+                        "moduleUoa": "hackathon.20181006",
+                        "xDimension": "__fevs",
+                        "yDimension": "__energies",
+                        "colorDimension": "_point",
+                        "sizeDimension": "fun_exact",
+                        "xVariationVisible": false,
+                        "yVariationVisible": false,
+                        "dataPrefix": "full_",
+                        "configPrefix": "full_",
+                        "filters": {
+                            "_platform": "local_qasm_simulator",
+                            "_minimizer_method": "my_cobyla"
+                        }
+                    },
+                    {
+                        "name": "Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Time To Solution",
+                        "moduleUoa": "hackathon.20181006",
+                        "xDimension": "T_ave",
+                        "yDimension": "__energies",
+                        "colorDimension": "_sample_number",
+                        "sizeDimension": "t_ave",
+                        "xVariationVisible": false,
+                        "yVariationVisible": false,
+                        "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
+                        "dataPrefix": "metrics_",
+                        "configPrefix": "metrics_",
+                        "props": {
+                            "__fun_key": "fun_exact",
+                            "__time_key": "total_q_shots",
+                            "__delta": 0.01,
+                            "__prob": 0.8
+                        },
+                        "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
+                        "refLines": {
+                            "exact_answer_qiskit_hydrogen": {
+                                "name": "H₂*",
+                                "dimension": "__energies",
+                                "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen",
+                            },
+                            "exact_answer_hydrogen": {
+                                "name": "H₂",
+                                "dimension": "__energies",
+                                "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen",
+                            },
+                            "exact_answer_helium": {
+                                "name": "He",
+                                "dimension": "__energies",
+                                "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_helium",
+                            }
+                        }
+                    },
+                    {
+                        "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Solution Convergence",
+                        "moduleUoa": "hackathon.20180615",
+                        "xDimension": "__fevs",
+                        "yDimension": "__energies",
+                        "colorDimension": "_point",
+                        "sizeDimension": "fun_exact",
+                        "xVariationVisible": false,
+                        "yVariationVisible": false,
+                        "dataPrefix": "full_",
+                        "configPrefix": "full_",
+                        "filters": {
+                            "_platform": "8q-agave",
+                            "_minimizer_method": "my_cobyla"
+                        }
+                    },
+                    {
+                        "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Time To Solution",
+                        "moduleUoa": "hackathon.20180615",
+                        "xDimension": "T_ave",
+                        "xVariationVisible": false,
+                        "yDimension": "__energies",
+                        "yVariationVisible": false,
+                        "colorDimension": "_sample_number",
+                        "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
+                        "sizeDimension": "t_ave",
+                        "dataPrefix": "metrics_",
+                        "configPrefix": "metrics_",
+                        "props": {
+                            "__fun_key": "fun_exact",
+                            "__time_key": "total_q_shots",
+                            "__delta": 0.1,
+                            "__prob": 0.5
+                        },
+                        "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor"
                     }
-                },
-                colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
-            }), _extends({}, workflowBase, {
-                filter: defaultQuantumFilterRigetti,
-                name: 'Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Solution Convergence',
-                moduleUoa: 'hackathon.20180615',
-                defaultXDimensionIndex: 2,
-                defaultYDimensionIndex: 1,
-                defaultCDimensionIndex: 3,
-                defaultSDimensionIndex: 5,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'full_',
-                configPrefix: 'full_'
-            }), _extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Time To Solution',
-                moduleUoa: 'hackathon.20180615',
-                defaultXDimensionIndex: 3,
-                defaultYDimensionIndex: 2,
-                defaultCDimensionIndex: 4,
-                defaultSDimensionIndex: 6,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'metrics_',
-                configPrefix: 'metrics_',
-                props: {
-                    '__fun_key': 'fun_exact',
-                    '__time_key': 'total_q_shots',
-                    '__delta': 0.1,
-                    '__prob': 0.5
-                },
-                tableProcessor: CkRepoWidgetUtils.quantum.benchmarkTableProcessor,
-                colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
-            })];
-
-            // Scenario filters available workflows
-            if (this.scenario !== '') {
-                workflows = workflows.filter(w => w.moduleUoa == this.scenario);
+                ]
             }
-            var defaultWorkflow = workflows[3] || workflows[0];
+
+            this.workflows = this._prepareWorkflows(workflowsDesc);
+            let defIdx = workflowsDesc.defaultWorkflowIndex;
+            defIdx = (this.scenario === '' ? defIdx : 0);
+            let workflows = this.workflows;
+            var defaultWorkflow = this.workflows[ defIdx ];
 
             var showWorkflow = function showWorkflow(workflow) {
                 _this9.selectedWorkflow = workflow;
