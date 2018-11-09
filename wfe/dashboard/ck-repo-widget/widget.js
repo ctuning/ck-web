@@ -2300,6 +2300,62 @@ var CkRepoWdiget = function () {
             showWorkflow(defaultWorkflow);
         }
     }, {
+        key: '_prepareWorkflows',
+        value: function _prepareWorkflows(rawWorkflowDesc) {
+            let defaultTableProcessor = (table => CkRepoWidgetUtils.prepareTable(table));
+
+            let makeTableProcessor = function(name) {
+                if (typeof name === 'undefined') {
+                    return undefined;
+                }
+                name = name.toString();
+                if (!name.startsWith('CkRepoWidgetUtils.')) {
+                    throw new Error("workflows[].tableProcessor should start with 'CkRepoWidgetUtils.'");
+                }
+                return eval(name);
+            }
+
+            let makeFilters = function(filtersDict) {
+                let res = new CkRepoWidgetFilter();
+                for(let key in filtersDict) {
+                    res.setSelector({ key: key }, filtersDict[key]);
+                }
+                return res;
+            }
+
+            let res = [];
+
+            for (let wf of rawWorkflowDesc.workflows) {
+                let newWf = {
+                    name: wf.name || '',
+                    moduleUoa: wf.moduleUoa || '',
+                    dataPrefix: wf.dataPrefix || '',
+                    configPrefix: wf.configPrefix|| '',
+                    tableProcessor: makeTableProcessor(wf.tableProcessor) || defaultTableProcessor,
+                    config: null,
+                    data: null,
+                    xDimension: wf.xDimension || '',
+                    yDimension: wf.yDimension || '',
+                    colorDimension: wf.colorDimension || '',
+                    colorRange: wf.colorRange,
+                    sizeDimension: wf.sizeDimension || '',
+                    xVariationVisible: wf.xVariationVisible || false,
+                    yVariationVisible: wf.yVariationVisible || false,
+                    filter: makeFilters(wf.filters || {}),
+                    props: wf.props || {},
+                };
+
+                // Scenario filters available workflows
+                if (this.scenario !== '' && newWf.moduleUoa !== this.scenario) {
+                    continue;
+                }
+
+                res.push(newWf);
+            }
+
+            return res;
+        }
+    }, {
         key: '_applyFilterValue',
         value: function _applyFilterValue(selector, value) {
             var prefix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
