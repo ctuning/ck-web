@@ -118,7 +118,9 @@ var CkRepoWidgetUtils = {
 
             values.sort();
 
-            values.unshift(CkRepoWidgetConstants.kFilterAllValue);
+            if (values.length > 1 || values.length == 0) {
+                values.unshift(CkRepoWidgetConstants.kFilterAllValue);
+            }
 
             selector['values'] = values;
         });
@@ -1949,15 +1951,13 @@ var CkRepoWdiget = function () {
                     _this9.dom.filterMetaContainer.style('display', (workflow.config.selector.length > 0 ? 'block' : 'none'));
 
                     workflow.config.selector2.forEach(function (selector, i) {
-                        if (selector.values.length > 1) {
-                            _this9._createValueSelector('ck-widget-filter-2-selector-' + (i + 1), _this9.dom.filter2Container, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
-                                if (isServerFilteringEnabled) {
-                                    applyServerFilter(selector, value);
-                                } else {
-                                    _this9._applyFilterValue(selector, value);
-                                }
-                            });
-                        }
+                        _this9._createValueSelector('ck-widget-filter-2-selector-' + (i + 1), _this9.dom.filter2Container, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
+                            if (isServerFilteringEnabled) {
+                                applyServerFilter(selector, value);
+                            } else {
+                                _this9._applyFilterValue(selector, value);
+                            }
+                        });
                     });
                     _this9.dom.filter2Container.style('display', (workflow.config.selector2.length > 0 ? 'block' : 'none'));
 
