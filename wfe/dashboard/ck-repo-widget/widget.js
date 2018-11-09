@@ -1185,7 +1185,7 @@ var CkRepoWidgetPlot = function () {
 
             this.yHasher.reset();
 
-            this.rawPointsData = this.getPointsData(this.data);
+            this.rawPointsData = this.getRawPointsData(this.data);
             this.pointsData = this.filterPointsData(this.rawPointsData);
             this.linesData = this.getLinesData(this.data);
             this.yVariationData = this.getYVariationData(this.pointsData);
