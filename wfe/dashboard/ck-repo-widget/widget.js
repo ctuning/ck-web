@@ -311,6 +311,66 @@ var CkRepoWidgetUtils = {
             }
         },
 
+        benchmarkTableProcessor: function benchmarkTableProcessor(table, workflow) {
+            CkRepoWidgetUtils.prepareTable(table);
+
+            var delta = workflow.props['__delta'];
+            var prob = workflow.props['__prob'];
+            var which_fun_key = workflow.props['__fun_key'];
+            var which_time_key = workflow.props['__time_key'];
+
+            var _iteratorNormalCompletion9 = true;
+            var _didIteratorError9 = false;
+            var _iteratorError9 = undefined;
+
+            try {
+                for (var _iterator9 = table[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                    var row = _step9.value;
+
+                    var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
+                        minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
+                        minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
+                        n_succ = _CkRepoWidgetUtils$qu2.n_succ,
+                        T_ave = _CkRepoWidgetUtils$qu2.T_ave,
+                        T_err = _CkRepoWidgetUtils$qu2.T_err,
+                        t_ave = _CkRepoWidgetUtils$qu2.t_ave,
+                        t_err = _CkRepoWidgetUtils$qu2.t_err,
+                        s = _CkRepoWidgetUtils$qu2.s,
+                        s_err = _CkRepoWidgetUtils$qu2.s_err,
+                        energies = _CkRepoWidgetUtils$qu2.energies,
+                        times = _CkRepoWidgetUtils$qu2.times;
+
+                    row['T_ave'] = T_ave;
+                    row['T_ave#min'] = T_ave - T_err;
+                    row['T_ave#max'] = T_ave + T_err;
+                    row['T_err'] = T_err;
+                    row['t_ave'] = t_ave;
+                    row['t_ave#min'] = t_ave - t_err;
+                    row['t_ave#max'] = t_ave + t_err;
+                    row['t_err'] = t_err;
+                    row['s'] = s;
+                    row['s_err'] = s_err;
+                    row['__energies'] = energies;
+                    row['__times'] = times;
+
+                    row[CkRepoWidgetConstants.kRowHiddenKey] = Number.isNaN(T_ave);
+                }
+            } catch (err) {
+                _didIteratorError9 = true;
+                _iteratorError9 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                        _iterator9.return();
+                    }
+                } finally {
+                    if (_didIteratorError9) {
+                        throw _iteratorError9;
+                    }
+                }
+            }
+        },
+
         get_exact_answer_molecule: function get_exact_answer_molecule(data, molecule) {
             let values = [];
             for(let d of data) {
@@ -1902,65 +1962,7 @@ var CkRepoWdiget = function () {
                     '__delta': 0.01,
                     '__prob': 0.8
                 },
-                tableProcessor: function tableProcessor(table, props) {
-                    CkRepoWidgetUtils.prepareTable(table);
-
-                    var delta = props['__delta'];
-                    var prob = props['__prob'];
-                    var which_fun_key = props['__fun_key'];
-                    var which_time_key = props['__time_key'];
-
-                    var _iteratorNormalCompletion9 = true;
-                    var _didIteratorError9 = false;
-                    var _iteratorError9 = undefined;
-
-                    try {
-                        for (var _iterator9 = table[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                            var row = _step9.value;
-
-                            var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
-                                minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
-                                n_succ = _CkRepoWidgetUtils$qu2.n_succ,
-                                T_ave = _CkRepoWidgetUtils$qu2.T_ave,
-                                T_err = _CkRepoWidgetUtils$qu2.T_err,
-                                t_ave = _CkRepoWidgetUtils$qu2.t_ave,
-                                t_err = _CkRepoWidgetUtils$qu2.t_err,
-                                s = _CkRepoWidgetUtils$qu2.s,
-                                s_err = _CkRepoWidgetUtils$qu2.s_err,
-                                energies = _CkRepoWidgetUtils$qu2.energies,
-                                times = _CkRepoWidgetUtils$qu2.times;
-
-                            row['T_ave'] = T_ave;
-                            row['T_ave#min'] = T_ave - T_err;
-                            row['T_ave#max'] = T_ave + T_err;
-                            row['T_err'] = T_err;
-                            row['t_ave'] = t_ave;
-                            row['t_ave#min'] = t_ave - t_err;
-                            row['t_ave#max'] = t_ave + t_err;
-                            row['t_err'] = t_err;
-                            row['s'] = s;
-                            row['s_err'] = s_err;
-                            row['__energies'] = energies;
-                            row['__times'] = times;
-
-                            row[CkRepoWidgetConstants.kRowHiddenKey] = Number.isNaN(T_ave);
-                        }
-                    } catch (err) {
-                        _didIteratorError9 = true;
-                        _iteratorError9 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                                _iterator9.return();
-                            }
-                        } finally {
-                            if (_didIteratorError9) {
-                                throw _iteratorError9;
-                            }
-                        }
-                    }
-                },
+                tableProcessor: CkRepoWidgetUtils.quantum.benchmarkTableProcessor,
                 refLines: {
                     "exact_answer_qiskit_hydrogen": {
                         name: "H₂*",
@@ -2009,65 +2011,7 @@ var CkRepoWdiget = function () {
                     '__delta': 0.1,
                     '__prob': 0.5
                 },
-                tableProcessor: function tableProcessor(table, props) {
-                    CkRepoWidgetUtils.prepareTable(table);
-
-                    var delta = props['__delta'];
-                    var prob = props['__prob'];
-                    var which_fun_key = props['__fun_key'];
-                    var which_time_key = props['__time_key'];
-
-                    var _iteratorNormalCompletion9 = true;
-                    var _didIteratorError9 = false;
-                    var _iteratorError9 = undefined;
-
-                    try {
-                        for (var _iterator9 = table[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                            var row = _step9.value;
-
-                            var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
-                                minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
-                                n_succ = _CkRepoWidgetUtils$qu2.n_succ,
-                                T_ave = _CkRepoWidgetUtils$qu2.T_ave,
-                                T_err = _CkRepoWidgetUtils$qu2.T_err,
-                                t_ave = _CkRepoWidgetUtils$qu2.t_ave,
-                                t_err = _CkRepoWidgetUtils$qu2.t_err,
-                                s = _CkRepoWidgetUtils$qu2.s,
-                                s_err = _CkRepoWidgetUtils$qu2.s_err,
-                                energies = _CkRepoWidgetUtils$qu2.energies,
-                                times = _CkRepoWidgetUtils$qu2.times;
-
-                            row['T_ave'] = T_ave;
-                            row['T_ave#min'] = T_ave - T_err;
-                            row['T_ave#max'] = T_ave + T_err;
-                            row['T_err'] = T_err;
-                            row['t_ave'] = t_ave;
-                            row['t_ave#min'] = t_ave - t_err;
-                            row['t_ave#max'] = t_ave + t_err;
-                            row['t_err'] = t_err;
-                            row['s'] = s;
-                            row['s_err'] = s_err;
-                            row['__energies'] = energies;
-                            row['__times'] = times;
-
-                            row[CkRepoWidgetConstants.kRowHiddenKey] = Number.isNaN(T_ave);
-                        }
-                    } catch (err) {
-                        _didIteratorError9 = true;
-                        _iteratorError9 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                                _iterator9.return();
-                            }
-                        } finally {
-                            if (_didIteratorError9) {
-                                throw _iteratorError9;
-                            }
-                        }
-                    }
-                },
+                tableProcessor: CkRepoWidgetUtils.quantum.benchmarkTableProcessor,
                 colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
             })];
 
@@ -2126,7 +2070,7 @@ var CkRepoWdiget = function () {
                                 if (eWorkflow.moduleUoa === workflow.moduleUoa) {
                                     eWorkflow.data = toLocal(data, eWorkflow.dataPrefix);
 
-                                    eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow.props);
+                                    eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow);
                                 }
                             }
                         } catch (err) {
@@ -2218,7 +2162,7 @@ var CkRepoWdiget = function () {
                                 _this9._createValueSelector('ck-widget-filter-s-selector-' + (i + 1), _this9.dom.filterSContainer, selector, workflow.props[selector.key], function (selector, value) {
                                     workflow.props[selector.key] = value;
 
-                                    workflow.tableProcessor(workflow.data.table, workflow.props);
+                                    workflow.tableProcessor(workflow.data.table, workflow);
 
                                     _this9._plotSetRefLines(workflow);
 
@@ -2307,7 +2251,7 @@ var CkRepoWdiget = function () {
                                 if (eWorkflow.moduleUoa === workflow.moduleUoa) {
                                     eWorkflow.data = toLocal(data, eWorkflow.dataPrefix);
 
-                                    eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow.props);
+                                    eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow);
                                 }
                             }
                         } catch (err) {
