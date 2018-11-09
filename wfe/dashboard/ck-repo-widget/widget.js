@@ -235,7 +235,6 @@ var CkRepoWidgetUtils = {
 
             if (!!num_repetitions) {
                 var first_run_input = list_of_runs[0]['vqe_input'];
-                var classical_energy = first_run_input['classical_energy'];
                 var minimizer_src = first_run_input['minimizer_src'];
                 var minimizer_method = first_run_input['minimizer_method'];
 
@@ -253,6 +252,7 @@ var CkRepoWidgetUtils = {
 
                         var vqe_output = run['vqe_output'];
                         var report = run['report'];
+                        let classical_energy = run['vqe_input']['classical_energy'];
 
                         //let fun = vqe_output['fun'];
                         //let fun_validated = vqe_output['fun_validated'];
@@ -294,7 +294,6 @@ var CkRepoWidgetUtils = {
                     s_err = _CkRepoWidgetUtils$qu.s_err;
 
                 return {
-                    classical_energy: classical_energy,
                     minimizer_method: minimizer_method,
                     minimizer_src: minimizer_src,
                     n_succ: n_succ,
@@ -1917,7 +1916,6 @@ var CkRepoWdiget = function () {
                             var row = _step9.value;
 
                             var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                classical_energy = _CkRepoWidgetUtils$qu2.classical_energy,
                                 minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
                                 minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
                                 n_succ = _CkRepoWidgetUtils$qu2.n_succ,
@@ -2025,7 +2023,6 @@ var CkRepoWdiget = function () {
                             var row = _step9.value;
 
                             var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                classical_energy = _CkRepoWidgetUtils$qu2.classical_energy,
                                 minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
                                 minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
                                 n_succ = _CkRepoWidgetUtils$qu2.n_succ,
