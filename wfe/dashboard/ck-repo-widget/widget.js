@@ -237,7 +237,6 @@ var CkRepoWidgetUtils = {
 
             if (!!num_repetitions) {
                 var first_run_input = list_of_runs[0]['vqe_input'];
-                var classical_energy = first_run_input['classical_energy'];
                 var minimizer_src = first_run_input['minimizer_src'];
                 var minimizer_method = first_run_input['minimizer_method'];
 
@@ -255,6 +254,7 @@ var CkRepoWidgetUtils = {
 
                         var vqe_output = run['vqe_output'];
                         var report = run['report'];
+                        let classical_energy = run['vqe_input']['classical_energy'];
 
                         //let fun = vqe_output['fun'];
                         //let fun_validated = vqe_output['fun_validated'];
@@ -296,7 +296,6 @@ var CkRepoWidgetUtils = {
                     s_err = _CkRepoWidgetUtils$qu.s_err;
 
                 return {
-                    classical_energy: classical_energy,
                     minimizer_method: minimizer_method,
                     minimizer_src: minimizer_src,
                     n_succ: n_succ,
@@ -310,6 +309,32 @@ var CkRepoWidgetUtils = {
                     times: list_selected_times
                 };
             }
+        },
+
+        get_exact_answer_molecule: function get_exact_answer_molecule(data, molecule) {
+            let values = [];
+            for(let d of data) {
+                if (d["_molecule"] != molecule) {
+                    continue;
+                }
+
+                for(let r of d["runs"]) {
+                    return r["vqe_input"]["classical_energy"];
+                }
+            }
+            return null;
+        },
+
+        get_exact_answer_qiskit_hydrogen: function get_exact_answer_qiskit_hydrogen(data) {
+            return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "qiskit_hydrogen")
+        },
+
+        get_exact_answer_hydrogen: function get_exact_answer_qiskit_hydrogen(data) {
+            return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "hydrogen")
+        },
+
+        get_exact_answer_helium: function get_exact_answer_qiskit_hydrogen(data) {
+            return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "helium")
         }
     },
 
@@ -349,7 +374,7 @@ var CkRepoWidgetUtils = {
         if (!isNaN(Number(input))) {
             return true;
         }
-    },
+    }
 };
 
 var CkRepoWidgetFilter = function () {
@@ -900,7 +925,11 @@ var CkRepoWidgetPlot = function () {
                 plotContainer = _plotConfig.plotContainer,
                 tooltipContainer = _plotConfig.tooltipContainer;
 
-            this.svg = plotContainer.append('svg').attr('width', width + margin.left + margin.right).attr('height', height + margin.top + margin.bottom).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            this.svg = plotContainer.append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom)
+                .append('g')
+                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             this.tooltip = tooltipContainer.append('div').attr('class', 'ck-repo-widget-plot-tooltip').style('opacity', 0);
 
@@ -1138,6 +1167,15 @@ var CkRepoWidgetPlot = function () {
                 });
             };
 
+            this.refLines = [];
+
+            this.setRefLines = function(refLines) {
+                this.refLines = refLines;
+                for (let refLine in this.refLines) {
+                    this.refLines[refLine].apply = () => this._applyRefLines();
+                }
+            }
+
             this.colorRange = plotConfig.colorRange || ['lightblue', 'darkblue'];
             this.sizeRange = plotConfig.sizeRange || [2.5, 4.5];
         }
@@ -1187,7 +1225,7 @@ var CkRepoWidgetPlot = function () {
 
             this.yHasher.reset();
 
-            this.rawPointsData = this.getPointsData(this.data);
+            this.rawPointsData = this.getRawPointsData(this.data);
             this.pointsData = this.filterPointsData(this.rawPointsData);
             this.linesData = this.getLinesData(this.data);
             this.yVariationData = this.getYVariationData(this.pointsData);
@@ -1253,6 +1291,11 @@ var CkRepoWidgetPlot = function () {
         key: 'getYVariationVisibility',
         value: function getYVariationVisibility() {
             return this.isVariationYVisible;
+        }
+    }, {
+        key: 'getRefLine',
+        value: function getRefLine(refLineName) {
+            return this.refLines[refLineName];
         }
     }, {
         key: 'setFilter',
@@ -1328,6 +1371,9 @@ var CkRepoWidgetPlot = function () {
             svg.append('defs').append('clipPath').attr('id', 'clip').append('rect').attr('width', width).attr('height', height);
 
             var applyScale = function applyScale(xScale, yScale) {
+                _this4.xScale = xScale;
+                _this4.yScale = yScale;
+
                 // update axes
                 gX.call(xAxis.scale(xScale));
                 gY.call(yAxis.scale(yScale));
@@ -1366,6 +1412,8 @@ var CkRepoWidgetPlot = function () {
                 }).attr('x2', function (d) {
                     return xScale(xValue(d));
                 });
+
+                _this4._applyRefLines();
             };
 
             // Pan and zoom
@@ -1389,6 +1437,7 @@ var CkRepoWidgetPlot = function () {
 
             // points & lines container
             var gPoints = svg.append('g').attr('clip-path', 'url(#clip)');
+            this.gPoints = gPoints;
 
             // x-variation lines
             var xVariations = gPoints.selectAll('.ck-repo-widget-plot-variation-x').data(xVariationData).enter().append('line').attr('class', 'ck-repo-widget-plot-variation-x');
@@ -1432,6 +1481,7 @@ var CkRepoWidgetPlot = function () {
             this._applyYVariationVisibility();
             this._applyDotVisibility();
             this._applyLinesVisibility();
+            this._applyRefLines();
         }
     }, {
         key: '_applyColorDimension',
@@ -1559,6 +1609,189 @@ var CkRepoWidgetPlot = function () {
                     .attr("width", rectWidth).attr("fill", function (d) { return colors(d); })
                     .attr("class", "ck-repo-widget-color-rect");
         }
+    }, {
+        key: '_applyRefLines',
+        value: function _applyRefLines() {
+            let isDimOk = d => this.yDimension.key === d.dimension;
+            let toVisibility = b => (b ? 'visible' : 'hidden');
+            let whiteBg = '#f7f9fa'; // todo: hack, this is background-color of body
+            let textXOffsetFromAxis = -5;
+            let deltaLineVisible = d => d.visible && d.delta_visible;
+            let linesIsInBounds = v => 0 < this.yScale(v) && this.yScale(v) < this.plotConfig.height;
+
+            let data = Object.values(this.refLines);
+
+            function rectsIntersects(a, b) {
+                if (typeof a === 'undefined' || typeof b === 'undefined') return false;
+                let res = (
+                    Math.max(a.x, b.x) < Math.min(a.x + a.width, b.x + b.width) &&
+                    Math.max(a.y, b.y) < Math.min(a.y + a.height, b.y + b.height) );
+                return res;
+            };
+
+            // Line
+            {
+                let className = '-line';
+                let line = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                line.enter().append("line")
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('x1', 0)
+                        .attr('x2', d => this.plotConfig.width)
+                        .style('stroke', 'black')
+                    .merge(line)
+                        .attr('y1', d => this.yScale(d.value))
+                        .attr('y2', d => this.yScale(d.value))
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
+                line.exit().remove();
+            }
+
+            // Label-background
+            let labelBg = null;
+            {
+                let className = '-label-bg';
+                labelBg = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                labelBg.enter().append('rect')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('fill', whiteBg)
+                    .merge(labelBg)
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible));
+                labelBg.exit().remove();
+            }
+
+            // Upper label background
+            let upperLabelBg = null;
+            {
+                let className = '-upper-label-bg';
+                upperLabelBg = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                upperLabelBg.enter().append('rect')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('fill', whiteBg)
+                upperLabelBg.exit().remove();
+            }
+
+            // Lower label background
+            let lowerLabelBg = null;
+            {
+                let className = '-lower-label-bg';
+                lowerLabelBg = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                lowerLabelBg.enter().append('rect')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('fill', whiteBg)
+                lowerLabelBg.exit().remove();
+            }
+
+            // Label
+            var labelBBoxes = null;
+            {
+                let className = '-label';
+                let label = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                label.enter().append('text')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('dy', '0.5em')
+                        .attr('x', d => textXOffsetFromAxis)
+                        .style('text-anchor', 'end')
+                        .text(d => d.name)
+                    .merge(label)
+                        .attr('y', d => this.yScale(d.value))
+                        .style('visibility', d => toVisibility(isDimOk(d) && d.visible && linesIsInBounds(d.value) ));
+                label.exit().remove();
+
+                labelBBoxes = label.nodes().map(n => n.getBBox());
+            }
+
+            // Upper line
+            {
+                let className = '-upper-line';
+                let upperLine = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                upperLine.enter().append("line")
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('x1', 0)
+                        .attr('x2', this.plotConfig.width)
+                        .style('stroke', 'black')
+                        .attr('stroke-dasharray', '10')
+                    .merge(upperLine)
+                        .attr('y1', d => this.yScale(d.value + d.delta()))
+                        .attr('y2', d => this.yScale(d.value + d.delta()))
+                        .style('visibility', d => toVisibility(isDimOk(d) && deltaLineVisible(d) ));
+                upperLine.exit().remove();
+            }
+
+            // Lower line
+            {
+                let className = '-lower-line';
+                let lowerLine = this.gPoints.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                lowerLine.enter().append("line")
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('x1', 0)
+                        .attr('x2', this.plotConfig.width)
+                        .style('stroke', 'black')
+                        .attr('stroke-dasharray', '10')
+                    .merge(lowerLine)
+                        .attr('y1', d => this.yScale(d.value - d.delta()))
+                        .attr('y2', d => this.yScale(d.value - d.delta()))
+                        .style('visibility', d => toVisibility(isDimOk(d) && deltaLineVisible(d) ));
+                lowerLine.exit().remove();
+            }
+
+            // Upper label
+            let upperLabelBBoxes = null;
+            {
+                let className = '-upper-label';
+                let upperLabel = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                upperLabel.enter().append('text')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('dy', '0.5em')
+                        .attr('x', textXOffsetFromAxis)
+                        .style('text-anchor', 'end')
+                        .text(d => d.name + ' +Δ')
+                    .merge(upperLabel)
+                        .attr('y', d => this.yScale(d.value + d.delta()))
+                        .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value + d.delta()) ); } );
+                upperLabel.exit().remove();
+
+                upperLabelBBoxes = upperLabel.nodes().map(n => n.getBBox());
+            }
+
+            // Lower label
+            let lowerLabelBBoxes = null;
+            {
+                let className = '-lower-label';
+                let lowerLabel = this.svg.selectAll('.ck-repo-widget-plot-refline' + className).data(data);
+                lowerLabel.enter().append('text')
+                        .attr('class', 'ck-repo-widget-plot-refline' + className)
+                        .attr('dy', '0.5em')
+                        .attr('x', textXOffsetFromAxis)
+                        .style('text-anchor', 'end')
+                        .text(d => d.name + ' -Δ')
+                    .merge(lowerLabel)
+                        .attr('y', d => this.yScale(d.value - d.delta()))
+                        .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta()) ); });
+                lowerLabel.exit().remove();
+
+                lowerLabelBBoxes = lowerLabel.nodes().map(n => n.getBBox());
+            }
+
+            let labelMargin = {left: 5, right: 5, top: 5, bottom: 5};
+            labelBg
+                .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
+                .attr('y', (_,i) => labelBBoxes[i].y - labelMargin.top)
+                .attr('width', (_,i) => this.plotConfig.margin.left) //labelBBoxes[i].x + labelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => labelBBoxes[i].height + labelMargin.bottom + labelMargin.top);
+
+            upperLabelBg
+                .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
+                .attr('y', (_,i) => upperLabelBBoxes[i].y - labelMargin.top)
+                .attr('width', (_,i) => this.plotConfig.margin.left) //upperLabelBBoxes[i].x + upperLabelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => upperLabelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
+                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value + d.delta()) ); } );
+
+            lowerLabelBg
+                .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
+                .attr('y', (_,i) => lowerLabelBBoxes[i].y - labelMargin.top)
+                .attr('width', (_,i) => this.plotConfig.margin.left) //labelBBoxes[i].x + labelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => labelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
+                .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta())); } );
+        }
     }]);
 
     return CkRepoWidgetPlot;
@@ -1588,8 +1821,8 @@ var CkRepoWdiget = function () {
             var kActionGetData = 'get_raw_data';
             var kActionGetConfig = 'get_raw_config';
 
-            var kPlotMargin = { top: 30, right: 20, bottom: 30, left: 40 };
-            var kPlotWidth = 960 - kPlotMargin.left - kPlotMargin.right;
+            var kPlotMargin = { top: 30, right: 70, bottom: 30, left: 90 };
+            var kPlotWidth = 1060 - kPlotMargin.left - kPlotMargin.right;
             var kPlotHeight = 500 - kPlotMargin.top - kPlotMargin.bottom;
 
             var plot = new CkRepoWidgetPlot();
@@ -1606,7 +1839,8 @@ var CkRepoWdiget = function () {
                 },
                 config: null,
                 data: null,
-                isSDimensionEnabled: true
+                isSDimensionEnabled: true,
+                refLines: {},
             };
 
             var defaultQuantumFilterRigetti = new CkRepoWidgetFilter();
@@ -1685,7 +1919,6 @@ var CkRepoWdiget = function () {
                             var row = _step9.value;
 
                             var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                classical_energy = _CkRepoWidgetUtils$qu2.classical_energy,
                                 minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
                                 minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
                                 n_succ = _CkRepoWidgetUtils$qu2.n_succ,
@@ -1726,6 +1959,23 @@ var CkRepoWdiget = function () {
                                 throw _iteratorError9;
                             }
                         }
+                    }
+                },
+                refLines: {
+                    "exact_answer_qiskit_hydrogen": {
+                        name: "H₂*",
+                        dimension: "__energies",
+                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen,
+                    },
+                    "hydrogen": {
+                        name: "H₂",
+                        dimension: "__energies",
+                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen,
+                    },
+                    "helium": {
+                        name: "He",
+                        dimension: "__energies",
+                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_helium,
                     }
                 },
                 colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
@@ -1776,7 +2026,6 @@ var CkRepoWdiget = function () {
                             var row = _step9.value;
 
                             var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                classical_energy = _CkRepoWidgetUtils$qu2.classical_energy,
                                 minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
                                 minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
                                 n_succ = _CkRepoWidgetUtils$qu2.n_succ,
@@ -1937,6 +2186,8 @@ var CkRepoWdiget = function () {
                     CkRepoWidgetUtils.prepareFilters(workflow.config.selector, data.table, CkRepoWidgetConstants.kMetaFilterPrefix);
                     CkRepoWidgetUtils.prepareFilters(workflow.config.selector2, data.table);
 
+                    _this9._plotSetRefLines(workflow);
+
                     workflow.config.selector.forEach(function (selector, i) {
                         if (selector.values.length > 1) {
                             _this9._createValueSelector('ck-widget-filter-meta-selector-' + (i + 1), _this9.dom.filterMetaContainer, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
@@ -1969,6 +2220,8 @@ var CkRepoWdiget = function () {
 
                                     workflow.tableProcessor(workflow.data.table, workflow.props);
 
+                                    _this9._plotSetRefLines(workflow);
+
                                     plot.build(workflow.data.table);
                                     table.build(workflow.data.table);
                                 });
@@ -1979,26 +2232,24 @@ var CkRepoWdiget = function () {
 
                     plot.build(data.table);
 
-                    _this9._createPlotSelector('x-axis-selector', 'Plot dimension X', _this9.dom.plotSelectorContainer, plot.getXDimension(), function (dimension) {
-                        return plot.setXDimension(dimension);
-                    }, function (isVisible) {
-                        return plot.setXVariationVisibility(isVisible);
-                    }, plot.getXVariationVisibility());
+                    _this9._createPlotSelector('x-axis-selector','Plot dimension X',
+                        _this9.dom.plotSelectorContainer, plot.getXDimension(), dimension => plot.setXDimension(dimension),
+                        // Variation
+                        isVisible => plot.setXVariationVisibility(isVisible), plot.getXVariationVisibility()
+                    );
 
-                    _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y', _this9.dom.plotSelectorContainer, plot.getYDimension(), function (dimension) {
-                        return plot.setYDimension(dimension);
-                    }, function (isVisible) {
-                        return plot.setYVariationVisibility(isVisible);
-                    }, plot.getYVariationVisibility());
+                    _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
+                        _this9.dom.plotSelectorContainer, plot.getYDimension(), dimension => plot.setYDimension(dimension),
+                        // Variation
+                        isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility()
+                    );
 
-                    _this9._createPlotSelector('c-axis-selector', 'Plot color dimension', _this9.dom.plotSelectorContainer, plot.getCDimension(), function (dimension) {
-                        return plot.setCDimension(dimension);
-                    });
+                    _this9._createPlotSelector('c-axis-selector', 'Plot color dimension',
+                        _this9.dom.plotSelectorContainer, plot.getCDimension(), dimension => plot.setCDimension(dimension) );
 
                     if (workflow.isSDimensionEnabled) {
-                        _this9._createPlotSelector('s-axis-selector', 'Point size dimension', _this9.dom.plotSelectorContainer, plot.getSDimension(), function (dimension) {
-                            return plot.setSDimension(dimension);
-                        });
+                        _this9._createPlotSelector('s-axis-selector', 'Point size dimension',
+                        _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
                     }
 
                     table.build(data.table);
@@ -2172,32 +2423,23 @@ var CkRepoWdiget = function () {
         }
     }, {
         key: '_createPlotSelector',
-        value: function _createPlotSelector(id, name, root, defalutDimension, onChange) {
+        value: function _createPlotSelector(id, name, root, defaultDimension, onChange) {
             var _this10 = this;
 
-            var onChecked = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
+            var onChecked =      arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : null;
             var defaultChecked = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : false;
-
-            var changeHandler = function changeHandler() {
-                var selectDimensionIndex = d3.select('#' + id).property('value');
-                var selectedDimension = _this10.selectedWorkflow.config.dimensions[selectDimensionIndex];
-
-                onChange(selectedDimension);
-            };
 
             var div = root.append('div').attr('class', 'ck-repo-widget-filter');
 
             var title = div.append('div').attr('class', 'ck-repo-widget-filter-title').text(name);
 
-            var select = div.append('select').attr('id', id).attr('class', 'ck-repo-widget-select').on('change', changeHandler);
+            var select = div.append('select').attr('id', id).attr('class', 'ck-repo-widget-select');
 
-            select.selectAll('option').data(this.selectedWorkflow.config.dimensions).enter().append('option').attr('value', function (_, i) {
-                return i;
-            }).property('selected', function (d) {
-                return d === defalutDimension;
-            }).text(function (d) {
-                return d.name;
-            });
+            select.selectAll('option').data(this.selectedWorkflow.config.dimensions)
+                .enter().append('option')
+                    .attr('value', (_, i) => i)
+                    .property('selected', (d) => d === defaultDimension)
+                    .text(d => d.name);
 
             if (onChecked) {
                 var variation = div.append('div').attr('class', 'ck-repo-widget-filter-variation').on('click', function () {
@@ -2213,6 +2455,16 @@ var CkRepoWdiget = function () {
 
                 variation.append('div').text('Variation');
             }
+
+
+            var changeHandler = function changeHandler() {
+                var selectDimensionIndex = d3.select('#' + id).property('value');
+                var selectedDimension = _this10.selectedWorkflow.config.dimensions[selectDimensionIndex];
+
+                onChange(selectedDimension);
+            };
+
+            select.on('change', changeHandler);
 
             return select;
         }
@@ -2298,6 +2550,31 @@ var CkRepoWdiget = function () {
             }
 
             return select;
+        }
+    }, {
+        key: '_plotSetRefLines',
+        value: function _plotSetRefLines(workflow) {
+            let refLines = [];
+            for (let refLineId in workflow.refLines) {
+                try {
+                    let refLine = workflow.refLines[refLineId];
+                    refLine.value = refLine.get_value(workflow.data.table);
+                    if (!refLine.value) {
+                        continue;
+                    }
+
+                    if (workflow.props) {
+                        refLine.delta = () => Number(workflow.props['__delta']);
+                    } else {
+                        refLine.delta = () => 0;
+                    }
+
+                    refLine.visible = true;
+                    refLine.delta_visible = true;
+                    refLines.push(refLine);
+                } catch (err) { /* todo: log */ }
+            }
+            this.plot.setRefLines(refLines);
         }
     }, {
         key: '_initDom',
