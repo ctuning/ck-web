@@ -6,7 +6,7 @@
             "moduleUoa": "request.asplos18",
             "xDimension": "##characteristics#run#inference_throughput",
             "yDimension": "##characteristics#run#accuracy_top1",
-            "colorDimension": "__number",
+            "colorDimension": "experiment",
             "sizeDimension": "##features#model_size",
             "xVariationVisible": true,
             "yVariationVisible": false

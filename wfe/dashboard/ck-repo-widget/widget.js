@@ -1527,7 +1527,7 @@ var CkRepoWidgetPlot = function () {
 
             var mouseoverHandler = function mouseoverHandler(d) {
                 tooltip.transition().duration(200).style('opacity', .9);
-                var hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.sDimension !== '' ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
+                var hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.sizeDimension !== '' ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
                 tooltip.html(hint).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
             };
             var mouseoutHandler = function mouseoutHandler(d) {
@@ -1604,7 +1604,7 @@ var CkRepoWidgetPlot = function () {
                 sValue = this.sValue;
 
             var sizeMapper = d3.scaleLinear().domain([d3.min(pointsData, sValue), d3.max(pointsData, sValue)]).range(this.sizeRange);
-            let pointSize = ( this.plotConfig.sDimension
+            let pointSize = ( this.plotConfig.sizeDimension !== ''
                 ? (row => sizeMapper(sValue(row)))
                 : (row => CkRepoWidgetConstants.kDefaultPointRadius)
             );
@@ -2014,7 +2014,6 @@ var CkRepoWdiget = function () {
                                 filter: workflow.filter,
                                 colorRange: workflow.colorRange,
                                 sizeRange: workflow.sizeRange,
-                                isSDimensionEnabled: workflow.isSDimensionEnabled
                             }, config);
 
                             table.init({
@@ -2088,7 +2087,7 @@ var CkRepoWdiget = function () {
                             _this9._createPlotSelector('c-axis-selector', 'Plot color dimension',
                                 _this9.dom.plotSelectorContainer, plot.getCDimension(), dimension => plot.setCDimension(dimension) );
 
-                            if (workflow.isSDimensionEnabled) {
+                            if (workflow.sizeDimension !== '') {
                                 _this9._createPlotSelector('s-axis-selector', 'Point size dimension',
                                 _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
                             }
