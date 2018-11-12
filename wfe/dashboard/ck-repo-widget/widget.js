@@ -2027,29 +2027,7 @@ var CkRepoWdiget = function () {
                             CkRepoWidgetUtils.prepareFilters(workflow.config.selector, data.table, CkRepoWidgetConstants.kMetaFilterPrefix);
                             CkRepoWidgetUtils.prepareFilters(workflow.config.selector2, data.table);
 
-                            // Set reference lines
-                            {
-                                let refLines = [];
-                                for (let refLineId in workflow.refLines) {
-                                    try {
-                                        let refLine = workflow.refLines[refLineId];
-                                        refLine.value = refLine.get_value(data.table);
-                                        if (typeof refLine.value === 'undefined') {
-                                            continue;
-                                        }
-
-                                        if (workflow.props) {
-                                            refLine.delta = () => Number(workflow.props['__delta']);
-                                        } else {
-                                            refLine.delta = () => 0;
-                                        }
-                                        refLine.visible = true;
-                                        refLine.delta_visible = true;
-                                        refLines.push(refLine);
-                                    } catch (err) { /* todo: log */ }
-                                }
-                                plot.setRefLines(refLines);
-                            }
+                            _this9._plotSetRefLines(workflow);
 
                             workflow.config.selector.forEach(function (selector, i) {
                                 if (selector.values.length > 1) {
@@ -2083,7 +2061,7 @@ var CkRepoWdiget = function () {
 
                                             workflow.tableProcessor(workflow.data.table, workflow);
 
-                                            plot.setRefLines(workflow.refLines);
+                                            _this9._plotSetRefLines(workflow);
 
                                             plot.build(workflow.data.table);
                                             table.build(workflow.data.table);
