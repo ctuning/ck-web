@@ -1741,7 +1741,7 @@ var CkRepoWidgetPlot = function () {
                         .attr('dy', '0.5em')
                         .attr('x', textXOffsetFromAxis)
                         .style('text-anchor', 'end')
-                        .text(d => '+Δ')
+                        .text(d => d.name + ' +Δ')
                     .merge(upperLabel)
                         .attr('y', d => this.yScale(d.value + d.delta()))
                         .style('visibility', function(d,i) { return toVisibility( isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value + d.delta()) ); } );
@@ -1760,7 +1760,7 @@ var CkRepoWidgetPlot = function () {
                         .attr('dy', '0.5em')
                         .attr('x', textXOffsetFromAxis)
                         .style('text-anchor', 'end')
-                        .text(d => '-Δ')
+                        .text(d => d.name + ' -Δ')
                     .merge(lowerLabel)
                         .attr('y', d => this.yScale(d.value - d.delta()))
                         .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta()) ); });
