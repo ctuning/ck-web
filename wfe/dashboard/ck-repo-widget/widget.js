@@ -1786,8 +1786,8 @@ var CkRepoWidgetPlot = function () {
             lowerLabelBg
                 .attr('x', (_,i) => -1 * this.plotConfig.margin.left)
                 .attr('y', (_,i) => lowerLabelBBoxes[i].y - labelMargin.top)
-                .attr('width', (_,i) => lowerLabelBBoxes[i].x + lowerLabelBBoxes[i].width + labelMargin.right)
-                .attr('height', (_,i) => this.plotConfig.margin.left) //lowerLabelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
+                .attr('width', (_,i) => this.plotConfig.margin.left) //labelBBoxes[i].x + labelBBoxes[i].width + labelMargin.right)
+                .attr('height', (_,i) => labelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
                 .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta())); } );
         }
     }]);
