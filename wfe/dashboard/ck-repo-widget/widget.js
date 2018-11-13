@@ -83,14 +83,17 @@ var CkRepoWidgetUtils = {
     },
 
     getAxisKey: function getAxisKey(dimension) {
+        if (typeof dimension === 'undefined') { return null; }
         return dimension.from_meta ? dimension.key : dimension.view_key || (dimension.reverse ? dimension.key + '#max' : dimension.key + '#min');
     },
 
     getVariationMinKey: function getVariationMinKey(dimension) {
+        if (typeof dimension === 'undefined') { return null; }
         return dimension.key + '#min';
     },
 
     getVariationMaxKey: function getVariationMaxKey(dimension) {
+        if (typeof dimension === 'undefined') { return null; }
         return dimension.key + '#max';
     },
 
@@ -311,6 +314,66 @@ var CkRepoWidgetUtils = {
             }
         },
 
+        benchmarkTableProcessor: function benchmarkTableProcessor(table, workflow) {
+            CkRepoWidgetUtils.prepareTable(table);
+
+            var delta = workflow.props['__delta'];
+            var prob = workflow.props['__prob'];
+            var which_fun_key = workflow.props['__fun_key'];
+            var which_time_key = workflow.props['__time_key'];
+
+            var _iteratorNormalCompletion9 = true;
+            var _didIteratorError9 = false;
+            var _iteratorError9 = undefined;
+
+            try {
+                for (var _iterator9 = table[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+                    var row = _step9.value;
+
+                    var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
+                        minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
+                        minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
+                        n_succ = _CkRepoWidgetUtils$qu2.n_succ,
+                        T_ave = _CkRepoWidgetUtils$qu2.T_ave,
+                        T_err = _CkRepoWidgetUtils$qu2.T_err,
+                        t_ave = _CkRepoWidgetUtils$qu2.t_ave,
+                        t_err = _CkRepoWidgetUtils$qu2.t_err,
+                        s = _CkRepoWidgetUtils$qu2.s,
+                        s_err = _CkRepoWidgetUtils$qu2.s_err,
+                        energies = _CkRepoWidgetUtils$qu2.energies,
+                        times = _CkRepoWidgetUtils$qu2.times;
+
+                    row['T_ave'] = T_ave;
+                    row['T_ave#min'] = T_ave - T_err;
+                    row['T_ave#max'] = T_ave + T_err;
+                    row['T_err'] = T_err;
+                    row['t_ave'] = t_ave;
+                    row['t_ave#min'] = t_ave - t_err;
+                    row['t_ave#max'] = t_ave + t_err;
+                    row['t_err'] = t_err;
+                    row['s'] = s;
+                    row['s_err'] = s_err;
+                    row['__energies'] = energies;
+                    row['__times'] = times;
+
+                    row[CkRepoWidgetConstants.kRowHiddenKey] = Number.isNaN(T_ave);
+                }
+            } catch (err) {
+                _didIteratorError9 = true;
+                _iteratorError9 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                        _iterator9.return();
+                    }
+                } finally {
+                    if (_didIteratorError9) {
+                        throw _iteratorError9;
+                    }
+                }
+            }
+        },
+
         get_exact_answer_molecule: function get_exact_answer_molecule(data, molecule) {
             let values = [];
             for(let d of data) {
@@ -329,11 +392,11 @@ var CkRepoWidgetUtils = {
             return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "qiskit_hydrogen")
         },
 
-        get_exact_answer_hydrogen: function get_exact_answer_qiskit_hydrogen(data) {
+        get_exact_answer_hydrogen: function get_exact_answer_hydrogen(data) {
             return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "hydrogen")
         },
 
-        get_exact_answer_helium: function get_exact_answer_qiskit_hydrogen(data) {
+        get_exact_answer_helium: function get_exact_answer_helium(data) {
             return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "helium")
         }
     },
@@ -374,6 +437,19 @@ var CkRepoWidgetUtils = {
         if (!isNaN(Number(input))) {
             return true;
         }
+    },
+
+    filterByPrefix: function filterByPrefix(obj, prefix) {
+        if (!prefix) {
+            return obj;
+        }
+        var res = {};
+        for (var key in obj) {
+            if (key.startsWith(prefix)) {
+                res[key.substr(prefix.length)] = obj[key];
+            }
+        }
+        return res;
     }
 };
 
@@ -941,10 +1017,10 @@ var CkRepoWidgetPlot = function () {
                 });
             */
 
-            this.xDimension = this.dataConfig.dimensions[this.plotConfig.defaultXDimensionIndex];
-            this.yDimension = this.dataConfig.dimensions[this.plotConfig.defaultYDimensionIndex];
-            this.cDimension = this.dataConfig.dimensions[this.plotConfig.defaultCDimensionIndex];
-            this.sDimension = this.dataConfig.dimensions[this.plotConfig.defaultSDimensionIndex];
+            this.xDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.xDimension);
+            this.yDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.yDimension);
+            this.cDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.colorDimension);
+            this.sDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.sizeDimension);
 
             this.xHasher = new CkRepoWidgetHasher();
             this.yHasher = new CkRepoWidgetHasher();
@@ -978,7 +1054,11 @@ var CkRepoWidgetPlot = function () {
 
             var valueToDisplay = function valueToDisplay(dimension, value) {
                 var tView = _this3.dataConfig.table_view.find(function (view) {
-                    return view.key.startsWith(dimension.key);
+                    if (dimension) {
+                        return view.key.startsWith(dimension.key);
+                    } else {
+                        return false;
+                    }
                 });
 
                 if (!!tView && tView.format) {
@@ -1447,7 +1527,7 @@ var CkRepoWidgetPlot = function () {
 
             var mouseoverHandler = function mouseoverHandler(d) {
                 tooltip.transition().duration(200).style('opacity', .9);
-                var hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.isSDimensionEnabled ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
+                var hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.sizeDimension !== '' ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
                 tooltip.html(hint).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
             };
             var mouseoutHandler = function mouseoutHandler(d) {
@@ -1523,15 +1603,13 @@ var CkRepoWidgetPlot = function () {
                 pointsData = this.pointsData,
                 sValue = this.sValue;
 
-            if (this.plotConfig.isSDimensionEnabled) {
-                var sizeMapper = d3.scaleLinear().domain([d3.min(pointsData, sValue), d3.max(pointsData, sValue)]).range(this.sizeRange);
+            var sizeMapper = d3.scaleLinear().domain([d3.min(pointsData, sValue), d3.max(pointsData, sValue)]).range(this.sizeRange);
+            let pointSize = ( this.plotConfig.sizeDimension !== ''
+                ? (row => sizeMapper(sValue(row)))
+                : (row => CkRepoWidgetConstants.kDefaultPointRadius)
+            );
 
-                svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).attr('r', function (row) {
-                    return sizeMapper(sValue(row));
-                });
-            } else {
-                svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).attr('r', CkRepoWidgetConstants.kDefaultPointRadius);
-            }
+            svg.selectAll('.ck-repo-widget-plot-dot').data(pointsData).attr('r', pointSize);
         }
     }, {
         key: '_applyXVariationVisibility',
@@ -1807,7 +1885,7 @@ var CkRepoWdiget = function () {
         value: function init(argsMap) {
             var _this9 = this;
 
-            // If this widget is running on local machine, e.g. launched through `ck widget nntest`
+            // If this widget is running on local machine, e.g. launched through `ck display dashboard`
             this.isLocalRun = (typeof argsMap.isLocalRun === 'undefined' ? true : argsMap.isLocalRun);
             // Scenario filters available workflows
             this.scenario = argsMap.scenario || '';
@@ -1831,529 +1909,354 @@ var CkRepoWdiget = function () {
             this.plot = plot;
             this.table = table;
 
-            var workflowBase = {
-                dataPrefix: '',
-                configPrefix: '',
-                tableProcessor: function tableProcessor(table) {
-                    CkRepoWidgetUtils.prepareTable(table);
-                },
-                config: null,
-                data: null,
-                isSDimensionEnabled: true,
-                refLines: {},
-            };
+            fetch(argsMap.workflows)
+                .then(response => response.json())
+                .then(workflowsDesc => {
+                    this.workflows = this._prepareWorkflows(workflowsDesc);
+                    let defIdx = workflowsDesc.defaultWorkflowIndex;
+                    defIdx = (this.scenario === '' ? defIdx : 0);
+                    return this.workflows[ defIdx ];
+                })
+                .then(function(defaultWorkflow) {
+                    var showWorkflow = function showWorkflow(workflow) {
+                        _this9.selectedWorkflow = workflow;
 
-            var defaultQuantumFilterRigetti = new CkRepoWidgetFilter();
-            defaultQuantumFilterRigetti.setSelector({ key: '_platform' }, '8q-agave');
-            defaultQuantumFilterRigetti.setSelector({ key: '_minimizer_method' }, 'my_cobyla');
+                        _this9._showLoadingLayer();
 
-            var defaultQuantumFilterIBM = new CkRepoWidgetFilter();
-            defaultQuantumFilterIBM.setSelector({ key: '_platform' }, 'local_qasm_simulator');
-            defaultQuantumFilterIBM.setSelector({ key: '_minimizer_method' }, 'my_cobyla');
+                        _this9._clearWorkflow();
 
-            var workflows = [_extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'ReQuEST @ ASPLOS\'18 tournament (Pareto-efficient image classification)',
-                moduleUoa: 'request.asplos18',
-                defaultXDimensionIndex: 3,
-                defaultYDimensionIndex: 4,
-                defaultCDimensionIndex: 0,
-                defaultSDimensionIndex: 6,
-                defaultXVariationVisible: true,
-                defaultYVariationVisible: false
-            }), _extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'NNTest (collaboratively benchmarking and optimizing neural network operations)',
-                moduleUoa: 'nntest',
-                defaultXDimensionIndex: 0,
-                defaultYDimensionIndex: 1,
-                defaultCDimensionIndex: 0,
-                defaultSDimensionIndex: 3,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                isSDimensionEnabled: false
-            }), _extends({}, workflowBase, {
-                filter: defaultQuantumFilterIBM,
-                name: 'Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Solution Convergence',
-                moduleUoa: 'hackathon.20181006',
-                defaultXDimensionIndex: 2,
-                defaultYDimensionIndex: 1,
-                defaultCDimensionIndex: 3,
-                defaultSDimensionIndex: 5,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'full_',
-                configPrefix: 'full_'
-            }), _extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Time To Solution',
-                moduleUoa: 'hackathon.20181006',
-                defaultXDimensionIndex: 3,
-                defaultYDimensionIndex: 2,
-                defaultCDimensionIndex: 4,
-                defaultSDimensionIndex: 6,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'metrics_',
-                configPrefix: 'metrics_',
-                props: {
-                    '__fun_key': 'fun_exact',
-                    '__time_key': 'total_q_shots',
-                    '__delta': 0.01,
-                    '__prob': 0.8
-                },
-                tableProcessor: function tableProcessor(table, props) {
-                    CkRepoWidgetUtils.prepareTable(table);
-
-                    var delta = props['__delta'];
-                    var prob = props['__prob'];
-                    var which_fun_key = props['__fun_key'];
-                    var which_time_key = props['__time_key'];
-
-                    var _iteratorNormalCompletion9 = true;
-                    var _didIteratorError9 = false;
-                    var _iteratorError9 = undefined;
-
-                    try {
-                        for (var _iterator9 = table[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                            var row = _step9.value;
-
-                            var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
-                                minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
-                                n_succ = _CkRepoWidgetUtils$qu2.n_succ,
-                                T_ave = _CkRepoWidgetUtils$qu2.T_ave,
-                                T_err = _CkRepoWidgetUtils$qu2.T_err,
-                                t_ave = _CkRepoWidgetUtils$qu2.t_ave,
-                                t_err = _CkRepoWidgetUtils$qu2.t_err,
-                                s = _CkRepoWidgetUtils$qu2.s,
-                                s_err = _CkRepoWidgetUtils$qu2.s_err,
-                                energies = _CkRepoWidgetUtils$qu2.energies,
-                                times = _CkRepoWidgetUtils$qu2.times;
-
-                            row['T_ave'] = T_ave;
-                            row['T_ave#min'] = T_ave - T_err;
-                            row['T_ave#max'] = T_ave + T_err;
-                            row['T_err'] = T_err;
-                            row['t_ave'] = t_ave;
-                            row['t_ave#min'] = t_ave - t_err;
-                            row['t_ave#max'] = t_ave + t_err;
-                            row['t_err'] = t_err;
-                            row['s'] = s;
-                            row['s_err'] = s_err;
-                            row['__energies'] = energies;
-                            row['__times'] = times;
-
-                            row[CkRepoWidgetConstants.kRowHiddenKey] = Number.isNaN(T_ave);
-                        }
-                    } catch (err) {
-                        _didIteratorError9 = true;
-                        _iteratorError9 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                                _iterator9.return();
+                        function toLocal(obj, prefix) {
+                            if (!prefix) {
+                                return obj;
                             }
-                        } finally {
-                            if (_didIteratorError9) {
-                                throw _iteratorError9;
-                            }
-                        }
-                    }
-                },
-                refLines: {
-                    "exact_answer_qiskit_hydrogen": {
-                        name: "H₂*",
-                        dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen,
-                    },
-                    "hydrogen": {
-                        name: "H₂",
-                        dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen,
-                    },
-                    "helium": {
-                        name: "He",
-                        dimension: "__energies",
-                        get_value: CkRepoWidgetUtils.quantum.get_exact_answer_helium,
-                    }
-                },
-                colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
-            }), _extends({}, workflowBase, {
-                filter: defaultQuantumFilterRigetti,
-                name: 'Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Solution Convergence',
-                moduleUoa: 'hackathon.20180615',
-                defaultXDimensionIndex: 2,
-                defaultYDimensionIndex: 1,
-                defaultCDimensionIndex: 3,
-                defaultSDimensionIndex: 5,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'full_',
-                configPrefix: 'full_'
-            }), _extends({}, workflowBase, {
-                filter: new CkRepoWidgetFilter(),
-                name: 'Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Time To Solution',
-                moduleUoa: 'hackathon.20180615',
-                defaultXDimensionIndex: 3,
-                defaultYDimensionIndex: 2,
-                defaultCDimensionIndex: 4,
-                defaultSDimensionIndex: 6,
-                defaultXVariationVisible: false,
-                defaultYVariationVisible: false,
-                dataPrefix: 'metrics_',
-                configPrefix: 'metrics_',
-                props: {
-                    '__fun_key': 'fun_exact',
-                    '__time_key': 'total_q_shots',
-                    '__delta': 0.1,
-                    '__prob': 0.5
-                },
-                tableProcessor: function tableProcessor(table, props) {
-                    CkRepoWidgetUtils.prepareTable(table);
 
-                    var delta = props['__delta'];
-                    var prob = props['__prob'];
-                    var which_fun_key = props['__fun_key'];
-                    var which_time_key = props['__time_key'];
+                            var res = {};
 
-                    var _iteratorNormalCompletion9 = true;
-                    var _didIteratorError9 = false;
-                    var _iteratorError9 = undefined;
-
-                    try {
-                        for (var _iterator9 = table[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                            var row = _step9.value;
-
-                            var _CkRepoWidgetUtils$qu2 = CkRepoWidgetUtils.quantum.benchmark_list_of_runs(row['runs'], delta, prob, which_fun_key, which_time_key),
-                                minimizer_method = _CkRepoWidgetUtils$qu2.minimizer_method,
-                                minimizer_src = _CkRepoWidgetUtils$qu2.minimizer_src,
-                                n_succ = _CkRepoWidgetUtils$qu2.n_succ,
-                                T_ave = _CkRepoWidgetUtils$qu2.T_ave,
-                                T_err = _CkRepoWidgetUtils$qu2.T_err,
-                                t_ave = _CkRepoWidgetUtils$qu2.t_ave,
-                                t_err = _CkRepoWidgetUtils$qu2.t_err,
-                                s = _CkRepoWidgetUtils$qu2.s,
-                                s_err = _CkRepoWidgetUtils$qu2.s_err,
-                                energies = _CkRepoWidgetUtils$qu2.energies,
-                                times = _CkRepoWidgetUtils$qu2.times;
-
-                            row['T_ave'] = T_ave;
-                            row['T_ave#min'] = T_ave - T_err;
-                            row['T_ave#max'] = T_ave + T_err;
-                            row['T_err'] = T_err;
-                            row['t_ave'] = t_ave;
-                            row['t_ave#min'] = t_ave - t_err;
-                            row['t_ave#max'] = t_ave + t_err;
-                            row['t_err'] = t_err;
-                            row['s'] = s;
-                            row['s_err'] = s_err;
-                            row['__energies'] = energies;
-                            row['__times'] = times;
-
-                            row[CkRepoWidgetConstants.kRowHiddenKey] = Number.isNaN(T_ave);
-                        }
-                    } catch (err) {
-                        _didIteratorError9 = true;
-                        _iteratorError9 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                                _iterator9.return();
-                            }
-                        } finally {
-                            if (_didIteratorError9) {
-                                throw _iteratorError9;
-                            }
-                        }
-                    }
-                },
-                colorRange: ['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FF0000']
-            })];
-
-            // Scenario filters available workflows
-            if (this.scenario !== '') {
-                workflows = workflows.filter(w => w.moduleUoa == this.scenario);
-            }
-            var defaultWorkflow = workflows[3] || workflows[0];
-
-            var showWorkflow = function showWorkflow(workflow) {
-                _this9.selectedWorkflow = workflow;
-
-                _this9._showLoadingLayer();
-
-                _this9._clearWorkflow();
-
-                function toLocal(obj, prefix) {
-                    if (!prefix) {
-                        return obj;
-                    }
-
-                    var res = {};
-
-                    for (var key in obj) {
-                        if (key.startsWith(prefix)) {
-                            res[key.substr(prefix.length)] = obj[key];
-                        }
-                    }
-
-                    return res;
-                }
-
-                var serverFilter = new CkRepoWidgetFilter();
-                var applyServerFilter = function applyServerFilter(selector, value) {
-                    var prefix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-
-                    serverFilter.setSelector(selector, value, prefix);
-
-                    fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetData, {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: serverFilter.getXWWWFormUrlencoded()
-                    }).then(function (response) {
-                        return response.json();
-                    }).then(function (data) {
-                        var _iteratorNormalCompletion10 = true;
-                        var _didIteratorError10 = false;
-                        var _iteratorError10 = undefined;
-
-                        try {
-                            for (var _iterator10 = workflows[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-                                var eWorkflow = _step10.value;
-
-                                if (eWorkflow.moduleUoa === workflow.moduleUoa) {
-                                    eWorkflow.data = toLocal(data, eWorkflow.dataPrefix);
-
-                                    eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow.props);
+                            for (var key in obj) {
+                                if (key.startsWith(prefix)) {
+                                    res[key.substr(prefix.length)] = obj[key];
                                 }
                             }
-                        } catch (err) {
-                            _didIteratorError10 = true;
-                            _iteratorError10 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion10 && _iterator10.return) {
-                                    _iterator10.return();
-                                }
-                            } finally {
-                                if (_didIteratorError10) {
-                                    throw _iteratorError10;
-                                }
-                            }
+
+                            return res;
                         }
 
-                        plot.build(workflow.data.table);
-                        table.build(workflow.data.table);
-                    });
-                };
-                var isServerFilteringEnabled = false;
-                var fetchDataInit = isServerFilteringEnabled ? null : {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: "all=yes"
-                };
+                        var serverFilter = new CkRepoWidgetFilter();
+                        var applyServerFilter = function applyServerFilter(selector, value) {
+                            var prefix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
-                var configApplier = function configApplier(config) {
-                    plot.init({
-                        plotContainer: _this9.dom.plotContainer,
-                        tooltipContainer: _this9.dom.plotTooltipContainer,
-                        width: kPlotWidth,
-                        height: kPlotHeight,
-                        margin: kPlotMargin,
-                        defaultXDimensionIndex: workflow.defaultXDimensionIndex,
-                        defaultYDimensionIndex: workflow.defaultYDimensionIndex,
-                        defaultCDimensionIndex: workflow.defaultCDimensionIndex,
-                        defaultSDimensionIndex: workflow.defaultSDimensionIndex,
-                        isVariationXVisible: workflow.defaultXVariationVisible,
-                        isVariationYVisible: workflow.defaultYVariationVisible,
-                        filter: workflow.filter,
-                        colorRange: workflow.colorRange,
-                        sizeRange: workflow.sizeRange,
-                        isSDimensionEnabled: workflow.isSDimensionEnabled
-                    }, config);
+                            serverFilter.setSelector(selector, value, prefix);
 
-                    table.init({
-                        filter: workflow.filter,
-                        tableContainer: _this9.dom.tableContainer
-                    }, config);
-                };
+                            fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetData, {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: serverFilter.getXWWWFormUrlencoded()
+                            }).then(function (response) {
+                                return response.json();
+                            }).then(function (data) {
+                                var _iteratorNormalCompletion10 = true;
+                                var _didIteratorError10 = false;
+                                var _iteratorError10 = undefined;
 
-                var dataApplier = function dataApplier(data) {
-                    CkRepoWidgetUtils.prepareFilters(workflow.config.selector, data.table, CkRepoWidgetConstants.kMetaFilterPrefix);
-                    CkRepoWidgetUtils.prepareFilters(workflow.config.selector2, data.table);
+                                try {
+                                    for (var _iterator10 = workflows[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                                        var eWorkflow = _step10.value;
 
-                    _this9._plotSetRefLines(workflow);
+                                        if (eWorkflow.moduleUoa === workflow.moduleUoa) {
+                                            eWorkflow.data = toLocal(data, eWorkflow.dataPrefix);
 
-                    workflow.config.selector.forEach(function (selector, i) {
-                        if (selector.values.length > 1) {
-                            _this9._createValueSelector('ck-widget-filter-meta-selector-' + (i + 1), _this9.dom.filterMetaContainer, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
-                                if (isServerFilteringEnabled) {
-                                    applyServerFilter(selector, value, CkRepoWidgetConstants.kMetaFilterPrefix);
-                                } else {
-                                    _this9._applyFilterValue(selector, value, CkRepoWidgetConstants.kMetaFilterPrefix);
+                                            eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow);
+                                        }
+                                    }
+                                } catch (err) {
+                                    _didIteratorError10 = true;
+                                    _iteratorError10 = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                                            _iterator10.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError10) {
+                                            throw _iteratorError10;
+                                        }
+                                    }
+                                }
+
+                                plot.build(workflow.data.table);
+                                table.build(workflow.data.table);
+                            });
+                        };
+                        var isServerFilteringEnabled = false;
+                        var fetchDataInit = isServerFilteringEnabled ? null : {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: "all=yes"
+                        };
+
+                        var configApplier = function configApplier(config) {
+                            plot.init({
+                                plotContainer: _this9.dom.plotContainer,
+                                tooltipContainer: _this9.dom.plotTooltipContainer,
+                                width: kPlotWidth,
+                                height: kPlotHeight,
+                                margin: kPlotMargin,
+                                xDimension: workflow.xDimension,
+                                yDimension: workflow.yDimension,
+                                colorDimension: workflow.colorDimension,
+                                sizeDimension: workflow.sizeDimension,
+                                isVariationXVisible: workflow.xVariationVisible,
+                                isVariationYVisible: workflow.yVariationVisible,
+                                filter: workflow.filter,
+                                colorRange: workflow.colorRange,
+                                sizeRange: workflow.sizeRange,
+                            }, config);
+
+                            table.init({
+                                filter: workflow.filter,
+                                tableContainer: _this9.dom.tableContainer
+                            }, config);
+                        };
+
+                        var dataApplier = function dataApplier(data) {
+                            CkRepoWidgetUtils.prepareFilters(workflow.config.selector, data.table, CkRepoWidgetConstants.kMetaFilterPrefix);
+                            CkRepoWidgetUtils.prepareFilters(workflow.config.selector2, data.table);
+
+                            _this9._plotSetRefLines(workflow);
+
+                            workflow.config.selector.forEach(function (selector, i) {
+                                if (selector.values.length > 1) {
+                                    _this9._createValueSelector('ck-widget-filter-meta-selector-' + (i + 1), _this9.dom.filterMetaContainer, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
+                                        if (isServerFilteringEnabled) {
+                                            applyServerFilter(selector, value, CkRepoWidgetConstants.kMetaFilterPrefix);
+                                        } else {
+                                            _this9._applyFilterValue(selector, value, CkRepoWidgetConstants.kMetaFilterPrefix);
+                                        }
+                                    });
                                 }
                             });
-                        }
-                    });
-                    _this9.dom.filterMetaContainer.style('display', (workflow.config.selector.length > 0 ? 'block' : 'none'));
+                            _this9.dom.filterMetaContainer.style('display', (workflow.config.selector.length > 0 ? 'block' : 'none'));
 
-                    workflow.config.selector2.forEach(function (selector, i) {
-                        _this9._createValueSelector('ck-widget-filter-2-selector-' + (i + 1), _this9.dom.filter2Container, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
-                            if (isServerFilteringEnabled) {
-                                applyServerFilter(selector, value);
-                            } else {
-                                _this9._applyFilterValue(selector, value);
-                            }
-                        });
-                    });
-                    _this9.dom.filter2Container.style('display', (workflow.config.selector2.length > 0 ? 'block' : 'none'));
+                            workflow.config.selector2.forEach(function (selector, i) {
+                                _this9._createValueSelector('ck-widget-filter-2-selector-' + (i + 1), _this9.dom.filter2Container, selector, workflow.filter.getSelectorValue(selector), function (selector, value) {
+                                    if (isServerFilteringEnabled) {
+                                        applyServerFilter(selector, value);
+                                    } else {
+                                        _this9._applyFilterValue(selector, value);
+                                    }
+                                });
+                            });
+                            _this9.dom.filter2Container.style('display', (workflow.config.selector2.length > 0 ? 'block' : 'none'));
 
-                    if (workflow.config.selector_s) {
-                        workflow.config.selector_s.forEach(function (selector, i) {
-                            if (!selector.values || selector.values.length > 1) {
-                                _this9._createValueSelector('ck-widget-filter-s-selector-' + (i + 1), _this9.dom.filterSContainer, selector, workflow.props[selector.key], function (selector, value) {
-                                    workflow.props[selector.key] = value;
+                            if (workflow.config.selector_s) {
+                                workflow.config.selector_s.forEach(function (selector, i) {
+                                    if (!selector.values || selector.values.length > 1) {
+                                        _this9._createValueSelector('ck-widget-filter-s-selector-' + (i + 1), _this9.dom.filterSContainer, selector, workflow.props[selector.key], function (selector, value) {
+                                            workflow.props[selector.key] = value;
 
-                                    workflow.tableProcessor(workflow.data.table, workflow.props);
+                                            workflow.tableProcessor(workflow.data.table, workflow);
 
-                                    _this9._plotSetRefLines(workflow);
+                                            _this9._plotSetRefLines(workflow);
 
-                                    plot.build(workflow.data.table);
-                                    table.build(workflow.data.table);
+                                            plot.build(workflow.data.table);
+                                            table.build(workflow.data.table);
+                                        });
+                                    }
                                 });
                             }
+                            _this9.dom.filterSContainer.style('display', ((workflow.config.selector_s && workflow.config.selector_s.length > 0) ? 'block' : 'none'));
+
+                            plot.build(data.table);
+
+                            _this9._createPlotSelector('x-axis-selector','Plot dimension X',
+                                _this9.dom.plotSelectorContainer, plot.getXDimension(), dimension => plot.setXDimension(dimension),
+                                // Variation
+                                isVisible => plot.setXVariationVisibility(isVisible), plot.getXVariationVisibility()
+                            );
+
+                            _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
+                                _this9.dom.plotSelectorContainer, plot.getYDimension(), dimension => plot.setYDimension(dimension),
+                                // Variation
+                                isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility()
+                            );
+
+                            _this9._createPlotSelector('c-axis-selector', 'Plot color dimension',
+                                _this9.dom.plotSelectorContainer, plot.getCDimension(), dimension => plot.setCDimension(dimension) );
+
+                            if (workflow.sizeDimension !== '') {
+                                _this9._createPlotSelector('s-axis-selector', 'Point size dimension',
+                                _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
+                            }
+
+                            table.build(data.table);
+
+                            _this9._hideLoadingLayer();
+                        };
+
+                        if (!workflow.config || !workflow.data) {
+                            return fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetConfig).then(function (response) {
+                                return response.json();
+                            }).then(function (config) {
+                                var _iteratorNormalCompletion11 = true;
+                                var _didIteratorError11 = false;
+                                var _iteratorError11 = undefined;
+
+                                try {
+                                    for (var _iterator11 = _this9.workflows[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                                        var eWorkflow = _step11.value;
+
+                                        if (eWorkflow.moduleUoa === workflow.moduleUoa) {
+                                            eWorkflow.config = toLocal(config, eWorkflow.configPrefix);
+
+                                            CkRepoWidgetUtils.prepareTableView(eWorkflow.config.table_view);
+                                        }
+                                    }
+                                } catch (err) {
+                                    _didIteratorError11 = true;
+                                    _iteratorError11 = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                                            _iterator11.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError11) {
+                                            throw _iteratorError11;
+                                        }
+                                    }
+                                }
+
+                                configApplier(workflow.config);
+                            }).then(function () {
+                                return fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetData, fetchDataInit);
+                            }).then(function (response) {
+                                return response.json();
+                            }).then(function (data) {
+                                var _iteratorNormalCompletion12 = true;
+                                var _didIteratorError12 = false;
+                                var _iteratorError12 = undefined;
+
+                                try {
+                                    for (var _iterator12 = _this9.workflows[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+                                        var eWorkflow = _step12.value;
+
+                                        if (eWorkflow.moduleUoa === workflow.moduleUoa) {
+                                            eWorkflow.data = toLocal(data, eWorkflow.dataPrefix);
+
+                                            eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow);
+                                        }
+                                    }
+                                } catch (err) {
+                                    _didIteratorError12 = true;
+                                    _iteratorError12 = err;
+                                } finally {
+                                    try {
+                                        if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                                            _iterator12.return();
+                                        }
+                                    } finally {
+                                        if (_didIteratorError12) {
+                                            throw _iteratorError12;
+                                        }
+                                    }
+                                }
+
+                                dataApplier(workflow.data);
+                            });
+                        } else {
+                            setTimeout(function () {
+                                configApplier(workflow.config);
+                                dataApplier(workflow.data);
+                            }, 100);
+                        }
+                    };
+
+                    _this9._initDom(d3.select(rootId), d3.select(headerId), d3.select(loadingLayerId));
+
+                    _this9.dom.sidePanelFiltersTabBtn.on('click', function () {
+                        return _this9._openSidePanelFiltersTab();
+                    });
+                    if (!_this9.isLocalRun) {
+                        _this9.dom.sidePanelInfoTabBtn.on('click', function () {
+                            return _this9._openSidePanelInfoTab();
                         });
                     }
-                    _this9.dom.filterSContainer.style('display', ((workflow.config.selector_s && workflow.config.selector_s.length > 0) ? 'block' : 'none'));
+                    _this9.dom.sidePanelCloseBtn.on('click', function () {
+                        return _this9._hideSidePanel();
+                    });
 
-                    plot.build(data.table);
+                    _this9._createWorkflowSelector('ck-widget-filter-workflow-selector', _this9.dom.workflowSelectContainer, _this9.workflows, defaultWorkflow, function (workflow) {
+                        return showWorkflow(workflow);
+                    });
 
-                    _this9._createPlotSelector('x-axis-selector','Plot dimension X',
-                        _this9.dom.plotSelectorContainer, plot.getXDimension(), dimension => plot.setXDimension(dimension),
-                        // Variation
-                        isVisible => plot.setXVariationVisibility(isVisible), plot.getXVariationVisibility()
-                    );
+                    showWorkflow(defaultWorkflow);
+                })
+                .catch(reason => console.log(reason));
+        }
+    }, {
+        key: '_prepareWorkflows',
+        value: function _prepareWorkflows(rawWorkflowDesc) {
+            let defaultTableProcessor = (table => CkRepoWidgetUtils.prepareTable(table));
 
-                    _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
-                        _this9.dom.plotSelectorContainer, plot.getYDimension(), dimension => plot.setYDimension(dimension),
-                        // Variation
-                        isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility()
-                    );
+            let makeFunctionFromStr = function(name) {
+                if (typeof name === 'undefined') {
+                    return undefined;
+                }
+                name = name.toString();
+                if (!name.startsWith('CkRepoWidgetUtils.')) {
+                    throw new Error("workflows[].tableProcessor should start with 'CkRepoWidgetUtils.'");
+                }
+                return eval(name);
+            }
 
-                    _this9._createPlotSelector('c-axis-selector', 'Plot color dimension',
-                        _this9.dom.plotSelectorContainer, plot.getCDimension(), dimension => plot.setCDimension(dimension) );
+            let makeFilters = function(filtersDict) {
+                let res = new CkRepoWidgetFilter();
+                for(let key in filtersDict) {
+                    res.setSelector({ key: key }, filtersDict[key]);
+                }
+                return res;
+            }
 
-                    if (workflow.isSDimensionEnabled) {
-                        _this9._createPlotSelector('s-axis-selector', 'Point size dimension',
-                        _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
-                    }
+            let res = [];
 
-                    table.build(data.table);
-
-                    _this9._hideLoadingLayer();
+            for (let wf of rawWorkflowDesc.workflows) {
+                let newWf = {
+                    name: wf.name || '',
+                    moduleUoa: wf.moduleUoa || '',
+                    dataPrefix: wf.dataPrefix || '',
+                    configPrefix: wf.configPrefix|| '',
+                    tableProcessor: makeFunctionFromStr(wf.tableProcessor) || defaultTableProcessor,
+                    config: null,
+                    data: null,
+                    xDimension: wf.xDimension || '',
+                    yDimension: wf.yDimension || '',
+                    colorDimension: wf.colorDimension || '',
+                    colorRange: wf.colorRange,
+                    sizeDimension: wf.sizeDimension || '',
+                    xVariationVisible: wf.xVariationVisible || false,
+                    yVariationVisible: wf.yVariationVisible || false,
+                    filter: makeFilters(wf.filters || {}),
+                    props: wf.props || {},
+                    refLines: wf.refLines || [],
                 };
 
-                if (!workflow.config || !workflow.data) {
-                    return fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetConfig).then(function (response) {
-                        return response.json();
-                    }).then(function (config) {
-                        var _iteratorNormalCompletion11 = true;
-                        var _didIteratorError11 = false;
-                        var _iteratorError11 = undefined;
-
-                        try {
-                            for (var _iterator11 = workflows[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-                                var eWorkflow = _step11.value;
-
-                                if (eWorkflow.moduleUoa === workflow.moduleUoa) {
-                                    eWorkflow.config = toLocal(config, eWorkflow.configPrefix);
-
-                                    CkRepoWidgetUtils.prepareTableView(eWorkflow.config.table_view);
-                                }
-                            }
-                        } catch (err) {
-                            _didIteratorError11 = true;
-                            _iteratorError11 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion11 && _iterator11.return) {
-                                    _iterator11.return();
-                                }
-                            } finally {
-                                if (_didIteratorError11) {
-                                    throw _iteratorError11;
-                                }
-                            }
-                        }
-
-                        configApplier(workflow.config);
-                    }).then(function () {
-                        return fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetData, fetchDataInit);
-                    }).then(function (response) {
-                        return response.json();
-                    }).then(function (data) {
-                        var _iteratorNormalCompletion12 = true;
-                        var _didIteratorError12 = false;
-                        var _iteratorError12 = undefined;
-
-                        try {
-                            for (var _iterator12 = workflows[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-                                var eWorkflow = _step12.value;
-
-                                if (eWorkflow.moduleUoa === workflow.moduleUoa) {
-                                    eWorkflow.data = toLocal(data, eWorkflow.dataPrefix);
-
-                                    eWorkflow.tableProcessor(eWorkflow.data.table, eWorkflow.props);
-                                }
-                            }
-                        } catch (err) {
-                            _didIteratorError12 = true;
-                            _iteratorError12 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion12 && _iterator12.return) {
-                                    _iterator12.return();
-                                }
-                            } finally {
-                                if (_didIteratorError12) {
-                                    throw _iteratorError12;
-                                }
-                            }
-                        }
-
-                        dataApplier(workflow.data);
-                    });
-                } else {
-                    setTimeout(function () {
-                        configApplier(workflow.config);
-                        dataApplier(workflow.data);
-                    }, 100);
+                for (let refLine of newWf.refLines) {
+                    refLine.get_value = makeFunctionFromStr(refLine.get_value) || (d => null);
                 }
-            };
 
-            this._initDom(d3.select(rootId), d3.select(headerId), d3.select(loadingLayerId));
+                // Scenario filters available workflows
+                if (this.scenario !== '' && newWf.moduleUoa !== this.scenario) {
+                    continue;
+                }
 
-            this.dom.sidePanelFiltersTabBtn.on('click', function () {
-                return _this9._openSidePanelFiltersTab();
-            });
-            if (!this.isLocalRun) {
-                this.dom.sidePanelInfoTabBtn.on('click', function () {
-                    return _this9._openSidePanelInfoTab();
-                });
+                res.push(newWf);
             }
-            this.dom.sidePanelCloseBtn.on('click', function () {
-                return _this9._hideSidePanel();
-            });
 
-            this._createWorkflowSelector('ck-widget-filter-workflow-selector', this.dom.workflowSelectContainer, workflows, defaultWorkflow, function (workflow) {
-                return showWorkflow(workflow);
-            });
-
-            showWorkflow(defaultWorkflow);
+            return res;
         }
     }, {
         key: '_applyFilterValue',

@@ -1,0 +1,113 @@
+{
+    "defaultWorkflowIndex": 3,
+    "workflows": [
+        {
+            "name": "ReQuEST @ ASPLOS'18 tournament (Pareto-efficient image classification)",
+            "moduleUoa": "request.asplos18",
+            "xDimension": "##characteristics#run#inference_throughput",
+            "yDimension": "##characteristics#run#accuracy_top1",
+            "colorDimension": "experiment",
+            "sizeDimension": "##features#model_size",
+            "xVariationVisible": true,
+            "yVariationVisible": false
+        },
+        {
+            "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
+            "moduleUoa": "nntest",
+            "xDimension": "experiment",
+            "yDimension": "##characteristics#run#execution_time",
+            "colorDimension": "experiment",
+            "xVariationVisible": false,
+            "yVariationVisible": false
+        },
+        {
+            "name": "Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Solution Convergence",
+            "moduleUoa": "hackathon.20181006",
+            "xDimension": "__fevs",
+            "yDimension": "__energies",
+            "colorDimension": "_point",
+            "sizeDimension": "fun_exact",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "dataPrefix": "full_",
+            "configPrefix": "full_",
+            "filters": {
+                "_platform": "local_qasm_simulator",
+                "_minimizer_method": "my_cobyla"
+            }
+        },
+        {
+            "name": "Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Time To Solution",
+            "moduleUoa": "hackathon.20181006",
+            "xDimension": "T_ave",
+            "yDimension": "__energies",
+            "colorDimension": "_sample_number",
+            "sizeDimension": "t_ave",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
+            "dataPrefix": "metrics_",
+            "configPrefix": "metrics_",
+            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
+            "props": {
+                "__fun_key": "fun_exact",
+                "__time_key": "total_q_shots",
+                "__delta": 0.01,
+                "__prob": 0.8
+            },
+            "refLines": [
+                {
+                    "name": "H₂*",
+                    "dimension": "__energies",
+                    "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen"
+                },
+                {
+                    "name": "H₂",
+                    "dimension": "__energies",
+                    "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen"
+                },
+                {
+                    "name": "He",
+                    "dimension": "__energies",
+                    "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_helium"
+                }
+            ]
+        },
+        {
+            "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Solution Convergence",
+            "moduleUoa": "hackathon.20180615",
+            "xDimension": "__fevs",
+            "yDimension": "__energies",
+            "colorDimension": "_point",
+            "sizeDimension": "fun_exact",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "dataPrefix": "full_",
+            "configPrefix": "full_",
+            "filters": {
+                "_platform": "8q-agave",
+                "_minimizer_method": "my_cobyla"
+            }
+        },
+        {
+            "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Time To Solution",
+            "moduleUoa": "hackathon.20180615",
+            "xDimension": "T_ave",
+            "yDimension": "__energies",
+            "colorDimension": "_sample_number",
+            "sizeDimension": "t_ave",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
+            "dataPrefix": "metrics_",
+            "configPrefix": "metrics_",
+            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
+            "props": {
+                "__fun_key": "fun_exact",
+                "__time_key": "total_q_shots",
+                "__delta": 0.1,
+                "__prob": 0.5
+            }
+        }
+    ]
+}
