@@ -48,13 +48,13 @@
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
             "dataPrefix": "metrics_",
             "configPrefix": "metrics_",
+            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
             "props": {
                 "__fun_key": "fun_exact",
                 "__time_key": "total_q_shots",
                 "__delta": 0.01,
                 "__prob": 0.8
             },
-            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
             "refLines": [
                 {
                     "name": "H₂*",
@@ -93,21 +93,21 @@
             "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Time To Solution",
             "moduleUoa": "hackathon.20180615",
             "xDimension": "T_ave",
-            "xVariationVisible": false,
             "yDimension": "__energies",
-            "yVariationVisible": false,
             "colorDimension": "_sample_number",
-            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
             "sizeDimension": "t_ave",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
             "dataPrefix": "metrics_",
             "configPrefix": "metrics_",
+            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
             "props": {
                 "__fun_key": "fun_exact",
                 "__time_key": "total_q_shots",
                 "__delta": 0.1,
                 "__prob": 0.5
-            },
-            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor"
+            }
         }
     ]
 }
