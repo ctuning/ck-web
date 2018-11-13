@@ -392,11 +392,11 @@ var CkRepoWidgetUtils = {
             return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "qiskit_hydrogen")
         },
 
-        get_exact_answer_hydrogen: function get_exact_answer_qiskit_hydrogen(data) {
+        get_exact_answer_hydrogen: function get_exact_answer_hydrogen(data) {
             return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "hydrogen")
         },
 
-        get_exact_answer_helium: function get_exact_answer_qiskit_hydrogen(data) {
+        get_exact_answer_helium: function get_exact_answer_helium(data) {
             return CkRepoWidgetUtils.quantum.get_exact_answer_molecule(data, "helium")
         }
     },
