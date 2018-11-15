@@ -1,5 +1,5 @@
 {
-    "defaultWorkflowIndex": 3,
+    "defaultWorkflowIndex": 4,
     "workflows": [
         {
             "name": "ReQuEST @ ASPLOS'18 tournament (Pareto-efficient image classification)",
@@ -10,6 +10,17 @@
             "sizeDimension": "##features#model_size",
             "xVariationVisible": true,
             "yVariationVisible": false
+        },
+        {
+            "name": "MobileNets benchmark performance (execution time) vs accuracy (top1 / top5) (MLPerf)",
+            "moduleUoa": "mlperf.mobilenets",
+            "xDimension": "time_avg_ms",
+            "yDimension": "accuracy_top1",
+            "colorDimension": "library",
+            "sizeDimension": "model",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"]
         },
         {
             "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
