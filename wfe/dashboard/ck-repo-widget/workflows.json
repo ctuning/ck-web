@@ -20,7 +20,7 @@
             "sizeDimension": "model",
             "xVariationVisible": false,
             "yVariationVisible": false,
-            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"]
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"]
         },
         {
             "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
