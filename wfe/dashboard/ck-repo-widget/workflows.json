@@ -12,7 +12,7 @@
             "yVariationVisible": false
         },
         {
-            "name": "MobileNets benchmark performance (execution time) vs accuracy (top1 / top5) (MLPerf)",
+            "name": "MLPerf Inference - Object Classification - MobileNets",
             "moduleUoa": "mlperf.mobilenets",
             "xDimension": "time_avg_ms",
             "yDimension": "accuracy_top1",
