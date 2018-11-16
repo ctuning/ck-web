@@ -40,7 +40,7 @@ var CkRepoWidgetConstants = {
     kFilterAllValue: 'All',
     kMetaFilterPrefix: '##meta#',
     kRowHiddenKey: '__hidden',
-    kDefaultPointRadius: 3.5
+    kDefaultPointRadius: 5
 };
 
 var CkRepoWidgetUtils = {
@@ -1257,7 +1257,7 @@ var CkRepoWidgetPlot = function () {
             }
 
             this.colorRange = plotConfig.colorRange || ['lightblue', 'darkblue'];
-            this.sizeRange = plotConfig.sizeRange || [2.5, 4.5];
+            this.sizeRange = plotConfig.sizeRange || [3.0, 6.0];
         }
     }, {
         key: 'build',
@@ -1544,13 +1544,15 @@ var CkRepoWidgetPlot = function () {
     }, {
         key: '_applyPoints',
         value: function (dirtyFlags = null) {
+            let thisPlot = this;
+
             let mouseoverHandler = function mouseoverHandler(d) {
-                tooltip.transition().duration(200).style('opacity', .9);
-                let hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + _this4.xDimension.name + ': ' + xValueToDisplay(d) + '<br/>' + _this4.yDimension.name + ': ' + yValueToDisplay(d) + '<br/>' + _this4.cDimension.name + ': ' + cValueToDisplay(d) + '<br/>' + (_this4.plotConfig.sizeDimension !== '' ? _this4.sDimension.name + ': ' + sValueToDisplay(d) + '<br/>' : '');
-                tooltip.html(hint).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
+                thisPlot.tooltip.transition().duration(200).style('opacity', .9);
+                let hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + thisPlot.xDimension.name + ': ' + thisPlot.xValueToDisplay(d) + '<br/>' + thisPlot.yDimension.name + ': ' + thisPlot.yValueToDisplay(d) + '<br/>' + thisPlot.cDimension.name + ': ' + thisPlot.cValueToDisplay(d) + '<br/>' + (thisPlot.plotConfig.sizeDimension !== '' ? thisPlot.sDimension.name + ': ' + thisPlot.sValueToDisplay(d) + '<br/>' : '');
+                thisPlot.tooltip.html(hint).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
             };
             let mouseoutHandler = function mouseoutHandler(d) {
-                tooltip.transition().duration(500).style('opacity', 0);
+                thisPlot.tooltip.transition().duration(500).style('opacity', 0);
             };
             let clickHandler = function clickHandler(d) {
                 CkRepoWidgetUtils.scrollToElement(d3.select('#' + CkRepoWidgetUtils.getRowId(d)).node());
@@ -1558,35 +1560,106 @@ var CkRepoWidgetPlot = function () {
 
             let points = this.gPoints.selectAll('.ck-repo-widget-plot-dot').data(this.pointsData);
 
+            let shapes = {
+                triangle : function() {
+                    let c = d3.path();
+                    c.moveTo(-0.5, 0.5);
+                    c.lineTo(0, -0.5);
+                    c.lineTo(0.5, 0.5);
+                    c.closePath();
+                    return c.toString();
+                }(),
+
+                rect : function() {
+                    let c = d3.path();
+                    c.rect(-0.5, -0.5, 1, 1);
+                    return c.toString();
+                }(),
+
+                pentagon : function() {
+                    let c = d3.path();
+                    c.moveTo(0.07, -0.50);
+                    c.lineTo(0.64, -0.06);
+                    c.lineTo(0.50, 0.50);
+                    c.lineTo(-0.36, 0.50);
+                    c.lineTo(-0.50, -0.06);
+                    c.closePath();
+                    return c.toString();
+                }(),
+
+                circle : function() {
+                    let c = d3.path();
+                    c.moveTo(0.5, 0);
+                    c.arc(0, 0, 0.5, 0, 2 * Math.PI);
+                    return c;
+                }().toString(),
+
+                triangle_down : function() {
+                    let c = d3.path();
+                    c.moveTo(-0.5, -0.5);
+                    c.lineTo(0, 0.5);
+                    c.lineTo(0.5, -0.5);
+                    c.closePath();
+                    return c.toString();
+                }(),
+
+                rhombus : function() {
+                    let c = d3.path();
+                    c.moveTo(-0.5, 0);
+                    c.lineTo(0, -0.5);
+                    c.lineTo(0.5, 0);
+                    c.lineTo(0, 0.5);
+                    c.closePath();
+                    return c.toString();
+                }(),
+
+                star : function() {
+                    let c = d3.path();
+                    c.moveTo(0.07, -0.50);
+                    c.lineTo(0.50, 0.50);
+                    c.lineTo(-0.50, -0.06);
+                    c.lineTo(0.64, -0.06);
+                    c.lineTo(-0.36, 0.50);
+                    c.closePath();
+                    return c.toString();
+                }(),
+            };
+
+            console.log(shapes.rect);
+
+            // Create
             points.enter()
-                .append('circle')
+                .append('path')
                     .attr('class', 'ck-repo-widget-plot-dot')
                     .on('mouseover', mouseoverHandler)
                     .on('mouseout', mouseoutHandler)
                     .on('click', clickHandler)
+                    .attr('d', d => shapes[ Object.keys(shapes)[Math.floor(Math.random()*Object.keys(shapes).length)] ])
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', '0.05')
 
-            if (!dirtyFlags || dirtyFlags.includes("scale")) {
-                points
-                    .attr('cx', d => this.xScale(this.xValue(d)))
-                    .attr('cy', d => this.yScale(this.yValue(d)));
-            }
-
-            if (!dirtyFlags || dirtyFlags.includes("color")) {
-                let color = d3.scaleLinear().domain(CkRepoWidgetUtils.getColorDomain(this.colorRange.length, this.colorBounds)).range(this.colorRange);
-
-                points.style('fill', row => color(this.cValue(row)));
-            }
-
-            if (!dirtyFlags || dirtyFlags.includes("size")) {
+            // Pos & Scale
+            if (!dirtyFlags || dirtyFlags.includes("scale") || dirtyFlags.includes("scale")) {
                 let sizeMapper = d3.scaleLinear().domain([d3.min(this.pointsData, this.sValue), d3.max(this.pointsData, this.sValue)]).range(this.sizeRange);
                 let pointSize = (this.plotConfig.sizeDimension !== ''
                     ? (row => sizeMapper(this.sValue(row)))
                     : (row => CkRepoWidgetConstants.kDefaultPointRadius)
                 );
 
-                points.attr('r', pointSize);
+                let translateFn = d => 'translate(' + this.xScale(this.xValue(d)) + ', ' + this.yScale(this.yValue(d)) + ')';
+                let scaleFn = d => 'scale(' + pointSize(d) * 2 + ')';
+
+                points.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
             }
 
+            // Color
+            if (!dirtyFlags || dirtyFlags.includes("color")) {
+                let color = d3.scaleLinear().domain(CkRepoWidgetUtils.getColorDomain(this.colorRange.length, this.colorBounds)).range(this.colorRange);
+
+                points.style('fill', row => color(this.cValue(row)));
+            }
+
+            // Visibility
             if (!dirtyFlags || dirtyFlags.includes("visibility")) {
                 points.style('visibility', row => (this.filter.isRowVisible(row) ? 'visible' : 'hidden'));
             }
