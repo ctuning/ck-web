@@ -1067,13 +1067,24 @@ class CkRepoWidgetMarker {
             c.lineTo(1, 0)
             c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
         } else if (name === 'vline') {
+            c.moveTo(0, -1);
+            c.lineTo(0, 1);
+        } else if (name === 'hline') {
             c.moveTo(-1, 0);
             c.lineTo(1, 0);
         } else if (name === 'cross') {
+            c.moveTo(-1, -1);
+            c.lineTo(1, 1);
+            c.moveTo(1, -1);
+            c.lineTo(-1, 1);
+        } else if (name === 'plus') {
             c.moveTo(0, -1);
             c.lineTo(0, 1);
             c.moveTo(-1, 0);
             c.lineTo(1, 0);
+        } else if (name === 'dot') {
+            c.moveTo(0.3, 0);
+            c.arc(0, 0, 0.3, 0, 2 * Math.PI);
         } else {
             c = null;
         }
@@ -1133,6 +1144,7 @@ var CkRepoWidgetPlot = function () {
 
             this.markerShapes = new CkRepoWidgetMarker();
             this.markerDimensionSetIdx = 0;
+            this.markerOverlayDimensionSetIdx = 0;
 
             /*
             this.centerButton = plotContainer.append('div')
@@ -1541,6 +1553,18 @@ var CkRepoWidgetPlot = function () {
             this._applyPoints(["markerOverlay"]);
         }
     }, {
+        key: 'getMarkerOverlayDimensionSetIdx',
+        value: function getMarkerOverlayDimensionSetIdx() {
+            return this.markerOverlayDimensionSetIdx;
+        }
+    }, {
+        key: 'setMarkerOverlayDimensionSetIdx',
+        value: function setMarkerOverlayDimensionSetIdx(newSetIdx) {
+            this.markerOverlayDimensionSetIdx = newSetIdx;
+            this._updateMarkerOverlayHasher();
+            this._applyPoints(["markerOverlay"]);
+        }
+    }, {
         key: 'setXVariationVisibility',
         value: function setXVariationVisibility(isVisible) {
             this.isVariationXVisible = isVisible;
@@ -1839,7 +1863,7 @@ var CkRepoWidgetPlot = function () {
                 if (pointOverlays) {
                     // Marker overlay
                     if (!dirtyFlags || dirtyFlags.includes("markerOverlay")) {
-                        pointOverlays.attr('d', d => this.markerShapes.getMarker(this.plotConfig.markerOverlayDimensionSets, 0, this.markerOverlayValue(d)) );
+                        pointOverlays.attr('d', d => this.markerShapes.getMarker(this.plotConfig.markerOverlayDimensionSets, this.markerOverlayDimensionSetIdx, this.markerOverlayValue(d)) );
                     }
                 }
             }
@@ -2373,9 +2397,8 @@ var CkRepoWdiget = function () {
                             }
 
                             if (workflow.markerDimension !== '') {
-
                                 let markersListSelector = {
-                                    name: 'Marker set',
+                                    name: 'Marker shapes',
                                     config: { type: 'list' },
                                     values: Object.keys(workflow.markerDimensionSets),
                                 };
@@ -2385,6 +2408,21 @@ var CkRepoWdiget = function () {
                                         markersListSelector,
                                         plot.getMarkerDimensionSetIdx(),
                                         (_, value) => plot.setMarkerDimensionSetIdx( markersListSelector.values.indexOf(value) )
+                                );
+                            }
+
+                            if (workflow.markerOverlayDimension !== '') {
+                                let markersOverlayListSelector = {
+                                    name: 'Overlay shapes',
+                                    config: { type: 'list' },
+                                    values: Object.keys(workflow.markerOverlayDimensionSets),
+                                };
+
+                                _this9._createValueSelector('marker-overlay-set-selector',
+                                        _this9.dom.plotSelectorContainer,
+                                        markersOverlayListSelector,
+                                        plot.getMarkerOverlayDimensionSetIdx(),
+                                        (_, value) => plot.setMarkerOverlayDimensionSetIdx( markersOverlayListSelector.values.indexOf(value) )
                                 );
                             }
 

@@ -30,7 +30,8 @@
                 "Circles" : ["circle"]
             },
             "markerOverlayDimensionSets": {
-                "_": ["none", "vline", "cross"]
+                "3 kinds": ["none", "vline", "cross"],
+                "6 kinds": ["none", "dot", "hline", "vline", "plus", "cross"]
             },
             "sizeRange": [4, 6]
         },
