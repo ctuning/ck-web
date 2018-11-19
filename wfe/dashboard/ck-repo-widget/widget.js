@@ -2354,22 +2354,31 @@ var CkRepoWdiget = function () {
                                 _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
                             }
 
-                            _this9._createPlotSelector('marker-axis-selector', 'Plot marker dimension',
-                                _this9.dom.plotSelectorContainer, plot.getMarkerDimension(), dimension => plot.setMarkerDimension(dimension) );
+                            if (workflow.markerDimension !== '') {
+                                _this9._createPlotSelector('marker-axis-selector', 'Plot marker dimension',
+                                    _this9.dom.plotSelectorContainer, plot.getMarkerDimension(), dimension => plot.setMarkerDimension(dimension) );
+                            }
 
-                            _this9._createPlotSelector('marker-overlay-axis-selector', 'Plot marker overlay dimension',
-                                _this9.dom.plotSelectorContainer, plot.getMarkerOverlayDimension(), dimension => plot.setMarkerOverlayDimension(dimension) );
+                            if (workflow.markerOverlayDimension !== '') {
+                                _this9._createPlotSelector('marker-overlay-axis-selector', 'Plot marker overlay dimension',
+                                    _this9.dom.plotSelectorContainer, plot.getMarkerOverlayDimension(), dimension => plot.setMarkerOverlayDimension(dimension) );
+                            }
 
-                            _this9._createValueSelector('marker-set-selector',
-                                    _this9.dom.plotSelectorContainer,
-                                    {
-                                        name: 'Marker set',
-                                        config: { type: 'list' },
-                                        values: [ 0, 1, 2 ]
-                                    },
-                                    plot.getMarkerDimensionSetIdx(),
-                                    (_, value) => plot.setMarkerDimensionSetIdx(value)
-                            );
+                            if (workflow.markerDimension !== '') {
+
+                                let markersListSelector = {
+                                    name: 'Marker set',
+                                    config: { type: 'list' },
+                                    values: [ 'Circles (○)', 'Polygons (△/□/⬠/⬡/▽/◇/☆/○)', 'Sectors (◷/⦵/◶/○)' ]
+                                };
+
+                                _this9._createValueSelector('marker-set-selector',
+                                        _this9.dom.plotSelectorContainer,
+                                        markersListSelector,
+                                        plot.getMarkerDimensionSetIdx(),
+                                        (_, value) => plot.setMarkerDimensionSetIdx( markersListSelector.values.indexOf(value) )
+                                );
+                            }
 
                             table.build(data.table);
 
