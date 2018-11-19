@@ -1603,13 +1603,6 @@ var CkRepoWidgetPlot = function () {
                     return c.toString();
                 }(),
 
-                circle : function() {
-                    let c = d3.path();
-                    c.moveTo(1, 0);
-                    c.arc(0, 0, 1, 0, 2 * Math.PI);
-                    return c;
-                }().toString(),
-
                 triangle_down : function() {
                     let c = d3.path();
                     c.moveTo(-1, -1);
@@ -1669,6 +1662,13 @@ var CkRepoWidgetPlot = function () {
                     c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
                     return c;
                 }(),
+
+                circle : function() {
+                    let c = d3.path();
+                    c.moveTo(1, 0);
+                    c.arc(0, 0, 1, 0, 2 * Math.PI);
+                    return c;
+                }().toString(),
             };
 
             // Create
@@ -1681,6 +1681,7 @@ var CkRepoWidgetPlot = function () {
                     .attr('d', d => shapes[ Object.keys(shapes)[Math.floor(Math.random()*Object.keys(shapes).length)] ])
                     .attr('stroke', 'black')
                     .attr('stroke-width', '0.03')
+            points.exit().remove();
 
             // Pos & Scale
             if (!dirtyFlags || dirtyFlags.includes("pos") || dirtyFlags.includes("size")) {
@@ -1707,7 +1708,6 @@ var CkRepoWidgetPlot = function () {
                 points.style('visibility', row => (this.filter.isRowVisible(row) ? 'visible' : 'hidden'));
             }
 
-            points.exit().remove();
         }
     }, {
         key: '_applyColorDimension',
