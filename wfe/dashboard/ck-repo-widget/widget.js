@@ -2365,33 +2365,33 @@ var CkRepoWdiget = function () {
 
                             plot.build(data.table);
 
-                            _this9._createPlotSelector('x-axis-selector','Plot dimension X',
+                            _this9._createPlotSelector('x-axis-selector','X dimension',
                                 _this9.dom.plotSelectorContainer, plot.getXDimension(), dimension => plot.setXDimension(dimension),
                                 // Variation
                                 isVisible => plot.setXVariationVisibility(isVisible), plot.getXVariationVisibility()
                             );
 
-                            _this9._createPlotSelector('y-axis-selector', 'Plot dimension Y',
+                            _this9._createPlotSelector('y-axis-selector', 'Y dimension',
                                 _this9.dom.plotSelectorContainer, plot.getYDimension(), dimension => plot.setYDimension(dimension),
                                 // Variation
                                 isVisible => plot.setYVariationVisibility(isVisible), plot.getYVariationVisibility()
                             );
 
-                            _this9._createPlotSelector('c-axis-selector', 'Plot color dimension',
+                            _this9._createPlotSelector('c-axis-selector', 'Color dimension',
                                 _this9.dom.plotSelectorContainer, plot.getCDimension(), dimension => plot.setCDimension(dimension) );
 
                             if (workflow.sizeDimension !== '') {
-                                _this9._createPlotSelector('s-axis-selector', 'Point size dimension',
+                                _this9._createPlotSelector('s-axis-selector', 'Size dimension',
                                 _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
                             }
 
                             if (workflow.markerDimension !== '') {
-                                _this9._createPlotSelector('marker-axis-selector', 'Plot marker dimension',
+                                _this9._createPlotSelector('marker-axis-selector', 'Marker dimension',
                                     _this9.dom.plotSelectorContainer, plot.getMarkerDimension(), dimension => plot.setMarkerDimension(dimension) );
                             }
 
                             if (workflow.markerOverlayDimension !== '') {
-                                _this9._createPlotSelector('marker-overlay-axis-selector', 'Plot marker overlay dimension',
+                                _this9._createPlotSelector('marker-overlay-axis-selector', 'Marker overlay dimension',
                                     _this9.dom.plotSelectorContainer, plot.getMarkerOverlayDimension(), dimension => plot.setMarkerOverlayDimension(dimension) );
                             }
 
