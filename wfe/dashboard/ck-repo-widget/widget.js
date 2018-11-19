@@ -1486,7 +1486,7 @@ var CkRepoWidgetPlot = function () {
                     return xScale(xValue(d));
                 });
 
-                _this4._applyPoints(["scale"]);
+                _this4._applyPoints(["pos"]);
                 _this4._applyRefLines();
             };
 
@@ -1591,6 +1591,18 @@ var CkRepoWidgetPlot = function () {
                     return c.toString();
                 }(),
 
+                hexagon : function() {
+                    let c = d3.path();
+                    c.moveTo(1, 0);
+                    c.lineTo(0.5, -1);
+                    c.lineTo(-0.5, -1);
+                    c.lineTo(-1, 0);
+                    c.lineTo(-0.5, 1);
+                    c.lineTo(0.5, 1);
+                    c.closePath();
+                    return c.toString();
+                }(),
+
                 circle : function() {
                     let c = d3.path();
                     c.moveTo(1, 0);
@@ -1631,6 +1643,32 @@ var CkRepoWidgetPlot = function () {
                     c.closePath();
                     return c.toString();
                 }(),
+
+                sector_1_4 : function() {
+                    let c = d3.path();
+                    c.moveTo(0, -1);
+                    c.lineTo(0, 0);
+                    c.lineTo(1, 0)
+                    c.arc(0, 0, 1, 0, -0.5 * Math.PI, true);
+                    return c;
+                }(),
+
+                sector_1_2 : function() {
+                    let c = d3.path();
+                    c.moveTo(-1, 0);
+                    c.lineTo(1, 0)
+                    c.arc(0, 0, 1, 0, -1 * Math.PI, true);
+                    return c;
+                }(),
+
+                sector_3_4 : function() {
+                    let c = d3.path();
+                    c.moveTo(0, 1);
+                    c.lineTo(0, 0)
+                    c.lineTo(1, 0)
+                    c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
+                    return c;
+                }(),
             };
 
             // Create
@@ -1645,7 +1683,7 @@ var CkRepoWidgetPlot = function () {
                     .attr('stroke-width', '0.03')
 
             // Pos & Scale
-            if (!dirtyFlags || dirtyFlags.includes("scale") || dirtyFlags.includes("scale")) {
+            if (!dirtyFlags || dirtyFlags.includes("pos") || dirtyFlags.includes("size")) {
                 let sizeMapper = d3.scaleLinear().domain([d3.min(this.pointsData, this.sValue), d3.max(this.pointsData, this.sValue)]).range(this.sizeRange);
                 let pointSize = (this.plotConfig.sizeDimension !== ''
                     ? (row => sizeMapper(this.sValue(row)))
