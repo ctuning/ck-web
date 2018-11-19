@@ -1398,6 +1398,18 @@ var CkRepoWidgetPlot = function () {
                 }
             }
 
+            this._updateMarkerHasher = function() {
+                let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerDimension)]);
+                this.markerHasher.reset();
+                this.markerHasher.prepareValues(values, true);
+            }
+
+            this._updateMarkerOverlayHasher = function() {
+                let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerOverlayDimension)]);
+                this.markerOverlayHasher.reset();
+                this.markerOverlayHasher.prepareValues(values, true);
+            }
+
             this.colorRange = plotConfig.colorRange || ['lightblue', 'darkblue'];
             this.sizeRange = plotConfig.sizeRange || [2.5, 4.5];
         }
@@ -1417,6 +1429,9 @@ var CkRepoWidgetPlot = function () {
             this.linesData = this.getLinesData(data);
             this.xVariationData = this.getXVariationData(this.pointsData);
             this.yVariationData = this.getYVariationData(this.pointsData);
+
+            this._updateMarkerHasher();
+            this._updateMarkerOverlayHasher();
 
             this._build();
         }
@@ -1510,10 +1525,7 @@ var CkRepoWidgetPlot = function () {
         key: 'setMarkerDimension',
         value: function setMarkerDimension(dimension) {
             this.markerDimension = dimension;
-            this.markerHasher.reset();
-
-            let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerDimension)]);
-            this.markerHasher.prepareValues(values, true);
+            this._updateMarkerHasher();
             this._applyPoints(["marker"]);
         }
     }, {
@@ -1525,9 +1537,7 @@ var CkRepoWidgetPlot = function () {
         key: 'setMarkerOverlayDimension',
         value: function setMarkerOverlayDimension(dimension) {
             this.markerOverlayDimension = dimension;
-            this.markerOverlayHasher.reset();
-            let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerOverlayDimension)]);
-            this.markerOverlayHasher.prepareValues(values, true);
+            this._updateMarkerOverlayHasher();
             this._applyPoints(["markerOverlay"]);
         }
     }, {
