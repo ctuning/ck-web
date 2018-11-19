@@ -981,6 +981,7 @@ class CkRepoWidgetMarker {
             ['circle'],
             ['triangle', 'rect', 'pentagon', 'hexagon', 'triangle_down', 'diamond', 'star', 'circle'],
             ['sector_1_4', 'sector_1_2', 'sector_3_4', 'circle'],
+            ['none', 'cross', 'vline'],
         ];
 
         this.markerCache = {};
@@ -1069,6 +1070,14 @@ class CkRepoWidgetMarker {
             c.lineTo(0, 0)
             c.lineTo(1, 0)
             c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
+        } else if (name === 'vline') {
+            c.moveTo(-1, 0);
+            c.lineTo(1, 0);
+        } else if (name === 'cross') {
+            c.moveTo(0, -1);
+            c.lineTo(0, 1);
+            c.moveTo(-1, 0);
+            c.lineTo(1, 0);
         } else {
             c = null;
         }
@@ -1394,7 +1403,7 @@ var CkRepoWidgetPlot = function () {
             }
 
             this.colorRange = plotConfig.colorRange || ['lightblue', 'darkblue'];
-            this.sizeRange = plotConfig.sizeRange || [3.0, 6.0];
+            this.sizeRange = plotConfig.sizeRange || [2.5, 4.5];
         }
     }, {
         key: 'build',
@@ -1737,6 +1746,11 @@ var CkRepoWidgetPlot = function () {
 
             let points = this.gPoints.selectAll('.ck-repo-widget-plot-dot').data(this.pointsData);
 
+            let pointOverlays = null;
+            if (typeof this.markerOverlayDimension !== 'undefined') {
+                pointOverlays = this.gPoints.selectAll('.ck-repo-widget-plot-dot-overlay').data(this.pointsData);
+            }
+
             // Create
             points.enter()
                 .append('path')
@@ -1748,6 +1762,16 @@ var CkRepoWidgetPlot = function () {
                     .attr('stroke-width', '0.03')
             points.exit().remove();
 
+            // Create (overlays)
+            if (pointOverlays) {
+                pointOverlays.enter()
+                    .append('path')
+                        .attr('class', 'ck-repo-widget-plot-dot-overlay')
+                        .attr('stroke', 'black')
+                        .attr('stroke-width', '0.1')
+                pointOverlays.exit().remove();
+            }
+
             // Pos & Scale
             if (!dirtyFlags || dirtyFlags.includes("pos") || dirtyFlags.includes("size")) {
                 let sizeMapper = d3.scaleLinear().domain([d3.min(this.pointsData, this.sValue), d3.max(this.pointsData, this.sValue)]).range(this.sizeRange);
@@ -1758,7 +1782,12 @@ var CkRepoWidgetPlot = function () {
 
                 let translateFn = d => 'translate(' + this.xScale(this.xValue(d)) + ', ' + this.yScale(this.yValue(d)) + ')';
                 let scaleFn = d => 'scale(' + pointSize(d) + ')';
+
                 points.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
+
+                if (pointOverlays){
+                    pointOverlays.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
+                }
             }
 
             // Color
@@ -1771,11 +1800,21 @@ var CkRepoWidgetPlot = function () {
             // Visibility
             if (!dirtyFlags || dirtyFlags.includes("visibility")) {
                 points.style('visibility', row => (this.filter.isRowVisible(row) ? 'visible' : 'hidden'));
+                if (pointOverlays) {
+                    pointOverlays.style('visibility', row => (this.filter.isRowVisible(row) ? 'visible' : 'hidden'));
+                }
             }
 
             // Marker
             if (!dirtyFlags || dirtyFlags.includes("marker")) {
                 points.attr('d', d => this.markerShapes.getMarker(this.markerDimensionSetIdx, this.markerValue(d)) );
+            }
+
+            if (pointOverlays) {
+                // Marker overlay
+                if (!dirtyFlags || dirtyFlags.includes("markerOverlay")) {
+                    pointOverlays.attr('d', d => this.markerShapes.getMarker(3, this.markerOverlayValue(d)) );
+                }
             }
         }
     }, {
@@ -2210,6 +2249,7 @@ var CkRepoWdiget = function () {
                                 sizeDimension: workflow.sizeDimension,
                                 markerDimension: workflow.markerDimension,
                                 markerDimensionSetIdx: workflow.markerDimensionSetIdx,
+                                markerOverlayDimension: workflow.markerOverlayDimension,
                                 isVariationXVisible: workflow.xVariationVisible,
                                 isVariationYVisible: workflow.yVariationVisible,
                                 filter: workflow.filter,
@@ -2457,6 +2497,7 @@ var CkRepoWdiget = function () {
                     sizeDimension: wf.sizeDimension || '',
                     markerDimension: wf.markerDimension || '',
                     markerDimensionSetIdx: wf.markerDimensionSetIdx || 0,
+                    markerOverlayDimension: wf.markerOverlayDimension || '',
                     xVariationVisible: wf.xVariationVisible || false,
                     yVariationVisible: wf.yVariationVisible || false,
                     filter: makeFilters(wf.filters || {}),
