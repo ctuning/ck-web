@@ -640,7 +640,11 @@ var CkRepoWidgetHasher = function () {
 
     _createClass(CkRepoWidgetHasher, [{
         key: 'hash',
-        value: function hash(value) {
+        value: function hash(value, convertToString = false) {
+            if (convertToString) {
+                value = String(value);
+            }
+
             if (typeof value === 'string') {
                 var hashedValue = this.hashMap[value];
 
@@ -658,6 +662,13 @@ var CkRepoWidgetHasher = function () {
         value: function reset() {
             this.lashHashKey = 0;
             this.hashMap = {};
+        }
+    }, {
+        key: 'prepareValues',
+        value: function prepareValues(values, convertToString) {
+            for (let v of values) {
+                this.hash(v, convertToString);
+            }
         }
     }]);
 
@@ -1021,11 +1032,15 @@ var CkRepoWidgetPlot = function () {
             this.yDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.yDimension);
             this.cDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.colorDimension);
             this.sDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.sizeDimension);
+            this.markerDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.markerDimension);
+            this.markerOverlayDimension = this.dataConfig.dimensions.find(d => d.key === this.plotConfig.markerOverlayDimension);
 
             this.xHasher = new CkRepoWidgetHasher();
             this.yHasher = new CkRepoWidgetHasher();
             this.cHasher = new CkRepoWidgetHasher();
             this.sHasher = new CkRepoWidgetHasher();
+            this.markerHasher = new CkRepoWidgetHasher();
+            this.markerOverlayHasher = new CkRepoWidgetHasher();
 
             this.xValue = function (row) {
                 return _this3.xHasher.hash(row[CkRepoWidgetUtils.getAxisKey(_this3.xDimension)]);
@@ -1051,6 +1066,11 @@ var CkRepoWidgetPlot = function () {
             this.sValue = function (row) {
                 return _this3.sHasher.hash(row[CkRepoWidgetUtils.getAxisKey(_this3.sDimension)]);
             };
+            this.getValue = function(row, dimension, hasher, convertToString = false) {
+                return hasher.hash(row[CkRepoWidgetUtils.getAxisKey(dimension)], convertToString);
+            }
+            this.markerValue = row => this.getValue(row, this.markerDimension, this.markerHasher, true);
+            this.markerOverlayValue = row => this.getValue(row, this.markerOverlayDimension, this.markerOverlayHasher, true);
 
             var valueToDisplay = function valueToDisplay(dimension, value) {
                 var tView = _this3.dataConfig.table_view.find(function (view) {
@@ -1145,6 +1165,14 @@ var CkRepoWidgetPlot = function () {
 
             this.filterPointsData = function (data) {
                 return data.filter(row => _this3.filter.isRowVisible(row));
+            }
+
+            this.getDataUniqueValues = function (data, valueGetter) {
+                let values = data.map( row => valueGetter(row) )
+                    .filter( val => !Number.isNaN(val) );
+                let unique = values.filter(function(item, i, ar){ return ar.indexOf(item) === i; });
+                unique.sort();
+                return unique;
             }
 
             this.getColorBounds = function (data) {
@@ -1347,6 +1375,35 @@ var CkRepoWidgetPlot = function () {
         key: 'getSDimension',
         value: function getSDimension() {
             return this.sDimension;
+        }
+    }, {
+        key: 'getMarkerDimension',
+        value: function getMarkerDimension() {
+            return this.markerDimension;
+        }
+    }, {
+        key: 'setMarkerDimension',
+        value: function setMarkerDimension(dimension) {
+            this.markerDimension = dimension;
+            this.markerHasher.reset();
+
+            let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerDimension)]);
+            this.markerHasher.prepareValues(values, true);
+            this._applyPoints(["marker"]);
+        }
+    }, {
+        key: 'getMarkerOverlayDimension',
+        value: function getMarkerOverlayDimension() {
+            return this.markerOverlayDimension;
+        }
+    }, {
+        key: 'setMarkerOverlayDimension',
+        value: function setMarkerOverlayDimension(dimension) {
+            this.markerOverlayDimension = dimension;
+            this.markerOverlayHasher.reset();
+            let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerOverlayDimension)]);
+            this.markerOverlayHasher.prepareValues(values, true);
+            this._applyPoints(["markerOverlay"]);
         }
     }, {
         key: 'setXVariationVisibility',
@@ -1560,116 +1617,127 @@ var CkRepoWidgetPlot = function () {
 
             let points = this.gPoints.selectAll('.ck-repo-widget-plot-dot').data(this.pointsData);
 
-            let shapes = {
-                triangle : function() {
-                    let c = d3.path();
-                    c.moveTo(-1, 1);
-                    c.lineTo(0, -1);
-                    c.lineTo(1, 1);
-                    c.closePath();
-                    return c.toString();
-                }(),
+            let shapes = [
+                [
+                    function triangle() {
+                        let c = d3.path();
+                        c.moveTo(-1, 1);
+                        c.lineTo(0, -1);
+                        c.lineTo(1, 1);
+                        c.closePath();
+                        return c.toString();
+                    }(),
 
-                rect : function() {
-                    let c = d3.path();
-                    c.rect(-1, -1, 2, 2);
-                    return c.toString();
-                }(),
+                    function rect() {
+                        let c = d3.path();
+                        c.rect(-1, -1, 2, 2);
+                        return c.toString();
+                    }(),
 
-                pentagon : function() {
-                    let c = d3.path();
-                    let c1 = 0.31;
-                    let c2 = 0.81;
-                    let s1 = 0.95;
-                    let s2 = 0.59;
-                    c.moveTo(0, -1);
-                    c.lineTo(s1, -c1);
-                    c.lineTo(s2, c2);
-                    c.lineTo(-s2, c2);
-                    c.lineTo(-s1, -c1);
-                    c.closePath();
-                    return c.toString();
-                }(),
+                    function pentagon() {
+                        let c = d3.path();
+                        let c1 = 0.31;
+                        let c2 = 0.81;
+                        let s1 = 0.95;
+                        let s2 = 0.59;
+                        c.moveTo(0, -1);
+                        c.lineTo(s1, -c1);
+                        c.lineTo(s2, c2);
+                        c.lineTo(-s2, c2);
+                        c.lineTo(-s1, -c1);
+                        c.closePath();
+                        return c.toString();
+                    }(),
 
-                hexagon : function() {
-                    let c = d3.path();
-                    c.moveTo(1, 0);
-                    c.lineTo(0.5, -1);
-                    c.lineTo(-0.5, -1);
-                    c.lineTo(-1, 0);
-                    c.lineTo(-0.5, 1);
-                    c.lineTo(0.5, 1);
-                    c.closePath();
-                    return c.toString();
-                }(),
+                    function hexagon() {
+                        let c = d3.path();
+                        c.moveTo(1, 0);
+                        c.lineTo(0.5, -1);
+                        c.lineTo(-0.5, -1);
+                        c.lineTo(-1, 0);
+                        c.lineTo(-0.5, 1);
+                        c.lineTo(0.5, 1);
+                        c.closePath();
+                        return c.toString();
+                    }(),
 
-                triangle_down : function() {
-                    let c = d3.path();
-                    c.moveTo(-1, -1);
-                    c.lineTo(0, 1);
-                    c.lineTo(1, -1);
-                    c.closePath();
-                    return c.toString();
-                }(),
+                    function triangle_down() {
+                        let c = d3.path();
+                        c.moveTo(-1, -1);
+                        c.lineTo(0, 1);
+                        c.lineTo(1, -1);
+                        c.closePath();
+                        return c.toString();
+                    }(),
 
-                rhombus : function() {
-                    let c = d3.path();
-                    c.moveTo(-1, 0);
-                    c.lineTo(0, -1);
-                    c.lineTo(1, 0);
-                    c.lineTo(0, 1);
-                    c.closePath();
-                    return c.toString();
-                }(),
+                    function rhombus() {
+                        let c = d3.path();
+                        c.moveTo(-1, 0);
+                        c.lineTo(0, -1);
+                        c.lineTo(1, 0);
+                        c.lineTo(0, 1);
+                        c.closePath();
+                        return c.toString();
+                    }(),
 
-                star : function() {
-                    let c = d3.path();
-                    let c1 = 0.31;
-                    let c2 = 0.81;
-                    let s1 = 0.95;
-                    let s2 = 0.59;
-                    c.moveTo(0, -1);
-                    c.lineTo(s2, c2);
-                    c.lineTo(-s1, -c1);
-                    c.lineTo(s1, -c1);
-                    c.lineTo(-s2, c2);
-                    c.closePath();
-                    return c.toString();
-                }(),
+                    function star() {
+                        let c = d3.path();
+                        let c1 = 0.31;
+                        let c2 = 0.81;
+                        let s1 = 0.95;
+                        let s2 = 0.59;
+                        c.moveTo(0, -1);
+                        c.lineTo(s2, c2);
+                        c.lineTo(-s1, -c1);
+                        c.lineTo(s1, -c1);
+                        c.lineTo(-s2, c2);
+                        c.closePath();
+                        return c.toString();
+                    }(),
 
-                sector_1_4 : function() {
-                    let c = d3.path();
-                    c.moveTo(0, -1);
-                    c.lineTo(0, 0);
-                    c.lineTo(1, 0)
-                    c.arc(0, 0, 1, 0, -0.5 * Math.PI, true);
-                    return c;
-                }(),
+                    function circle() {
+                        let c = d3.path();
+                        c.moveTo(1, 0);
+                        c.arc(0, 0, 1, 0, 2 * Math.PI);
+                        return c;
+                    }().toString(),
+                ],
 
-                sector_1_2 : function() {
-                    let c = d3.path();
-                    c.moveTo(-1, 0);
-                    c.lineTo(1, 0)
-                    c.arc(0, 0, 1, 0, -1 * Math.PI, true);
-                    return c;
-                }(),
+                [
+                    function sector_1_4() {
+                        let c = d3.path();
+                        c.moveTo(0, -1);
+                        c.lineTo(0, 0);
+                        c.lineTo(1, 0)
+                        c.arc(0, 0, 1, 0, -0.5 * Math.PI, true);
+                        return c;
+                    }(),
 
-                sector_3_4 : function() {
-                    let c = d3.path();
-                    c.moveTo(0, 1);
-                    c.lineTo(0, 0)
-                    c.lineTo(1, 0)
-                    c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
-                    return c;
-                }(),
+                    function sector_1_2() {
+                        let c = d3.path();
+                        c.moveTo(-1, 0);
+                        c.lineTo(1, 0)
+                        c.arc(0, 0, 1, 0, -1 * Math.PI, true);
+                        return c;
+                    }(),
 
-                circle : function() {
-                    let c = d3.path();
-                    c.moveTo(1, 0);
-                    c.arc(0, 0, 1, 0, 2 * Math.PI);
-                    return c;
-                }().toString(),
-            };
+                    function sector_3_4() {
+                        let c = d3.path();
+                        c.moveTo(0, 1);
+                        c.lineTo(0, 0)
+                        c.lineTo(1, 0)
+                        c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
+                        return c;
+                    }(),
+
+                    function circle() {
+                        let c = d3.path();
+                        c.moveTo(1, 0);
+                        c.arc(0, 0, 1, 0, 2 * Math.PI);
+                        return c;
+                    }().toString(),
+                ]
+            ];
 
             // Create
             points.enter()
@@ -1678,7 +1746,6 @@ var CkRepoWidgetPlot = function () {
                     .on('mouseover', mouseoverHandler)
                     .on('mouseout', mouseoutHandler)
                     .on('click', clickHandler)
-                    .attr('d', d => shapes[ Object.keys(shapes)[Math.floor(Math.random()*Object.keys(shapes).length)] ])
                     .attr('stroke', 'black')
                     .attr('stroke-width', '0.03')
             points.exit().remove();
@@ -1708,6 +1775,10 @@ var CkRepoWidgetPlot = function () {
                 points.style('visibility', row => (this.filter.isRowVisible(row) ? 'visible' : 'hidden'));
             }
 
+            // Marker
+            if (!dirtyFlags || dirtyFlags.includes("marker")) {
+                points.attr('d', d => shapes[0][ Math.min(this.markerValue(d), shapes[0].length - 1) ]);
+            }
         }
     }, {
         key: '_applyColorDimension',
@@ -2221,6 +2292,12 @@ var CkRepoWdiget = function () {
                                 _this9._createPlotSelector('s-axis-selector', 'Point size dimension',
                                 _this9.dom.plotSelectorContainer, plot.getSDimension(), dimension =>  plot.setSDimension(dimension) );
                             }
+
+                            _this9._createPlotSelector('marker-axis-selector', 'Plot marker dimension',
+                                _this9.dom.plotSelectorContainer, plot.getMarkerDimension(), dimension => plot.setMarkerDimension(dimension) );
+
+                            _this9._createPlotSelector('marker-overlay-axis-selector', 'Plot marker overlay dimension',
+                                _this9.dom.plotSelectorContainer, plot.getMarkerOverlayDimension(), dimension => plot.setMarkerOverlayDimension(dimension) );
 
                             table.build(data.table);
 
