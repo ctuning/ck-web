@@ -975,6 +975,112 @@ var CkRepoWidgetTable = function () {
     return CkRepoWidgetTable;
 }();
 
+class CkRepoWidgetMarker {
+    constructor() {
+        this.markerSets = [
+            ['circle'],
+            ['triangle', 'rect', 'pentagon', 'hexagon', 'triangle_down', 'diamond', 'star', 'circle'],
+            ['sector_1_4', 'sector_1_2', 'sector_3_4', 'circle'],
+        ];
+
+        this.markerCache = {};
+    }
+
+    getMarker(setIdx, markerIdx) {
+        if (setIdx >= this.markerSets.length) {
+            setIdx = 0;
+        }
+
+        if (markerIdx >= this.markerSets[setIdx].length) {
+            markerIdx = this.markerSets[setIdx].length - 1;
+        }
+
+        return this.marker( this.markerSets[setIdx][markerIdx] );
+    }
+
+    marker(name) {
+        if (typeof this.markerCache[name] !== 'undefined') {
+            return this.markerCache[name];
+        }
+
+        let c = d3.path();
+        if (name === 'triangle') {
+            c.moveTo(-1, 1);
+            c.lineTo(0, -1);
+            c.lineTo(1, 1);
+            c.closePath();
+        } else if (name === 'rect') {
+            c.rect(-1, -1, 2, 2);
+        } else if (name === 'pentagon') {
+            let c1 = 0.31;
+            let c2 = 0.81;
+            let s1 = 0.95;
+            let s2 = 0.59;
+            c.moveTo(0, -1);
+            c.lineTo(s1, -c1);
+            c.lineTo(s2, c2);
+            c.lineTo(-s2, c2);
+            c.lineTo(-s1, -c1);
+            c.closePath();
+        } else if (name === 'hexagon') {
+            c.moveTo(1, 0);
+            c.lineTo(0.5, -1);
+            c.lineTo(-0.5, -1);
+            c.lineTo(-1, 0);
+            c.lineTo(-0.5, 1);
+            c.lineTo(0.5, 1);
+            c.closePath();
+        } else if (name === 'triangle_down') {
+            c.moveTo(-1, -1);
+            c.lineTo(0, 1);
+            c.lineTo(1, -1);
+            c.closePath();
+        } else if (name === 'diamond') {
+            c.moveTo(-1, 0);
+            c.lineTo(0, -1);
+            c.lineTo(1, 0);
+            c.lineTo(0, 1);
+            c.closePath();
+        } else if (name === 'star') {
+            let c1 = 0.31;
+            let c2 = 0.81;
+            let s1 = 0.95;
+            let s2 = 0.59;
+            c.moveTo(0, -1);
+            c.lineTo(s2, c2);
+            c.lineTo(-s1, -c1);
+            c.lineTo(s1, -c1);
+            c.lineTo(-s2, c2);
+            c.closePath();
+        } else if (name === 'circle') {
+            c.moveTo(1, 0);
+            c.arc(0, 0, 1, 0, 2 * Math.PI);
+        } else if (name === 'sector_1_4') {
+            c.moveTo(0, -1);
+            c.lineTo(0, 0);
+            c.lineTo(1, 0)
+            c.arc(0, 0, 1, 0, -0.5 * Math.PI, true);
+        } else if (name === 'sector_1_2') {
+            c.moveTo(-1, 0);
+            c.lineTo(1, 0)
+            c.arc(0, 0, 1, 0, -1 * Math.PI, true);
+        } else if (name === 'sector_3_4') {
+            c.moveTo(0, 1);
+            c.lineTo(0, 0)
+            c.lineTo(1, 0)
+            c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
+        } else {
+            c = null;
+        }
+
+        if (c != null) {
+            this.markerCache[name] = c.toString();
+        } else {
+            return null;
+        }
+    }
+}
+
 /*
 const plotConfig = {
     plotContainerId,
@@ -1019,6 +1125,9 @@ var CkRepoWidgetPlot = function () {
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             this.tooltip = tooltipContainer.append('div').attr('class', 'ck-repo-widget-plot-tooltip').style('opacity', 0);
+
+            this.markerShapes = new CkRepoWidgetMarker();
+            this.markerDimensionSetIdx = 0;
 
             /*
             this.centerButton = plotContainer.append('div')
@@ -1382,6 +1491,17 @@ var CkRepoWidgetPlot = function () {
             return this.markerDimension;
         }
     }, {
+        key: 'getMarkerDimensionSetIdx',
+        value: function getMarkerDimensionSetIdx() {
+            return this.markerDimensionSetIdx;
+        }
+    }, {
+        key: 'setMarkerDimensionSetIdx',
+        value: function setMarkerDimensionSetIdx(newSetIdx) {
+            this.markerDimensionSetIdx = newSetIdx;
+            this._applyPoints(["marker"]);
+        }
+    }, {
         key: 'setMarkerDimension',
         value: function setMarkerDimension(dimension) {
             this.markerDimension = dimension;
@@ -1617,128 +1737,6 @@ var CkRepoWidgetPlot = function () {
 
             let points = this.gPoints.selectAll('.ck-repo-widget-plot-dot').data(this.pointsData);
 
-            let shapes = [
-                [
-                    function triangle() {
-                        let c = d3.path();
-                        c.moveTo(-1, 1);
-                        c.lineTo(0, -1);
-                        c.lineTo(1, 1);
-                        c.closePath();
-                        return c.toString();
-                    }(),
-
-                    function rect() {
-                        let c = d3.path();
-                        c.rect(-1, -1, 2, 2);
-                        return c.toString();
-                    }(),
-
-                    function pentagon() {
-                        let c = d3.path();
-                        let c1 = 0.31;
-                        let c2 = 0.81;
-                        let s1 = 0.95;
-                        let s2 = 0.59;
-                        c.moveTo(0, -1);
-                        c.lineTo(s1, -c1);
-                        c.lineTo(s2, c2);
-                        c.lineTo(-s2, c2);
-                        c.lineTo(-s1, -c1);
-                        c.closePath();
-                        return c.toString();
-                    }(),
-
-                    function hexagon() {
-                        let c = d3.path();
-                        c.moveTo(1, 0);
-                        c.lineTo(0.5, -1);
-                        c.lineTo(-0.5, -1);
-                        c.lineTo(-1, 0);
-                        c.lineTo(-0.5, 1);
-                        c.lineTo(0.5, 1);
-                        c.closePath();
-                        return c.toString();
-                    }(),
-
-                    function triangle_down() {
-                        let c = d3.path();
-                        c.moveTo(-1, -1);
-                        c.lineTo(0, 1);
-                        c.lineTo(1, -1);
-                        c.closePath();
-                        return c.toString();
-                    }(),
-
-                    function rhombus() {
-                        let c = d3.path();
-                        c.moveTo(-1, 0);
-                        c.lineTo(0, -1);
-                        c.lineTo(1, 0);
-                        c.lineTo(0, 1);
-                        c.closePath();
-                        return c.toString();
-                    }(),
-
-                    function star() {
-                        let c = d3.path();
-                        let c1 = 0.31;
-                        let c2 = 0.81;
-                        let s1 = 0.95;
-                        let s2 = 0.59;
-                        c.moveTo(0, -1);
-                        c.lineTo(s2, c2);
-                        c.lineTo(-s1, -c1);
-                        c.lineTo(s1, -c1);
-                        c.lineTo(-s2, c2);
-                        c.closePath();
-                        return c.toString();
-                    }(),
-
-                    function circle() {
-                        let c = d3.path();
-                        c.moveTo(1, 0);
-                        c.arc(0, 0, 1, 0, 2 * Math.PI);
-                        return c;
-                    }().toString(),
-                ],
-
-                [
-                    function sector_1_4() {
-                        let c = d3.path();
-                        c.moveTo(0, -1);
-                        c.lineTo(0, 0);
-                        c.lineTo(1, 0)
-                        c.arc(0, 0, 1, 0, -0.5 * Math.PI, true);
-                        return c;
-                    }(),
-
-                    function sector_1_2() {
-                        let c = d3.path();
-                        c.moveTo(-1, 0);
-                        c.lineTo(1, 0)
-                        c.arc(0, 0, 1, 0, -1 * Math.PI, true);
-                        return c;
-                    }(),
-
-                    function sector_3_4() {
-                        let c = d3.path();
-                        c.moveTo(0, 1);
-                        c.lineTo(0, 0)
-                        c.lineTo(1, 0)
-                        c.arc(0, 0, 1, 0, -1.5 * Math.PI, true);
-                        return c;
-                    }(),
-
-                    function circle() {
-                        let c = d3.path();
-                        c.moveTo(1, 0);
-                        c.arc(0, 0, 1, 0, 2 * Math.PI);
-                        return c;
-                    }().toString(),
-                ]
-            ];
-
             // Create
             points.enter()
                 .append('path')
@@ -1777,7 +1775,7 @@ var CkRepoWidgetPlot = function () {
 
             // Marker
             if (!dirtyFlags || dirtyFlags.includes("marker")) {
-                points.attr('d', d => shapes[0][ Math.min(this.markerValue(d), shapes[0].length - 1) ]);
+                points.attr('d', d => this.markerShapes.getMarker(this.markerDimensionSetIdx, this.markerValue(d)) );
             }
         }
     }, {
@@ -2298,6 +2296,10 @@ var CkRepoWdiget = function () {
 
                             _this9._createPlotSelector('marker-overlay-axis-selector', 'Plot marker overlay dimension',
                                 _this9.dom.plotSelectorContainer, plot.getMarkerOverlayDimension(), dimension => plot.setMarkerOverlayDimension(dimension) );
+
+                            _this9._createValueSelector('marker-set-selector', _this9.dom.plotSelectorContainer, { name: 'Marker set', config:{type:'list'}, values:[0, 1, 2] }, 0, function (selector, value) {
+                                plot.setMarkerDimensionSetIdx(value);
+                            });
 
                             table.build(data.table);
 
