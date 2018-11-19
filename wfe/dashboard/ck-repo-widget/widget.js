@@ -977,26 +977,22 @@ var CkRepoWidgetTable = function () {
 
 class CkRepoWidgetMarker {
     constructor() {
-        this.markerSets = [
-            ['circle'],
-            ['triangle', 'rect', 'pentagon', 'hexagon', 'triangle_down', 'diamond', 'star', 'circle'],
-            ['sector_1_4', 'sector_1_2', 'sector_3_4', 'circle'],
-            ['none', 'cross', 'vline'],
-        ];
-
         this.markerCache = {};
     }
 
-    getMarker(setIdx, markerIdx) {
-        if (setIdx >= this.markerSets.length) {
+    getMarker(shapeSet, setIdx, markerIdx) {
+
+        if (typeof setIdx === 'undefined' || setIdx >= Object.keys(shapeSet).length) {
             setIdx = 0;
         }
 
-        if (markerIdx >= this.markerSets[setIdx].length) {
-            markerIdx = this.markerSets[setIdx].length - 1;
+        let setKey = Object.keys(shapeSet)[setIdx];
+
+        if (markerIdx >= shapeSet[setKey].length) {
+            markerIdx = shapeSet[setKey].length - 1;
         }
 
-        return this.marker( this.markerSets[setIdx][markerIdx] );
+        return this.marker( shapeSet[setKey][markerIdx] );
     }
 
     marker(name) {
@@ -1136,7 +1132,7 @@ var CkRepoWidgetPlot = function () {
             this.tooltip = tooltipContainer.append('div').attr('class', 'ck-repo-widget-plot-tooltip').style('opacity', 0);
 
             this.markerShapes = new CkRepoWidgetMarker();
-            this.markerDimensionSetIdx = plotConfig.markerDimensionSetIdx || 0;
+            this.markerDimensionSetIdx = 0;
 
             /*
             this.centerButton = plotContainer.append('div')
@@ -1827,13 +1823,13 @@ var CkRepoWidgetPlot = function () {
             // Marker
             if (isMarkersActive) {
                 if (!dirtyFlags || dirtyFlags.includes("marker")) {
-                    points.attr('d', d => this.markerShapes.getMarker(this.markerDimensionSetIdx, this.markerValue(d)) );
+                    points.attr('d', d => this.markerShapes.getMarker(this.plotConfig.markerDimensionSets, this.markerDimensionSetIdx, this.markerValue(d)) );
                 }
 
                 if (pointOverlays) {
                     // Marker overlay
                     if (!dirtyFlags || dirtyFlags.includes("markerOverlay")) {
-                        pointOverlays.attr('d', d => this.markerShapes.getMarker(3, this.markerOverlayValue(d)) );
+                        pointOverlays.attr('d', d => this.markerShapes.getMarker(this.plotConfig.markerOverlayDimensionSets, 0, this.markerOverlayValue(d)) );
                     }
                 }
             }
@@ -2271,6 +2267,8 @@ var CkRepoWdiget = function () {
                                 markerDimension: workflow.markerDimension,
                                 markerDimensionSetIdx: workflow.markerDimensionSetIdx,
                                 markerOverlayDimension: workflow.markerOverlayDimension,
+                                markerDimensionSets: workflow.markerDimensionSets,
+                                markerOverlayDimensionSets: workflow.markerOverlayDimensionSets,
                                 isVariationXVisible: workflow.xVariationVisible,
                                 isVariationYVisible: workflow.yVariationVisible,
                                 filter: workflow.filter,
@@ -2369,7 +2367,7 @@ var CkRepoWdiget = function () {
                                 let markersListSelector = {
                                     name: 'Marker set',
                                     config: { type: 'list' },
-                                    values: [ 'Circles (○)', 'Polygons (△/□/⬠/⬡/▽/◇/☆/○)', 'Sectors (◷/⦵/◶/○)' ]
+                                    values: Object.keys(workflow.markerDimensionSets),
                                 };
 
                                 _this9._createValueSelector('marker-set-selector',
@@ -2526,8 +2524,10 @@ var CkRepoWdiget = function () {
                     colorRange: wf.colorRange,
                     sizeDimension: wf.sizeDimension || '',
                     markerDimension: wf.markerDimension || '',
-                    markerDimensionSetIdx: wf.markerDimensionSetIdx || 0,
                     markerOverlayDimension: wf.markerOverlayDimension || '',
+                    markerDimensionSetIdx: 0,
+                    markerDimensionSets: wf.markerDimensionSets || {},
+                    markerOverlayDimensionSets: wf.markerOverlayDimensionSets || {},
                     xVariationVisible: wf.xVariationVisible || false,
                     yVariationVisible: wf.yVariationVisible || false,
                     filter: makeFilters(wf.filters || {}),
