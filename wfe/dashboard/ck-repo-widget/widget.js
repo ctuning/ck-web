@@ -1746,21 +1746,33 @@ var CkRepoWidgetPlot = function () {
 
             let points = this.gPoints.selectAll('.ck-repo-widget-plot-dot').data(this.pointsData);
 
-            let pointOverlays = null;
-            if (typeof this.markerOverlayDimension !== 'undefined') {
-                pointOverlays = this.gPoints.selectAll('.ck-repo-widget-plot-dot-overlay').data(this.pointsData);
-            }
+            let isMarkersActive = typeof this.markerDimension !== 'undefined';
+            let isMarkerOverlaysActive = typeof this.markerOverlayDimension !== 'undefined';
+
+            let pointOverlays = (isMarkerOverlaysActive ? this.gPoints.selectAll('.ck-repo-widget-plot-dot-overlay').data(this.pointsData) : null);
 
             // Create
-            points.enter()
-                .append('path')
-                    .attr('class', 'ck-repo-widget-plot-dot')
-                    .on('mouseover', mouseoverHandler)
-                    .on('mouseout', mouseoutHandler)
-                    .on('click', clickHandler)
-                    .attr('stroke', 'black')
-                    .attr('stroke-width', '0.03')
-            points.exit().remove();
+            if (isMarkersActive) {
+                points.enter()
+                    .append('path')
+                        .attr('class', 'ck-repo-widget-plot-dot')
+                        .on('mouseover', mouseoverHandler)
+                        .on('mouseout', mouseoutHandler)
+                        .on('click', clickHandler)
+                        .attr('stroke', 'black')
+                        .attr('stroke-width', '0.03')
+                points.exit().remove();
+            } else {
+                points.enter()
+                    .append('circle')
+                        .attr('class', 'ck-repo-widget-plot-dot')
+                        .on('mouseover', mouseoverHandler)
+                        .on('mouseout', mouseoutHandler)
+                        .on('click', clickHandler)
+                        .attr('stroke', 'black')
+                        .attr('stroke-width', '0.1')
+                points.exit().remove();
+            }
 
             // Create (overlays)
             if (pointOverlays) {
@@ -1768,7 +1780,7 @@ var CkRepoWidgetPlot = function () {
                     .append('path')
                         .attr('class', 'ck-repo-widget-plot-dot-overlay')
                         .attr('stroke', 'black')
-                        .attr('stroke-width', '0.1')
+                        .attr('stroke-width', '0.2')
                 pointOverlays.exit().remove();
             }
 
@@ -1783,7 +1795,14 @@ var CkRepoWidgetPlot = function () {
                 let translateFn = d => 'translate(' + this.xScale(this.xValue(d)) + ', ' + this.yScale(this.yValue(d)) + ')';
                 let scaleFn = d => 'scale(' + pointSize(d) + ')';
 
-                points.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
+                if (isMarkersActive) {
+                    points.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
+                } else {
+                    points
+                        .attr('cx', d => this.xScale(this.xValue(d)))
+                        .attr('cy', d => this.yScale(this.yValue(d)))
+                        .attr('r', d => pointSize(d))
+                }
 
                 if (pointOverlays){
                     pointOverlays.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
@@ -1806,14 +1825,16 @@ var CkRepoWidgetPlot = function () {
             }
 
             // Marker
-            if (!dirtyFlags || dirtyFlags.includes("marker")) {
-                points.attr('d', d => this.markerShapes.getMarker(this.markerDimensionSetIdx, this.markerValue(d)) );
-            }
+            if (isMarkersActive) {
+                if (!dirtyFlags || dirtyFlags.includes("marker")) {
+                    points.attr('d', d => this.markerShapes.getMarker(this.markerDimensionSetIdx, this.markerValue(d)) );
+                }
 
-            if (pointOverlays) {
-                // Marker overlay
-                if (!dirtyFlags || dirtyFlags.includes("markerOverlay")) {
-                    pointOverlays.attr('d', d => this.markerShapes.getMarker(3, this.markerOverlayValue(d)) );
+                if (pointOverlays) {
+                    // Marker overlay
+                    if (!dirtyFlags || dirtyFlags.includes("markerOverlay")) {
+                        pointOverlays.attr('d', d => this.markerShapes.getMarker(3, this.markerOverlayValue(d)) );
+                    }
                 }
             }
         }
