@@ -17,7 +17,9 @@
             "xDimension": "time_avg_ms",
             "yDimension": "accuracy_top1",
             "colorDimension": "library",
-            "sizeDimension": "model",
+            "sizeDimension": "resolution",
+            "markerDimension": "multiplier",
+            "markerDimensionSetIdx": 1,
             "xVariationVisible": false,
             "yVariationVisible": false,
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"]

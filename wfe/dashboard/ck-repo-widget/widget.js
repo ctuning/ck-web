@@ -1127,7 +1127,7 @@ var CkRepoWidgetPlot = function () {
             this.tooltip = tooltipContainer.append('div').attr('class', 'ck-repo-widget-plot-tooltip').style('opacity', 0);
 
             this.markerShapes = new CkRepoWidgetMarker();
-            this.markerDimensionSetIdx = 0;
+            this.markerDimensionSetIdx = plotConfig.markerDimensionSetIdx || 0;
 
             /*
             this.centerButton = plotContainer.append('div')
@@ -2208,6 +2208,8 @@ var CkRepoWdiget = function () {
                                 yDimension: workflow.yDimension,
                                 colorDimension: workflow.colorDimension,
                                 sizeDimension: workflow.sizeDimension,
+                                markerDimension: workflow.markerDimension,
+                                markerDimensionSetIdx: workflow.markerDimensionSetIdx,
                                 isVariationXVisible: workflow.xVariationVisible,
                                 isVariationYVisible: workflow.yVariationVisible,
                                 filter: workflow.filter,
@@ -2297,9 +2299,16 @@ var CkRepoWdiget = function () {
                             _this9._createPlotSelector('marker-overlay-axis-selector', 'Plot marker overlay dimension',
                                 _this9.dom.plotSelectorContainer, plot.getMarkerOverlayDimension(), dimension => plot.setMarkerOverlayDimension(dimension) );
 
-                            _this9._createValueSelector('marker-set-selector', _this9.dom.plotSelectorContainer, { name: 'Marker set', config:{type:'list'}, values:[0, 1, 2] }, 0, function (selector, value) {
-                                plot.setMarkerDimensionSetIdx(value);
-                            });
+                            _this9._createValueSelector('marker-set-selector',
+                                    _this9.dom.plotSelectorContainer,
+                                    {
+                                        name: 'Marker set',
+                                        config: { type: 'list' },
+                                        values: [ 0, 1, 2 ]
+                                    },
+                                    plot.getMarkerDimensionSetIdx(),
+                                    (_, value) => plot.setMarkerDimensionSetIdx(value)
+                            );
 
                             table.build(data.table);
 
@@ -2446,6 +2455,8 @@ var CkRepoWdiget = function () {
                     colorDimension: wf.colorDimension || '',
                     colorRange: wf.colorRange,
                     sizeDimension: wf.sizeDimension || '',
+                    markerDimension: wf.markerDimension || '',
+                    markerDimensionSetIdx: wf.markerDimensionSetIdx || 0,
                     xVariationVisible: wf.xVariationVisible || false,
                     yVariationVisible: wf.yVariationVisible || false,
                     filter: makeFilters(wf.filters || {}),
