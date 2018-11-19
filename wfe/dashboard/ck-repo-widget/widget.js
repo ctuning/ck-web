@@ -1563,69 +1563,75 @@ var CkRepoWidgetPlot = function () {
             let shapes = {
                 triangle : function() {
                     let c = d3.path();
-                    c.moveTo(-0.5, 0.5);
-                    c.lineTo(0, -0.5);
-                    c.lineTo(0.5, 0.5);
+                    c.moveTo(-1, 1);
+                    c.lineTo(0, -1);
+                    c.lineTo(1, 1);
                     c.closePath();
                     return c.toString();
                 }(),
 
                 rect : function() {
                     let c = d3.path();
-                    c.rect(-0.5, -0.5, 1, 1);
+                    c.rect(-1, -1, 2, 2);
                     return c.toString();
                 }(),
 
                 pentagon : function() {
                     let c = d3.path();
-                    c.moveTo(0.07, -0.50);
-                    c.lineTo(0.64, -0.06);
-                    c.lineTo(0.50, 0.50);
-                    c.lineTo(-0.36, 0.50);
-                    c.lineTo(-0.50, -0.06);
+                    let c1 = 0.31;
+                    let c2 = 0.81;
+                    let s1 = 0.95;
+                    let s2 = 0.59;
+                    c.moveTo(0, -1);
+                    c.lineTo(s1, -c1);
+                    c.lineTo(s2, c2);
+                    c.lineTo(-s2, c2);
+                    c.lineTo(-s1, -c1);
                     c.closePath();
                     return c.toString();
                 }(),
 
                 circle : function() {
                     let c = d3.path();
-                    c.moveTo(0.5, 0);
-                    c.arc(0, 0, 0.5, 0, 2 * Math.PI);
+                    c.moveTo(1, 0);
+                    c.arc(0, 0, 1, 0, 2 * Math.PI);
                     return c;
                 }().toString(),
 
                 triangle_down : function() {
                     let c = d3.path();
-                    c.moveTo(-0.5, -0.5);
-                    c.lineTo(0, 0.5);
-                    c.lineTo(0.5, -0.5);
+                    c.moveTo(-1, -1);
+                    c.lineTo(0, 1);
+                    c.lineTo(1, -1);
                     c.closePath();
                     return c.toString();
                 }(),
 
                 rhombus : function() {
                     let c = d3.path();
-                    c.moveTo(-0.5, 0);
-                    c.lineTo(0, -0.5);
-                    c.lineTo(0.5, 0);
-                    c.lineTo(0, 0.5);
+                    c.moveTo(-1, 0);
+                    c.lineTo(0, -1);
+                    c.lineTo(1, 0);
+                    c.lineTo(0, 1);
                     c.closePath();
                     return c.toString();
                 }(),
 
                 star : function() {
                     let c = d3.path();
-                    c.moveTo(0.07, -0.50);
-                    c.lineTo(0.50, 0.50);
-                    c.lineTo(-0.50, -0.06);
-                    c.lineTo(0.64, -0.06);
-                    c.lineTo(-0.36, 0.50);
+                    let c1 = 0.31;
+                    let c2 = 0.81;
+                    let s1 = 0.95;
+                    let s2 = 0.59;
+                    c.moveTo(0, -1);
+                    c.lineTo(s2, c2);
+                    c.lineTo(-s1, -c1);
+                    c.lineTo(s1, -c1);
+                    c.lineTo(-s2, c2);
                     c.closePath();
                     return c.toString();
                 }(),
             };
-
-            console.log(shapes.rect);
 
             // Create
             points.enter()
@@ -1636,7 +1642,7 @@ var CkRepoWidgetPlot = function () {
                     .on('click', clickHandler)
                     .attr('d', d => shapes[ Object.keys(shapes)[Math.floor(Math.random()*Object.keys(shapes).length)] ])
                     .attr('stroke', 'black')
-                    .attr('stroke-width', '0.05')
+                    .attr('stroke-width', '0.03')
 
             // Pos & Scale
             if (!dirtyFlags || dirtyFlags.includes("scale") || dirtyFlags.includes("scale")) {
@@ -1647,8 +1653,7 @@ var CkRepoWidgetPlot = function () {
                 );
 
                 let translateFn = d => 'translate(' + this.xScale(this.xValue(d)) + ', ' + this.yScale(this.yValue(d)) + ')';
-                let scaleFn = d => 'scale(' + pointSize(d) * 2 + ')';
-
+                let scaleFn = d => 'scale(' + pointSize(d) + ')';
                 points.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
             }
 
