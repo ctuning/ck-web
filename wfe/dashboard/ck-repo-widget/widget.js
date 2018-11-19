@@ -40,7 +40,7 @@ var CkRepoWidgetConstants = {
     kFilterAllValue: 'All',
     kMetaFilterPrefix: '##meta#',
     kRowHiddenKey: '__hidden',
-    kDefaultPointRadius: 5
+    kDefaultPointRadius: 3.5
 };
 
 var CkRepoWidgetUtils = {
