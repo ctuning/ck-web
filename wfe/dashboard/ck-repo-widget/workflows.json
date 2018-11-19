@@ -19,7 +19,6 @@
             "colorDimension": "library",
             "sizeDimension": "resolution",
             "markerDimension": "multiplier",
-            "markerDimensionSetIdx": 1,
             "markerOverlayDimension": "convolution_method",
             "xVariationVisible": false,
             "yVariationVisible": false,
