@@ -2533,6 +2533,7 @@ var CkRepoWdiget = function () {
                     filter: makeFilters(wf.filters || {}),
                     props: wf.props || {},
                     refLines: wf.refLines || [],
+                    sizeRange: wf.sizeRange,
                 };
 
                 for (let refLine of newWf.refLines) {

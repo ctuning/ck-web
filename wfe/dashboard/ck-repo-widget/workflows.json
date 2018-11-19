@@ -30,8 +30,9 @@
                 "Circles" : ["circle"]
             },
             "markerOverlayDimensionSets": {
-                "_": ["none", "cross", "vline"]
-            }
+                "_": ["none", "vline", "cross"]
+            },
+            "sizeRange": [4, 6]
         },
         {
             "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
