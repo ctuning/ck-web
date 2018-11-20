@@ -1939,6 +1939,18 @@ var CkRepoWidgetPlot = function () {
     }, {
         key: '_renderCDimensionLegend',
         value: function _renderCDimensionLegend() {
+
+            // clear existing legend
+            this.svg.select('.ck-repo-widget-plot-axis_color').remove();
+
+            // check if color band would make sense
+            {
+                let row = this.pointsData[0];
+                if ( ! CkRepoWidgetUtils.isNumberAndFinite( row[CkRepoWidgetUtils.getAxisKey(this.cDimension)] ) ) {
+                    return;
+                }
+            }
+
             var colorDomain = CkRepoWidgetUtils.getColorDomain(this.colorRange.length, this.colorBounds);
 
             var minValue = this.colorBounds[0];
@@ -1961,9 +1973,6 @@ var CkRepoWidgetPlot = function () {
             cAxis = d3.axisTop(cScale);
 
             cScale.domain([minValue, maxValue]);
-
-            // clear existing legend
-            this.svg.select('.ck-repo-widget-plot-axis_color').remove();
 
             var gC = this.svg.append('g').attr('class', 'ck-repo-widget-plot-axis ck-repo-widget-plot-axis_color').attr('transform', 'translate(' + axisWidth + ',' + -rectHeight + ')').call(cAxis);
 
