@@ -1,5 +1,5 @@
 {
-    "defaultWorkflowIndex": 3,
+    "defaultWorkflowIndex": 4,
     "workflows": [
         {
             "name": "ReQuEST @ ASPLOS'18 tournament (Pareto-efficient image classification)",
@@ -10,6 +10,29 @@
             "sizeDimension": "##features#model_size",
             "xVariationVisible": true,
             "yVariationVisible": false
+        },
+        {
+            "name": "MLPerf Inference - Object Classification - MobileNets",
+            "moduleUoa": "mlperf.mobilenets",
+            "xDimension": "time_avg_ms",
+            "yDimension": "accuracy_top1",
+            "colorDimension": "library",
+            "sizeDimension": "resolution",
+            "markerDimension": "multiplier",
+            "markerOverlayDimension": "convolution_method",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "markerDimensionSets": {
+                "Polygons" : ["triangle", "rect", "pentagon", "hexagon", "triangle_down", "diamond", "star", "circle"],
+                "Sectors" : ["sector_1_4", "sector_1_2", "sector_3_4", "circle"],
+                "Circles" : ["circle"]
+            },
+            "markerOverlayDimensionSets": {
+                "3 kinds": ["none", "vline", "cross"],
+                "6 kinds": ["none", "dot", "hline", "vline", "plus", "cross"]
+            },
+            "sizeRange": [4, 6]
         },
         {
             "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
