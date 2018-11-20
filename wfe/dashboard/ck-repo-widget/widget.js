@@ -925,7 +925,7 @@ var CkRepoWidgetTable = function () {
             }
 
             if (!!item.cmd) {
-                return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.cmd) + '");\'><i class="far fa-copy"></i><span class=\'ck-repo-widget-cmd-btn-label\'>' + item.title + '</span></div>';
+                return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.cmd) + '");\'><span class=\'ck-repo-widget-cmd-btn-label\'>' + item.title + '</span></div>';
             }
 
             if (!!item.key) {
@@ -934,7 +934,7 @@ var CkRepoWidgetTable = function () {
 
             if (!!item.list) {
                 if (!!item.json) {
-                    return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.json) + '");\'><i class="far fa-copy"></i><span class=\'ck-repo-widget-cmd-btn-label\'>View JSON</span></div><br>' + this._getCellHtml(item.list);
+                    return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.json) + '");\'><span class=\'ck-repo-widget-cmd-btn-label\'>View JSON</span></div><br>' + this._getCellHtml(item.list);
                 }
 
                 return this._getCellHtml(item.list);
