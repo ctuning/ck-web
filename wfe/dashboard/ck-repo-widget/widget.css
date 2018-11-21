@@ -10,11 +10,16 @@
 
 .ck-repo-widget-plot-tooltip {
     position: absolute;
-    pointer-events: none;
     border: 0.5px solid gray;
     border-radius: 5px;
     padding: 5px;
     background: white;
+}
+
+.ck-repo-widget-plot-tooltip-link {
+    color: #1F5A9F;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .ck-repo-widget {
@@ -92,7 +97,13 @@ thead th {
 
 .ck-repo-widget-tbody {}
 
-.ck-repo-widget-tr {}
+.ck-repo-widget-tr {
+    background: #FFFFFF;
+}
+
+.ck-repo-widget-tr-selected {
+    background: #FFFFCC;
+}
 
 .ck-repo-widget-th {
     background: rgb(244, 247, 250);
@@ -114,7 +125,6 @@ thead th {
 }
 
 .ck-repo-widget-td {
-    background: #FFFFFF;
     border: 1px solid #E0E0E0;
     color: #383838;
     font-family: Roboto;
