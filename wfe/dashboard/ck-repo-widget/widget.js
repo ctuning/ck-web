@@ -794,13 +794,10 @@ var CkRepoWidgetTable = function () {
                 });
 
             // create a cell in each row for each column
-            var gCells = gRows.selectAll('td').data(function (row) {
-                return columns.map(function (column) {
-                    return _this._getCellValue(row, column);
-                });
-            }).enter().append('td').attr('class', 'ck-repo-widget-td').html(function (item, idx) {
-                return _this._getCellHtml(item, idx == 0);
-            });
+            let gCells = gRows.selectAll('td').data( curRow => columns.map(curCol => { return { row:curRow, column: curCol }; } ) )
+                .enter().append('td')
+                    .attr('class', 'ck-repo-widget-td')
+                    .each( function(d) { _this._fillCell(d3.select(this), d.column, d.row); })
 
             sortRowsBy(columns[0], true);
 
@@ -904,7 +901,7 @@ var CkRepoWidgetTable = function () {
         }
     }, {
         key: '_getCellHtml',
-        value: function _getCellHtml(item, isRowId) {
+        value: function _getCellHtml(item) {
             if (Array.isArray(item)) {
                 var html = '';
 
@@ -940,10 +937,6 @@ var CkRepoWidgetTable = function () {
                 return html;
             }
 
-            if (isRowId) {
-                return '<span class=\'ck-repo-widget-cmd-btn ck-repo-widget-cmd-btn-label\' onclick="CkRepoWidgetUtils.scrollToTop()">#' + item + '</span>';
-            }
-
             if (!!item.cmd) {
                 return '<div class=\'ck-repo-widget-cmd-btn\' onclick=\'CkRepoWidgetUtils.showMessageBox("' + CkRepoWidgetUtils.encode(item.cmd) + '");\'><span class=\'ck-repo-widget-cmd-btn-label\'>' + item.title + '</span></div>';
             }
@@ -961,6 +954,21 @@ var CkRepoWidgetTable = function () {
             }
 
             return item;
+        }
+    }, {
+        key: '_fillCell',
+        value: function _fillCell(node, column, row) {
+            if (column.key === CkRepoWidgetConstants.kNumberKey) {
+                node.append('span')
+                    .attr('class', 'ck-repo-widget-cmd-btn ck-repo-widget-cmd-btn-label')
+                    .text('#' + row[column.key])
+                    .on('click', d => {
+                        this.tableConfig.pointSelectionCallback( row[column.key] );
+                        CkRepoWidgetUtils.scrollToTop();
+                    })
+            } else {
+                node.html( this._getCellHtml( this._getCellValue(row, column) ) )
+            }
         }
     }, {
         key: '_updateCellVisibility',
@@ -1781,15 +1789,12 @@ var CkRepoWidgetPlot = function () {
                 let id = d[CkRepoWidgetConstants.kNumberKey];
 
                 if (!thisPlot.selectedPointId || thisPlot.selectedPointId === id) {
-                    thisPlot.tooltip.transition().duration(200).style('opacity', .9);
-                    thisPlot.tooltip.call( thisPlot._fillTooltipHints, thisPlot, d ).style('left', d3.event.pageX + 15 + 'px').style('top', d3.event.pageY + 5 + 'px');
-                    thisPlot.tooltip.style('pointer-events', 'all');
+                    thisPlot._showTooltip(true, d, [ d3.event.pageX, d3.event.pageY ]);
                 }
             };
             let mouseoutHandler = function mouseoutHandler(d) {
                 if (thisPlot.selectedPointId === null) {
-                    thisPlot.tooltip.transition().duration(500).style('opacity', 0);
-                    thisPlot.tooltip.style('pointer-events', 'none');
+                    thisPlot._showTooltip(false);
                 }
             };
             let clickHandler = function clickHandler(d) {
@@ -1798,9 +1803,7 @@ var CkRepoWidgetPlot = function () {
                     thisPlot.plotConfig.pointSelectionCallback(null);
                 } else {
                     thisPlot.plotConfig.pointSelectionCallback( d[CkRepoWidgetConstants.kNumberKey] );
-                    thisPlot.tooltip.transition().duration(200).style('opacity', 1.0);
-                    thisPlot.tooltip.call( thisPlot._fillTooltipHints, thisPlot, d ).style('left', d3.event.pageX + 15 + 'px').style('top', d3.event.pageY + 5 + 'px');
-                    thisPlot.tooltip.style('pointer-events', 'all');
+                    thisPlot._showTooltip(true, d, [d3.event.pageX, d3.event.pageY]);
                 }
             };
 
@@ -1866,23 +1869,30 @@ var CkRepoWidgetPlot = function () {
                 }
 
                 if (this.selectedPointId) {
-                    thisPlot.tooltip.transition().duration(100).style('opacity', 0);
-                    thisPlot.tooltip.style('pointer-events', 'none');
+                    this._showTooltip(false);
                 }
             }
 
             if (!dirtyFlags || dirtyFlags.includes("select")) {
-                let strokeWidth = (isMarkersActive ? 0.3 : 2);
+                let strokeWidth = (isMarkersActive ? 0.2 : 2);
                 points
-                    .attr('stroke', d => (d[CkRepoWidgetConstants.kNumberKey] == this.selectedPointId ? 'black' : 'none'))
+                    .attr('stroke', d => (d[CkRepoWidgetConstants.kNumberKey] == this.selectedPointId ? '#0000FF' : 'none'))
                     .attr('stroke-width', d => (d[CkRepoWidgetConstants.kNumberKey] == this.selectedPointId ? strokeWidth : 0));
             }
 
             // Color
-            if (!dirtyFlags || dirtyFlags.includes("color")) {
+            if (!dirtyFlags || dirtyFlags.includes("color") || dirtyFlags.includes("select")) {
                 let color = d3.scaleLinear().domain(CkRepoWidgetUtils.getColorDomain(this.colorRange.length, this.colorBounds)).range(this.colorRange);
 
-                points.style('fill', row => color(this.cValue(row)));
+                function hightlightIfSelected(value, selectedPointId, row) {
+                    if (row[CkRepoWidgetConstants.kNumberKey] === selectedPointId) {
+                        return '#FFFF00';
+                    } else {
+                        return value;
+                    }
+                }
+
+                points.style('fill', row => hightlightIfSelected( color(this.cValue(row)), this.selectedPointId, row ) );
             }
 
             // Visibility
@@ -2208,6 +2218,35 @@ var CkRepoWidgetPlot = function () {
                 .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta())); } );
         }
     }, {
+        key: '_showTooltip',
+        value: function _showTooltip(isShow, updateHintForPointId = null, pos = null) {
+            if (isShow) {
+                this.tooltip
+                    .style('pointer-events', 'all')
+                    .transition()
+                    .duration(200)
+                    .style('opacity', .9);
+            } else {
+                this.tooltip
+                    .style('pointer-events', 'none')
+                    .transition()
+                    .duration(100)
+                    .style('opacity', 0);
+            }
+
+            if (updateHintForPointId) {
+                console.log(updateHintForPointId);
+                this.tooltip.call( this._fillTooltipHints, this, updateHintForPointId );
+            }
+
+            if (pos) {
+                console.log(pos);
+                this.tooltip
+                    .style('left', pos[0] + 15 + 'px')
+                    .style('top', pos[1] + 5 + 'px');
+            }
+        }
+    }, {
         key: '_fillTooltipHints',
         value: function _fillTooltipHints(tooltip, thisPlot, row) {
             let dimensionNames = thisPlot.plotConfig.tooltipValues;
@@ -2248,6 +2287,7 @@ var CkRepoWidgetPlot = function () {
         value: function onPointSelect(id) {
             this.selectedPointId = id;
             this._applyPoints(["select"]);
+            this._showTooltip(false);
          }
     }]);
 
@@ -2403,7 +2443,8 @@ var CkRepoWdiget = function () {
 
                             table.init({
                                 filter: workflow.filter,
-                                tableContainer: _this9.dom.tableContainer
+                                tableContainer: _this9.dom.tableContainer,
+                                pointSelectionCallback: id => _this9._pointSelectionCallback(id),
                             }, config);
                         };
 
