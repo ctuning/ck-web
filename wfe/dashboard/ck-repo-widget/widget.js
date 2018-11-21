@@ -981,7 +981,6 @@ class CkRepoWidgetMarker {
     }
 
     getMarker(shapeSet, setIdx, markerIdx) {
-
         if (typeof setIdx === 'undefined' || setIdx >= Object.keys(shapeSet).length) {
             setIdx = 0;
         }
@@ -1091,6 +1090,7 @@ class CkRepoWidgetMarker {
 
         if (c != null) {
             this.markerCache[name] = c.toString();
+            return this.markerCache[name];
         } else {
             return null;
         }
@@ -1411,13 +1411,13 @@ var CkRepoWidgetPlot = function () {
             }
 
             this._updateMarkerHasher = function() {
-                let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerDimension)]);
+                let values = this.getDataUniqueValues(this.rawPointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerDimension)]);
                 this.markerHasher.reset();
                 this.markerHasher.prepareValues(values, true);
             }
 
             this._updateMarkerOverlayHasher = function() {
-                let values = this.getDataUniqueValues(this.pointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerOverlayDimension)]);
+                let values = this.getDataUniqueValues(this.rawPointsData, row => row[CkRepoWidgetUtils.getAxisKey(this.markerOverlayDimension)]);
                 this.markerOverlayHasher.reset();
                 this.markerOverlayHasher.prepareValues(values, true);
             }
@@ -1789,8 +1789,6 @@ var CkRepoWidgetPlot = function () {
                         .on('mouseover', mouseoverHandler)
                         .on('mouseout', mouseoutHandler)
                         .on('click', clickHandler)
-                        .attr('stroke', 'black')
-                        .attr('stroke-width', '0.03')
                 points.exit().remove();
             } else {
                 points.enter()
@@ -1799,8 +1797,6 @@ var CkRepoWidgetPlot = function () {
                         .on('mouseover', mouseoverHandler)
                         .on('mouseout', mouseoutHandler)
                         .on('click', clickHandler)
-                        .attr('stroke', 'black')
-                        .attr('stroke-width', '0.1')
                 points.exit().remove();
             }
 
