@@ -2741,9 +2741,8 @@ var CkRepoWdiget = function () {
                             return i;
                         }).property('selected', function (value) {
                             return value === defaultValue;
-                        }).text(function (d) {
-                            return d;
-                        });
+                        })
+                        .text(d => (selector.format && d != CkRepoWidgetConstants.kFilterAllValue) ? CkRepoWidgetUtils.formatNumber(d, selector.format) : d);
 
                         return select;
                     }
