@@ -2176,6 +2176,14 @@ var CkRepoWidgetPlot = function () {
             if (dimensionNames.indexOf(this.yDimension.key) < 0)    dimensionNames.push(this.yDimension.key);
             if (dimensionNames.indexOf(this.cDimension.key) < 0)    dimensionNames.push(this.cDimension.key);
 
+            if (this.plotConfig.markerDimension !== '')  {
+                if (dimensionNames.indexOf(this.markerDimension.key) < 0)           dimensionNames.push(this.markerDimension.key);
+            }
+
+            if (this.plotConfig.markerOverlayDimension !== '')  {
+                if (dimensionNames.indexOf(this.markerOverlayDimension.key) < 0)    dimensionNames.push(this.markerOverlayDimension.key);
+            }
+
             if (this.plotConfig.sizeDimension !== '')  {
                 if (dimensionNames.indexOf(this.sDimension.key) < 0)    dimensionNames.push(this.sDimension.key);
             }
