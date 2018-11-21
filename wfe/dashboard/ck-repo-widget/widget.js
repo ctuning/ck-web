@@ -2218,6 +2218,8 @@ var CkRepoWdiget = function () {
             let headerId = argsMap.headerId || '#ck-repo-widget-header';
             let loadingLayerId = argsMap.loadingLayerId || '#ck-repo-widget-loading-layer';
 
+            this.onWorkflowChange = argsMap.onWorkflowChange || null;
+
             // Url where to get data from
             const kApiUrl = argsMap.apiUrlPrefix || (this.isLocalRun ? '/web' : 'http://cknowledge.org/repo/json.php');
             var kActionGetData = 'get_raw_data';
@@ -2248,6 +2250,10 @@ var CkRepoWdiget = function () {
                         _this9._showLoadingLayer();
 
                         _this9._clearWorkflow();
+
+                        if (_this9.onWorkflowChange) {
+                            _this9.onWorkflowChange(workflow.name);
+                        }
 
                         function toLocal(obj, prefix) {
                             if (!prefix) {
