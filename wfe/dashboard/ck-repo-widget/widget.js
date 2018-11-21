@@ -1198,7 +1198,7 @@ var CkRepoWidgetPlot = function () {
             this.markerValue = row => this.getValue(row, this.markerDimension, this.markerHasher, true);
             this.markerOverlayValue = row => this.getValue(row, this.markerOverlayDimension, this.markerOverlayHasher, true);
 
-            var valueToDisplay = function valueToDisplay(dimension, value) {
+            this.valueToDisplay = function valueToDisplay(dimension, value) {
                 var tView = _this3.dataConfig.table_view.find(function (view) {
                     if (dimension) {
                         return view.key.startsWith(dimension.key);
@@ -1215,16 +1215,16 @@ var CkRepoWidgetPlot = function () {
             };
 
             this.xValueToDisplay = function (row) {
-                return valueToDisplay(_this3.xDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.xDimension)]);
+                return _this3.valueToDisplay(_this3.xDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.xDimension)]);
             };
             this.yValueToDisplay = function (row) {
-                return valueToDisplay(_this3.yDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.yDimension)]);
+                return _this3.valueToDisplay(_this3.yDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.yDimension)]);
             };
             this.cValueToDisplay = function (row) {
-                return valueToDisplay(_this3.cDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.cDimension)]);
+                return _this3.valueToDisplay(_this3.cDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.cDimension)]);
             };
             this.sValueToDisplay = function (row) {
-                return valueToDisplay(_this3.sDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.sDimension)]);
+                return _this3.valueToDisplay(_this3.sDimension, row[CkRepoWidgetUtils.getAxisKey(_this3.sDimension)]);
             };
 
             this.isVariationXVisible = this.plotConfig.isVariationXVisible;
@@ -1764,8 +1764,7 @@ var CkRepoWidgetPlot = function () {
 
             let mouseoverHandler = function mouseoverHandler(d) {
                 thisPlot.tooltip.transition().duration(200).style('opacity', .9);
-                let hint = d[CkRepoWidgetConstants.kTitleKey] + '<br/>' + thisPlot.xDimension.name + ': ' + thisPlot.xValueToDisplay(d) + '<br/>' + thisPlot.yDimension.name + ': ' + thisPlot.yValueToDisplay(d) + '<br/>' + thisPlot.cDimension.name + ': ' + thisPlot.cValueToDisplay(d) + '<br/>' + (thisPlot.plotConfig.sizeDimension !== '' ? thisPlot.sDimension.name + ': ' + thisPlot.sValueToDisplay(d) + '<br/>' : '');
-                thisPlot.tooltip.html(hint).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
+                thisPlot.tooltip.html( thisPlot._getTooltipHint(d) ).style('left', d3.event.pageX + 5 + 'px').style('top', d3.event.pageY - 28 + 'px');
             };
             let mouseoutHandler = function mouseoutHandler(d) {
                 thisPlot.tooltip.transition().duration(500).style('opacity', 0);
@@ -2168,6 +2167,29 @@ var CkRepoWidgetPlot = function () {
                 .attr('height', (_,i) => labelBBoxes[i].height + labelMargin.bottom + labelMargin.top)
                 .style('visibility', function(d,i) { return toVisibility(isDimOk(d) && deltaLineVisible(d) && !rectsIntersects(labelBBoxes[i], this.getBBox()) && linesIsInBounds(d.value - d.delta())); } );
         }
+    }, {
+        key: '_getTooltipHint',
+        value: function _getTooltipHint(row) {
+            let dimensionNames = this.plotConfig.tooltipValues;
+
+            if (dimensionNames.indexOf(this.xDimension.key) < 0)    dimensionNames.push(this.xDimension.key);
+            if (dimensionNames.indexOf(this.yDimension.key) < 0)    dimensionNames.push(this.yDimension.key);
+            if (dimensionNames.indexOf(this.cDimension.key) < 0)    dimensionNames.push(this.cDimension.key);
+
+            if (this.plotConfig.sizeDimension !== '')  {
+                if (dimensionNames.indexOf(this.sDimension.key) < 0)    dimensionNames.push(this.sDimension.key);
+            }
+
+            let dims = dimensionNames
+                .filter( dimName => dimName !== '')
+                .map( dimName => this.dataConfig.dimensions.find(d => d.key === dimName) )
+                .filter( dim => typeof dim !== 'undefined' )
+                .map( dim => dim.name + ': ' + this.valueToDisplay(dim, row[CkRepoWidgetUtils.getAxisKey(dim)]) )
+                .join('<br/>');
+
+            let hint = '#' + row[CkRepoWidgetConstants.kNumberKey] + '<br/>' + dims;
+            return hint;
+        }
     }]);
 
     return CkRepoWidgetPlot;
@@ -2316,6 +2338,7 @@ var CkRepoWdiget = function () {
                                 filter: workflow.filter,
                                 colorRange: workflow.colorRange,
                                 sizeRange: workflow.sizeRange,
+                                tooltipValues: workflow.tooltipValues,
                             }, config);
 
                             table.init({
@@ -2589,6 +2612,7 @@ var CkRepoWdiget = function () {
                     props: wf.props || {},
                     refLines: wf.refLines || [],
                     sizeRange: wf.sizeRange,
+                    tooltipValues: wf.tooltipValues || [],
                 };
 
                 for (let refLine of newWf.refLines) {

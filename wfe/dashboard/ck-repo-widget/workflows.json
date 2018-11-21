@@ -94,7 +94,8 @@
                     "dimension": "__energies",
                     "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_helium"
                 }
-            ]
+            ],
+            "tooltipValues": ["T_ave", "t_ave"]
         },
         {
             "name": "Quantum Hackathon 2018-06-15 (Variational Quantum Eigensolver on Rigetti) - Solution Convergence",
