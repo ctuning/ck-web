@@ -1778,16 +1778,30 @@ var CkRepoWidgetPlot = function () {
             let thisPlot = this;
 
             let mouseoverHandler = function mouseoverHandler(d) {
-                thisPlot.tooltip.transition().duration(200).style('opacity', .9);
-                thisPlot.tooltip.call( thisPlot._fillTooltipHints, thisPlot, d ).style('left', d3.event.pageX + 15 + 'px').style('top', d3.event.pageY + 5 + 'px');
-                thisPlot.tooltip.style('pointer-events', 'all');
+                let id = d[CkRepoWidgetConstants.kNumberKey];
+
+                if (!thisPlot.selectedPointId || thisPlot.selectedPointId === id) {
+                    thisPlot.tooltip.transition().duration(200).style('opacity', .9);
+                    thisPlot.tooltip.call( thisPlot._fillTooltipHints, thisPlot, d ).style('left', d3.event.pageX + 15 + 'px').style('top', d3.event.pageY + 5 + 'px');
+                    thisPlot.tooltip.style('pointer-events', 'all');
+                }
             };
             let mouseoutHandler = function mouseoutHandler(d) {
-                thisPlot.tooltip.transition().duration(500).style('opacity', 0);
-                thisPlot.tooltip.style('pointer-events', 'none');
+                if (thisPlot.selectedPointId === null) {
+                    thisPlot.tooltip.transition().duration(500).style('opacity', 0);
+                    thisPlot.tooltip.style('pointer-events', 'none');
+                }
             };
             let clickHandler = function clickHandler(d) {
-                thisPlot.plotConfig.pointSelectionCallback( d[CkRepoWidgetConstants.kNumberKey] );
+                let id = d[CkRepoWidgetConstants.kNumberKey];
+                if (thisPlot.selectedPointId === id) {
+                    thisPlot.plotConfig.pointSelectionCallback(null);
+                } else {
+                    thisPlot.plotConfig.pointSelectionCallback( d[CkRepoWidgetConstants.kNumberKey] );
+                    thisPlot.tooltip.transition().duration(200).style('opacity', 1.0);
+                    thisPlot.tooltip.call( thisPlot._fillTooltipHints, thisPlot, d ).style('left', d3.event.pageX + 15 + 'px').style('top', d3.event.pageY + 5 + 'px');
+                    thisPlot.tooltip.style('pointer-events', 'all');
+                }
             };
 
             let points = this.gPoints.selectAll('.ck-repo-widget-plot-dot').data(this.pointsData);
@@ -1823,6 +1837,7 @@ var CkRepoWidgetPlot = function () {
                         .attr('class', 'ck-repo-widget-plot-dot-overlay')
                         .attr('stroke', 'black')
                         .attr('stroke-width', '0.2')
+                        .style('pointer-events', 'all');
                 pointOverlays.exit().remove();
             }
 
@@ -1848,6 +1863,11 @@ var CkRepoWidgetPlot = function () {
 
                 if (pointOverlays){
                     pointOverlays.attr('transform', d => translateFn(d) + ' ' + scaleFn(d));
+                }
+
+                if (this.selectedPointId) {
+                    thisPlot.tooltip.transition().duration(100).style('opacity', 0);
+                    thisPlot.tooltip.style('pointer-events', 'none');
                 }
             }
 
