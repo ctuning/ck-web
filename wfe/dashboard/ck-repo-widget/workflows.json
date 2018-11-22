@@ -14,9 +14,9 @@
         {
             "name": "MLPerf Inference - Object Classification - MobileNets",
             "moduleUoa": "mlperf.mobilenets",
-            "xDimension": "time_avg_ms",
+            "xDimension": "time_min_ms",
             "yDimension": "accuracy_top1",
-            "colorDimension": "library",
+            "colorDimension": "platform",
             "sizeDimension": "resolution",
             "markerDimension": "multiplier",
             "markerOverlayDimension": "convolution_method",
