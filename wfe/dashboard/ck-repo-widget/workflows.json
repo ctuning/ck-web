@@ -24,9 +24,9 @@
             "yVariationVisible": false,
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
             "markerDimensionSets": {
-                "Polygons" : ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"],
-                "Sectors" : ["sector_1_4", "sector_1_4", "sector_1_2", "sector_3_4", "circle"],
-                "Circles" : ["circle"]
+                "Polygons": ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"],
+                "Sectors": ["sector_1_4", "sector_1_4", "sector_1_2", "sector_3_4", "circle", "diamond", "star"],
+                "Circles": ["circle"]
             },
             "markerOverlayDimensionSets": {
                 "3 kinds": ["none", "vline", "cross"],
