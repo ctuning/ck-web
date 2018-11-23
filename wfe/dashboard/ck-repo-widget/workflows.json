@@ -16,7 +16,7 @@
             "moduleUoa": "mlperf.mobilenets",
             "xDimension": "time_min_ms",
             "yDimension": "accuracy_top1",
-            "colorDimension": "platform",
+            "colorDimension": "rate_max_s",
             "sizeDimension": "resolution",
             "markerDimension": "multiplier",
             "markerOverlayDimension": "convolution_method",
@@ -41,7 +41,7 @@
                           "plus",  "cross"]
             },
             "sizeRange": [5, 7],
-            "tooltipValues": ["model", "time_min_ms", "time_avg_ms", "accuracy_top1", "accuracy_top5"]
+            "tooltipValues": ["model", "rate_max_s", "time_min_ms", "time_avg_ms", "accuracy_top1", "accuracy_top5"]
         },
         {
             "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
