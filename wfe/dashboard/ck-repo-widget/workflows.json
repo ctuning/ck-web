@@ -31,8 +31,12 @@
                 "Circles": ["circle"]
             },
             "markerOverlayDimensionSets": {
-                "3 kinds": ["none", "vline", "cross"],
-                "6 kinds": ["none", "dot", "hline", "vline", "plus", "cross"]
+                "1xn": ["none",  "hline", "vline", "plus", "cross"],
+                "2x3": ["none",  "hline", "vline",
+                        "dot",   "plus",  "cross"],
+                "3x2": ["none",  "dot",
+                        "hline", "vline",
+                        "plus",  "cross"]
             },
             "sizeRange": [5, 7],
             "tooltipValues": ["model", "time_min_ms", "time_avg_ms", "accuracy_top1", "accuracy_top5"]
