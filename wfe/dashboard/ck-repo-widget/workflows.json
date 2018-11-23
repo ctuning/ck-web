@@ -32,6 +32,8 @@
             },
             "markerOverlayDimensionSets": {
                 "1 X N": ["none", "dot", "hline", "vline", "plus", "cross"],
+                "2 X 2": ["none",  "dot",
+                          "hline", "vline"],
                 "2 X 3": ["none",  "hline", "vline",
                           "dot",   "plus",  "cross"],
                 "3 X 2": ["none",  "dot",
