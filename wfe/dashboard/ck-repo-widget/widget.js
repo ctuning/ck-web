@@ -1078,6 +1078,11 @@ class CkRepoWidgetMarker {
             c.lineTo(0, 0);
             c.lineTo(1, 0)
             c.arc(0, 0, 1, 0, -0.5 * Math.PI, true);
+        } else if (name === 'sector_1_3') {
+            c.moveTo(/* -1/2 */ -0.50, /* -sqrt(3)/2 */ -0.86);
+            c.lineTo(0, 0);
+            c.lineTo(1, 0);
+            c.arc(0, 0, 1, 0, /* -2/3 */ -0.66 * Math.PI, true);
         } else if (name === 'sector_1_2') {
             c.moveTo(-1, 0);
             c.lineTo(1, 0)
