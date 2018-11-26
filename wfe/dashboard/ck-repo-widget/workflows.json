@@ -1,5 +1,5 @@
 {
-    "defaultWorkflowIndex": 4,
+    "defaultWorkflowIndex": 1,
     "workflows": [
         {
             "name": "ReQuEST @ ASPLOS'18 tournament (Pareto-efficient image classification)",
