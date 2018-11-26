@@ -12,8 +12,33 @@
             "yVariationVisible": false
         },
         {
-            "name": "MLPerf Inference - Object Classification - MobileNets",
+            "name": "MLPerf Inference - Image Classification - MobileNets (highlights)",
             "moduleUoa": "mlperf.mobilenets",
+            "xDimension": "time_min_ms",
+            "yDimension": "accuracy_top1",
+            "colorDimension": "rate_max_s",
+            "sizeDimension": "resolution",
+            "markerDimension": "multiplier",
+            "markerOverlayDimension": "convolution_method",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "markerDimensionSets": {
+                "Polygons": ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"],
+                "Sectors v1": ["sector_1_4", "sector_1_2", "sector_3_4", "circle"],
+                "Sectors v2": ["sector_1_3", "sector_1_2", "sector_3_4", "circle", "diamond", "star"],
+                "Sectors v1/v2": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "diamond", "star"],
+                "Circles": ["circle"]
+            },
+            "markerOverlayDimensionSets": {
+                "1 X N": ["none", "dot", "hline", "vline", "plus", "cross"]
+            },
+            "sizeRange": [4, 6],
+            "tooltipValues": ["model", "rate_max_s", "time_min_ms", "time_avg_ms", "accuracy_top1", "accuracy_top5"]
+        },
+        {
+            "name": "MLPerf Inference - Image Classification - MobileNets (all)",
+            "moduleUoa": "mlperf.mobilenets.all",
             "xDimension": "time_min_ms",
             "yDimension": "accuracy_top1",
             "colorDimension": "rate_max_s",
@@ -40,7 +65,7 @@
                           "hline", "vline",
                           "plus",  "cross"]
             },
-            "sizeRange": [5, 7],
+            "sizeRange": [4, 6],
             "tooltipValues": ["model", "rate_max_s", "time_min_ms", "time_avg_ms", "accuracy_top1", "accuracy_top5"]
         },
         {
