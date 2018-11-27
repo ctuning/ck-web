@@ -2594,7 +2594,7 @@ var CkRepoWdiget = function () {
                                     for (var _iterator11 = _this9.workflows[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
                                         var eWorkflow = _step11.value;
 
-                                        if (eWorkflow.moduleUoa === workflow.moduleUoa) {
+                                        if (eWorkflow.moduleUoa === workflow.moduleUoa && JSON.stringify(eWorkflow.call_attribs || {}) === JSON.stringify(workflow.call_attribs || {}) ) {
                                             eWorkflow.config = toLocal(config, eWorkflow.configPrefix);
 
                                             CkRepoWidgetUtils.prepareTableView(eWorkflow.config.table_view);
