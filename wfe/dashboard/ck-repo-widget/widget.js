@@ -2372,12 +2372,20 @@ var CkRepoWdiget = function () {
                         }
 
                         var serverFilter = new CkRepoWidgetFilter();
+                        var urlWithModule = kApiUrl + '?module_uoa=' + workflow.moduleUoa
+                        var callAttribs = workflow.call_attribs || {}
+                        for (var attrib_name in callAttribs) {
+                            if (!callAttribs.hasOwnProperty(attrib_name)) continue;
+
+                            urlWithModule += '&' + attrib_name + '=' + callAttribs[attrib_name]
+                        }
+
                         var applyServerFilter = function applyServerFilter(selector, value) {
                             var prefix = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
                             serverFilter.setSelector(selector, value, prefix);
 
-                            fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetData, {
+                            fetch(urlWithModule + '&action=' + kActionGetData, {
                                 method: "POST",
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -2575,7 +2583,7 @@ var CkRepoWdiget = function () {
                         };
 
                         if (!workflow.config || !workflow.data) {
-                            return fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetConfig).then(function (response) {
+                            return fetch(urlWithModule + '&action=' + kActionGetConfig).then(function (response) {
                                 return response.json();
                             }).then(function (config) {
                                 var _iteratorNormalCompletion11 = true;
@@ -2609,7 +2617,7 @@ var CkRepoWdiget = function () {
 
                                 configApplier(workflow.config);
                             }).then(function () {
-                                return fetch(kApiUrl + '?module_uoa=' + workflow.moduleUoa + '&action=' + kActionGetData, fetchDataInit);
+                                return fetch(urlWithModule + '&action=' + kActionGetData, fetchDataInit);
                             }).then(function (response) {
                                 return response.json();
                             }).then(function (data) {
@@ -2725,6 +2733,7 @@ var CkRepoWdiget = function () {
                     refLines: wf.refLines || [],
                     sizeRange: wf.sizeRange,
                     tooltipValues: wf.tooltipValues || [],
+                    call_attribs: wf.call_attribs || {},
                 };
 
                 for (let refLine of newWf.refLines) {
