@@ -215,6 +215,61 @@
                 "__delta": 0.1,
                 "__prob": 0.5
             }
+        },
+        {
+            "name": "New functionality test 1 (please ignore)",
+            "moduleUoa": "challenge.vqe",
+            "xDimension": "__fevs",
+            "yDimension": "__energies",
+            "colorDimension": "_point",
+            "sizeDimension": "fun_exact",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "dataPrefix": "full_",
+            "configPrefix": "full_",
+            "call_attribs": {
+                "repo_uoa": "ck-quantum-hackathon-20181006"
+            }
+        },
+        {
+            "name": "New functionality test 2 (please ignore)",
+            "moduleUoa": "challenge.vqe",
+            "xDimension": "T_ave",
+            "yDimension": "__energies",
+            "colorDimension": "_sample_number",
+            "sizeDimension": "t_ave",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFFF00", "#FF0000"],
+            "dataPrefix": "metrics_",
+            "configPrefix": "metrics_",
+            "tableProcessor": "CkRepoWidgetUtils.quantum.benchmarkTableProcessor",
+            "props": {
+                "__fun_key": "fun_exact",
+                "__time_key": "total_q_shots",
+                "__delta": 0.1,
+                "__prob": 0.8
+            },
+            "refLines": [
+                {
+                    "name": "H₂*",
+                    "dimension": "__energies",
+                    "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_qiskit_hydrogen"
+                },
+                {
+                    "name": "H₂",
+                    "dimension": "__energies",
+                    "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_hydrogen"
+                },
+                {
+                    "name": "He",
+                    "dimension": "__energies",
+                    "get_value": "CkRepoWidgetUtils.quantum.get_exact_answer_helium"
+                }
+            ],
+            "call_attribs": {
+                "repo_uoa": "ck-quantum-hackathon-20181006"
+            }
         }
     ]
 }
