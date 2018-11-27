@@ -87,11 +87,7 @@
             "xVariationVisible": false,
             "yVariationVisible": false,
             "dataPrefix": "full_",
-            "configPrefix": "full_",
-            "filters": {
-                "_platform": "qasm_simulator",
-                "_minimizer_method": "my_cobyla"
-            }
+            "configPrefix": "full_"
         },
         {
             "name": "Quantum Open Challenge (Variational Quantum Eigensolver) - Time To Solution",
@@ -109,7 +105,7 @@
             "props": {
                 "__fun_key": "fun_exact",
                 "__time_key": "total_q_shots",
-                "__delta": 0.01,
+                "__delta": 0.1,
                 "__prob": 0.8
             },
             "refLines": [
