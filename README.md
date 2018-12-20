@@ -1,4 +1,5 @@
 [![compatibility](https://github.com/ctuning/ck-guide-images/blob/master/ck-compatible.svg)](https://github.com/ctuning/ck)
+[![DOI](https://zenodo.org/badge/26590461.svg)](https://zenodo.org/badge/latestdoi/26590461)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 This repository contains Collective Knowledge extension modules
