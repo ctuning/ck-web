@@ -133,6 +133,16 @@
             ]
         },
         {
+            "name": "Quantum Hackathon 2019-01-27 (Quantum Machine Learning)",
+            "moduleUoa": "hackathon.20190127",
+            "xDimension": "problem",
+            "yDimension": "timestamp_epoch_secs",
+            "colorDimension": "test_accuracy",
+            "sizeDimension": "test_accuracy",
+            "xVariationVisible": false,
+            "yVariationVisible": false
+        },
+        {
             "name": "Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Solution Convergence",
             "moduleUoa": "hackathon.20181006",
             "xDimension": "__fevs",
