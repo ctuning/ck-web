@@ -137,10 +137,14 @@
             "moduleUoa": "hackathon.20190127",
             "xDimension": "problem_index",
             "yDimension": "timestamp_epoch_secs",
-            "colorDimension": "team",
+            "colorDimension": "training_error",
             "sizeDimension": "test_error",
-            "sizeRange": [4, 8],
+            "markerDimension": "team",
             "colorRange": ["#0000ff", "#00ffff", "#00dd00", "#ffbb00", "#ff0000"],
+            "sizeRange": [4, 8],
+            "markerDimensionSets": {
+                "Polygons": ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"]
+            },
             "xVariationVisible": false,
             "yVariationVisible": false
         },
