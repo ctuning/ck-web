@@ -139,6 +139,7 @@
             "yDimension": "timestamp_epoch_secs",
             "colorDimension": "team",
             "sizeDimension": "test_error",
+            "sizeRange": [4, 8],
             "colorRange": ["#0000ff", "#00ffff", "#00dd00", "#ffbb00", "#ff0000"],
             "xVariationVisible": false,
             "yVariationVisible": false
