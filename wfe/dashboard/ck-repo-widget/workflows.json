@@ -136,7 +136,7 @@
             "name": "Quantum Hackathon 2019-01-27 (Quantum Machine Learning)",
             "moduleUoa": "hackathon.20190127",
             "xDimension": "problem_index",
-            "yDimension": "timestamp_epoch_secs",
+            "yDimension": "seconds_since_start",
             "sizeDimension": "training_accuracy",
             "colorDimension": "test_accuracy",
             "markerDimension": "team",
