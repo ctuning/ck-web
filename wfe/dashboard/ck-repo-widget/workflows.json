@@ -146,7 +146,9 @@
                 "Polygons": ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"]
             },
             "xVariationVisible": false,
-            "yVariationVisible": false
+            "yVariationVisible": false,
+            "call_attribs": {
+            }
         },
         {
             "name": "Quantum Hackathon 2018-10-06 (Variational Quantum Eigensolver on IBM) - Solution Convergence",
