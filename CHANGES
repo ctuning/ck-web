@@ -1,3 +1,5 @@
+* 2019.02.11 - fixed http://cknowledge.org/repo -> /repo in JS script to allow https
+
 * 2018.02.19 - fixing possible issue if tag is not a string in CK entry
 
 * 2017.10.06 - minor fix to HTML selector
