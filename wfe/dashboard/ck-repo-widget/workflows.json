@@ -133,7 +133,25 @@
             ]
         },
         {
-            "name": "Quantum Hackathon 2019-01-27 (Quantum Machine Learning)",
+            "name": "Quantum Hackathon 2019-03-15 (Quantum Machine Learning : Oxford)",
+            "moduleUoa": "hackathon.20190315",
+            "xDimension": "problem_index",
+            "yDimension": "hours_since_start",
+            "sizeDimension": "training_accuracy",
+            "colorDimension": "test_accuracy",
+            "markerDimension": "team",
+            "colorRange": ["#0000ff", "#00ffff", "#00dd00", "#ffbb00", "#ff0000"],
+            "sizeRange": [4, 8],
+            "markerDimensionSets": {
+                "Polygons": ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"]
+            },
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "call_attribs": {
+            }
+        },
+        {
+            "name": "Quantum Hackathon 2019-01-27 (Quantum Machine Learning : Paris)",
             "moduleUoa": "hackathon.20190127",
             "xDimension": "problem_index",
             "yDimension": "hours_since_start",
