@@ -75,6 +75,42 @@
             }
         },
         {
+            "name": "MLPerf Inference demo at SysML'19 - Image Classification - MobileNets (all)",
+            "moduleUoa": "mlperf.mobilenets",
+            "xDimension": "time_min_ms",
+            "yDimension": "accuracy_top1",
+            "colorDimension": "rate_max_s",
+            "sizeDimension": "resolution",
+            "markerDimension": "multiplier",
+            "markerOverlayDimension": "convolution_method",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "markerDimensionSets": {
+                "Polygons": ["triangle", "triangle_down", "rect", "pentagon", "hexagon", "diamond",  "star", "circle"],
+                "Sectors v1": ["sector_1_4", "sector_1_2", "sector_3_4", "circle"],
+                "Sectors v2": ["sector_1_3", "sector_1_2", "sector_3_4", "circle", "diamond", "star"],
+                "Sectors v1/v2": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "diamond", "star"],
+                "Circles": ["circle"]
+            },
+            "markerOverlayDimensionSets": {
+                "1 X N": ["none", "dot", "hline", "vline", "plus", "cross"],
+                "2 X 2": ["none",  "dot",
+                          "hline", "vline"],
+                "2 X 3": ["none",  "hline", "vline",
+                          "dot",   "plus",  "cross"],
+                "3 X 2": ["none",  "dot",
+                          "hline", "vline",
+                          "plus",  "cross"]
+            },
+            "sizeRange": [4, 6],
+            "tooltipValues": ["model", "rate_max_s", "time_min_ms", "time_avg_ms", "accuracy_top1", "accuracy_top5"],
+            "call_attribs": {
+                "prefilter_mode": "all",
+                "selected_repo":"ck-mlperf-sysml-demo-20190402"
+            }
+        },
+        {
             "name": "NNTest (collaboratively benchmarking and optimizing neural network operations)",
             "moduleUoa": "nntest",
             "xDimension": "experiment",
