@@ -2921,7 +2921,7 @@ var CkRepoWdiget = function () {
                 onChange(workflows[selectedIndex]);
             };
 
-            var old_repo = '<center><b>[ <a href="http://cKnowledge.org/repo-beta"><b>Other crowd-optimization scenarios</b></a> ]</b></center>';
+            var old_repo = '<center><b>[&nbsp;<a href="http://cKnowledge.org/repo-beta"><b>Older crowd-optimization scenarios</b></a>&nbsp;]</b></center>';
 
             var select = root.append('div').html(old_repo).attr('class', 'ck-repo-widget-select_workflow-container').append('select').attr('id', id).attr('class', 'ck-repo-widget-select ck-repo-widget-select_workflow').on('change', changeHandler);
 
