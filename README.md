@@ -31,10 +31,14 @@ You may need to install easysetup:
 or
 * http://www.pythonware.com/products/pil/
 
+Maintainers
+===========
+* [dividiti](http://dividiti.com)
+
 Authors
 =======
 
-* [Grigori Fursin](http://fursin.net/research.html), cTuning foundation (France) / dividiti (UK)
+* [Grigori Fursin](http://fursin.net/research.html)
 
 License
 =======
