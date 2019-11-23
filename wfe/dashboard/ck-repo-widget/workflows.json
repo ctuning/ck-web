@@ -12,7 +12,31 @@
             "yVariationVisible": false
         },
         {
-            "name": "MLPerf Inference - Image Classification - MobileNets (highlights)",
+            "name": "MLPerf Inference v0.5 - Image Classification - Single Stream",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_IC1_SS",
+            "yDimension": "A_IC1_SS",
+	    "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "image-classification-single-stream"
+            },
+            "tooltipValues": ["ID", "Submitter", "P_IC1_SS", "A_IC1_SS"]
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Object Detection - Single Stream",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_OD1_SS",
+            "yDimension": "A_OD1_SS",
+       	    "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "object-detection-single-stream"
+            },
+            "tooltipValues": ["ID", "Submitter", "P_OD1_SS", "A_OD1_SS"]
+        },
+        {
+            "name": "MLPerf Inference - Image Classification - MobileNets demo 2018 (highlights)",
             "moduleUoa": "mlperf.mobilenets",
             "xDimension": "time_min_ms",
             "yDimension": "accuracy_top1",
@@ -40,7 +64,7 @@
             }
         },
         {
-            "name": "MLPerf Inference - Image Classification - MobileNets (all)",
+            "name": "MLPerf Inference - Image Classification - MobileNets demo 2018 (all)",
             "moduleUoa": "mlperf.mobilenets",
             "xDimension": "time_min_ms",
             "yDimension": "accuracy_top1",
