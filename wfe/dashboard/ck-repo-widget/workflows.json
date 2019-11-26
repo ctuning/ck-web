@@ -12,28 +12,196 @@
             "yVariationVisible": false
         },
         {
-            "name": "MLPerf Inference v0.5 - Image Classification - Single Stream",
+            "name": "MLPerf Inference v0.5 - Image Classification - Single Stream (milliseconds per sample)",
             "moduleUoa": "mlperf.inference",
-            "xDimension": "P_IC1_SS",
-            "yDimension": "A_IC1_SS",
-	    "colorDimension": "Submitter",
+            "xDimension": "P_IC1",
+            "yDimension": "A_IC1",
+            "colorDimension": "Submitter",
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
             "call_attribs": {
-                "prefilter_mode": "image-classification-single-stream"
+                "prefilter_mode": "image_classification_single_stream"
             },
-            "tooltipValues": ["ID", "Submitter", "P_IC1_SS", "A_IC1_SS"]
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
+            "filters": {
+                "Task": "Image Classification",
+                "Scenario": "SingleStream"
+            }
         },
         {
-            "name": "MLPerf Inference v0.5 - Object Detection - Single Stream",
+            "name": "MLPerf Inference v0.5 - Image Classification - Multi Stream (number of streams)",
             "moduleUoa": "mlperf.inference",
-            "xDimension": "P_OD1_SS",
-            "yDimension": "A_OD1_SS",
-       	    "colorDimension": "Submitter",
+            "xDimension": "P_IC1",
+            "yDimension": "A_IC1",
+            "colorDimension": "Submitter",
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
             "call_attribs": {
-                "prefilter_mode": "object-detection-single-stream"
+                "prefilter_mode": "image_classification_multi_stream"
             },
-            "tooltipValues": ["ID", "Submitter", "P_OD1_SS", "A_OD1_SS"]
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
+            "filters": {
+                "Task": "Image Classification",
+                "Scenario": "MultiStream"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Image Classification - Server (queries per second)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_IC1",
+            "yDimension": "A_IC1",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "image_classification_server"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
+            "filters": {
+                "Task": "Image Classification",
+                "Scenario": "Server"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Image Classification - Offline (samples per second)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_IC1",
+            "yDimension": "A_IC1",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "image_classification_offline"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
+            "filters": {
+                "Task": "Image Classification",
+                "Scenario": "Offline"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Object Detection - Single Stream (milliseconds per sample)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_OD1",
+            "yDimension": "A_OD1",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "object_detection_single_stream"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_OD1", "A_OD1"],
+            "filters": {
+                "Task": "Object Detection",
+                "Scenario": "SingleStream"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Object Detection - Multi Stream (number of streams)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_OD1",
+            "yDimension": "A_OD1",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "object_detection_multi_stream"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_OD1", "A_OD1"],
+            "filters": {
+                "Task": "Object Detection",
+                "Scenario": "MultiStream"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Object Detection - Server (queries per second)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_OD1",
+            "yDimension": "A_OD1",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "object_detection_server"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_OD1", "A_OD1"],
+            "filters": {
+                "Task": "Object Detection",
+                "Scenario": "Server"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Object Detection - Offline (samples per second)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_OD1",
+            "yDimension": "A_OD1",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "object_detection_offline"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_OD1", "A_OD1"],
+            "filters": {
+                "Task": "Object Detection",
+                "Scenario": "Offline"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Machine Translation - Single Stream (milliseconds per sample)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_NMT",
+            "yDimension": "A_NMT",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "machine_translation_single_stream"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_NMT", "A_NMT"],
+            "filters": {
+                "Task": "Machine Translation",
+                "Scenario": "SingleStream"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Machine Translation - Multi Stream (number of streams)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_NMT",
+            "yDimension": "A_NMT",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "machine_translation_multi_stream"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_NMT", "A_NMT"],
+            "filters": {
+                "Task": "Machine Translation",
+                "Scenario": "MultiStream"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Machine Translation - Server (queries per second)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_NMT",
+            "yDimension": "A_NMT",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "machine_translation_server"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_NMT", "A_NMT"],
+            "filters": {
+                "Task": "Machine Translation",
+                "Scenario": "Server"
+            }
+        },
+        {
+            "name": "MLPerf Inference v0.5 - Machine Translation - Offline (samples per second)",
+            "moduleUoa": "mlperf.inference",
+            "xDimension": "P_NMT",
+            "yDimension": "A_NMT",
+            "colorDimension": "Submitter",
+            "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "call_attribs": {
+                "prefilter_mode": "machine_translation_offline"
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_NMT", "A_NMT"],
+            "filters": {
+                "Task": "Machine Translation",
+                "Scenario": "Offline"
+            }
         },
         {
             "name": "MLPerf Inference - Image Classification - MobileNets demo 2018 (highlights)",
