@@ -16,12 +16,20 @@
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_IC1",
             "yDimension": "A_IC1",
-            "colorDimension": "Submitter",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorDimension": "Accelerator #",
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "sizeDimension": "Processor #",
+            "sizeRange": [4,6],
+            "markerDimension": "Submitter",
+            "markerDimensionSets": {
+                "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
             "call_attribs": {
                 "prefilter_mode": "image_classification_single_stream"
             },
-            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
             "filters": {
                 "Task": "Image Classification",
                 "Scenario": "SingleStream"
@@ -32,12 +40,20 @@
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_IC1",
             "yDimension": "A_IC1",
-            "colorDimension": "Submitter",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorDimension": "Accelerator #",
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "sizeDimension": "Processor #",
+            "sizeRange": [4,6],
+            "markerDimension": "Submitter",
+            "markerDimensionSets": {
+                "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
             "call_attribs": {
                 "prefilter_mode": "image_classification_multi_stream"
             },
-            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
             "filters": {
                 "Task": "Image Classification",
                 "Scenario": "MultiStream"
@@ -48,12 +64,20 @@
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_IC1",
             "yDimension": "A_IC1",
-            "colorDimension": "Submitter",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorDimension": "Accelerator #",
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "sizeDimension": "Processor #",
+            "sizeRange": [4,6],
+            "markerDimension": "Submitter",
+            "markerDimensionSets": {
+                "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
             "call_attribs": {
                 "prefilter_mode": "image_classification_server"
             },
-            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
             "filters": {
                 "Task": "Image Classification",
                 "Scenario": "Server"
@@ -64,12 +88,20 @@
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_IC1",
             "yDimension": "A_IC1",
-            "colorDimension": "Submitter",
+            "xVariationVisible": false,
+            "yVariationVisible": false,
+            "colorDimension": "Accelerator #",
             "colorRange": ["#0000FF", "#00FFFF", "#00FF00", "#FFCC00", "#FF0000"],
+            "sizeDimension": "Processor #",
+            "sizeRange": [4,6],
+            "markerDimension": "Submitter",
+            "markerDimensionSets": {
+                "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
+            },
+            "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
             "call_attribs": {
                 "prefilter_mode": "image_classification_offline"
             },
-            "tooltipValues": ["ID", "Division", "Submitter", "System", "Benchmark", "P_IC1", "A_IC1"],
             "filters": {
                 "Task": "Image Classification",
                 "Scenario": "Offline"
