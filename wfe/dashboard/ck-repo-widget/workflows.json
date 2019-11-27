@@ -12,7 +12,7 @@
             "yVariationVisible": false
         },
         {
-            "name": "MLPerf Inference v0.5 - Image Classification - Single Stream (milliseconds per sample)",
+            "name": "MLPerf Inference v0.5 - Image Classification - SingleStream (milliseconds per sample)",
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_IC1",
             "yDimension": "A_IC1",
@@ -28,7 +28,7 @@
             },
             "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
             "call_attribs": {
-                "prefilter_mode": "image_classification_single_stream"
+                "prefilter_mode": "image_classification_singlestream"
             },
             "filters": {
                 "Task": "Image Classification",
@@ -36,7 +36,7 @@
             }
         },
         {
-            "name": "MLPerf Inference v0.5 - Image Classification - Multi Stream (number of streams)",
+            "name": "MLPerf Inference v0.5 - Image Classification - MultiStream (number of streams)",
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_IC1",
             "yDimension": "A_IC1",
@@ -52,7 +52,7 @@
             },
             "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
             "call_attribs": {
-                "prefilter_mode": "image_classification_multi_stream"
+                "prefilter_mode": "image_classification_multistream"
             },
             "filters": {
                 "Task": "Image Classification",
@@ -108,7 +108,7 @@
             }
         },
         {
-            "name": "MLPerf Inference v0.5 - Object Detection - Single Stream (milliseconds per sample)",
+            "name": "MLPerf Inference v0.5 - Object Detection - SingleStream (milliseconds per sample)",
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_OD1",
             "yDimension": "A_OD1",
@@ -124,7 +124,7 @@
             },
             "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_OD1", "A_OD1"],
             "call_attribs": {
-                "prefilter_mode": "object_detection_single_stream"
+                "prefilter_mode": "object_detection_singlestream"
             },
             "filters": {
                 "Task": "Object Detection",
@@ -132,7 +132,7 @@
             }
         },
         {
-            "name": "MLPerf Inference v0.5 - Object Detection - Multi Stream (number of streams)",
+            "name": "MLPerf Inference v0.5 - Object Detection - MultiStream (number of streams)",
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_OD1",
             "yDimension": "A_OD1",
@@ -148,7 +148,7 @@
             },
             "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_OD1", "A_OD1"],
             "call_attribs": {
-                "prefilter_mode": "object_detection_multi_stream"
+                "prefilter_mode": "object_detection_multistream"
             },
             "filters": {
                 "Task": "Object Detection",
@@ -204,7 +204,7 @@
             }
         },
         {
-            "name": "MLPerf Inference v0.5 - Machine Translation - Single Stream (milliseconds per sample)",
+            "name": "MLPerf Inference v0.5 - Machine Translation - SingleStream (milliseconds per sample)",
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_NMT",
             "yDimension": "A_NMT",
@@ -220,7 +220,7 @@
             },
             "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_NMT", "A_NMT"],
             "call_attribs": {
-                "prefilter_mode": "machine_translation_single_stream"
+                "prefilter_mode": "machine_translation_singlestream"
             },
             "filters": {
                 "Task": "Machine Translation",
@@ -228,7 +228,7 @@
             }
         },
         {
-            "name": "MLPerf Inference v0.5 - Machine Translation - Multi Stream (number of streams)",
+            "name": "MLPerf Inference v0.5 - Machine Translation - MultiStream (number of streams)",
             "moduleUoa": "mlperf.inference",
             "xDimension": "P_NMT",
             "yDimension": "A_NMT",
@@ -244,7 +244,7 @@
             },
             "tooltipValues": ["ID", "Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_NMT", "A_NMT"],
             "call_attribs": {
-                "prefilter_mode": "machine_translation_multi_stream"
+                "prefilter_mode": "machine_translation_multistream"
             },
             "filters": {
                 "Task": "Machine Translation",
