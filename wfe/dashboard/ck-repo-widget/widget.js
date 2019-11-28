@@ -405,6 +405,15 @@ var CkRepoWidgetUtils = {
         }
     },
 
+    mlperf: {
+        get_reference_accuracy_resnet: function get_reference_accuracy_resnet(data) {
+            return 76.456
+        },
+        get_reference_accuracy_mobilenet: function get_reference_accuracy_mobilenet(data) {
+            return 71.676
+        }
+    },
+
     getColorDomain: function getColorDomain(length, bounds) {
         var min = bounds[0];
         var max = bounds[1];
