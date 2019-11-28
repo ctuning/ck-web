@@ -2299,12 +2299,12 @@ var CkRepoWidgetPlot = function () {
     return CkRepoWidgetPlot;
 }();
 
-var CkRepoWdiget = function () {
-    function CkRepoWdiget() {
-        _classCallCheck(this, CkRepoWdiget);
+var CkRepoWidget = function () {
+    function CkRepoWidget() {
+        _classCallCheck(this, CkRepoWidget);
     }
 
-    _createClass(CkRepoWdiget, [{
+    _createClass(CkRepoWidget, [{
         key: 'init',
         value: function init(argsMap) {
             var _this9 = this;
@@ -3058,5 +3058,5 @@ var CkRepoWdiget = function () {
         }
     }]);
 
-    return CkRepoWdiget;
+    return CkRepoWidget;
 }();
