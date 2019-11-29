@@ -339,6 +339,16 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_NMT", "A_NMT"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "GNMT",
+                    "dimension": "A_NMT",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_gnmt"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "machine_translation_singlestream"
             },
@@ -363,6 +373,16 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_NMT", "A_NMT"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "GNMT",
+                    "dimension": "A_NMT",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_gnmt"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "machine_translation_multistream"
             },
@@ -387,6 +407,16 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_NMT", "A_NMT"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "GNMT",
+                    "dimension": "A_NMT",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_gnmt"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "machine_translation_server"
             },
@@ -411,6 +441,16 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_NMT", "A_NMT"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "GNMT",
+                    "dimension": "A_NMT",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_gnmt"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "machine_translation_offline"
             },
