@@ -411,6 +411,15 @@ var CkRepoWidgetUtils = {
         },
         get_reference_accuracy_mobilenet: function get_reference_accuracy_mobilenet(data) {
             return 71.676
+        },
+        get_reference_accuracy_ssd_large: function get_reference_accuracy_ssd_large(data) {
+            return 20.000
+        },
+        get_reference_accuracy_ssd_small: function get_reference_accuracy_ssd_small(data) {
+            return 23.000
+        },
+        get_reference_accuracy_gnmt: function get_reference_accuracy_gnmt(data) {
+            return 23.900
         }
     },
 
