@@ -27,10 +27,10 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
+            "props": {
+                "__delta": 0.0
+            },
             "refLines": [
-		{
-		    "FIXME": "Does not work yet."
-		},
 		{
                     "name": "ResNet",
                     "dimension": "A_IC1",
@@ -66,6 +66,21 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "ResNet",
+                    "dimension": "A_IC1",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_resnet"
+                },
+                {
+                    "name": "MobileNet",
+                    "dimension": "A_IC1",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_mobilenet"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "image_classification_multistream"
             },
@@ -90,6 +105,21 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "ResNet",
+                    "dimension": "A_IC1",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_resnet"
+                },
+                {
+                    "name": "MobileNet",
+                    "dimension": "A_IC1",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_mobilenet"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "image_classification_server"
             },
@@ -114,6 +144,21 @@
                 "Default": ["sector_1_4", "sector_1_3", "sector_1_2", "sector_3_4", "circle", "triangle", "triangle_down", "sector_1_4", "rect", "pentagon", "hexagon", "sector_1_4", "star", "diamond"]
             },
             "tooltipValues": ["Division", "Submitter", "System", "Processor", "Processor #", "Accelerator", "Accelerator #", "Benchmark", "P_IC1", "A_IC1"],
+            "props": {
+                "__delta": 0.0
+            },
+            "refLines": [
+		{
+                    "name": "ResNet",
+                    "dimension": "A_IC1",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_resnet"
+                },
+                {
+                    "name": "MobileNet",
+                    "dimension": "A_IC1",
+                    "get_value": "CkRepoWidgetUtils.mlperf.get_reference_accuracy_mobilenet"
+                }
+            ],
             "call_attribs": {
                 "prefilter_mode": "image_classification_offline"
             },
