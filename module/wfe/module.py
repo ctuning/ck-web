@@ -574,7 +574,7 @@ def index(i):
 
           hp=hf # init html + form
 
-          hp+='<span style="font-size:16px;"><b>This page is outdated. New version is available <a href="https://dev.codereef.ai/portal/c/'+muoa+'/'+duoa+'">here</a>!</b></span><br>\n'
+          hp+='<span style="font-size:18px;"><b>This page is outdated. New version is available <a href="https://dev.codereef.ai/portal/c/'+muoa+'/'+duoa+'">here</a>!</b></span><br>\n'
 
           # Preset current entry params
           rx=create_input({'type':'hidden', 'name': frepo_name, 'value':ruid})
