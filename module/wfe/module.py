@@ -574,8 +574,6 @@ def index(i):
 
           hp=hf # init html + form
 
-          hp+='<br><span style="font-size:18px;color:#000000;"><b>This page is outdated! New version is available <a href="https://dev.codereef.ai/portal/c/'+muoa+'/'+duoa+'">here</a>.</b></span><br><br><br>\n'
-
           # Preset current entry params
           rx=create_input({'type':'hidden', 'name': frepo_name, 'value':ruid})
           if rx['return']>0: return rx
@@ -2476,6 +2474,8 @@ def form_url_prefix(i):
               (template)     - possible web template
 
               (base_url)     - already prepared base url
+
+              (use_repo_uoa) - use specific repo
             }
 
     Output: {
@@ -2521,6 +2521,8 @@ def form_url_prefix(i):
 
     # Load template
     ii={'action':'load',
+        'common':'yes',
+        'repo_uoa':i.get('use_repo_uoa',''),
         'module_uoa':work['self_module_uoa'],
         'data_uoa':template}
     r=ck.access(ii)
