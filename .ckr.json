@@ -1,11 +1,12 @@
 {
-  "data_uid": "215d441c19db1fed", 
-  "data_name": "CK web", 
+  "data_alias": "ck-web",
+  "data_name": "CK web",
+  "data_uid": "215d441c19db1fed",
+  "data_uoa": "ck-web",
   "dict": {
-    "url": "https://github.com/ctuning/ck-web.git", 
-    "shared": "git", 
-    "sync": "yes"
-  }, 
-  "data_alias": "ck-web", 
-  "data_uoa": "ck-web"
+    "desc": "Portable CK web server and web front-end with a unified JSON API for dashboards, benchmark scoreboards, interactive articles, graphs, crowdsourced experiments, etc (see <a href=\"http://cKnowledge.org/request-results\">demo</a>).",
+    "shared": "git",
+    "sync": "yes",
+    "url": "https://github.com/ctuning/ck-web"
+  }
 }

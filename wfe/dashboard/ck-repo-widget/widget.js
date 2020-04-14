@@ -2939,7 +2939,7 @@ var CkRepoWidget = function () {
                 onChange(workflows[selectedIndex]);
             };
 
-            var old_repo = '<center><b><span style="font-size:16pt;">This dashboard is now available at <a href="https://dev.codereef.ai/portal/search/?q=%22reproduced-results%22"><b><u>CodeReef</u></b></a> - an open reproducibility platform!</span></b></center><div style="padding:4px;"></div>';
+            var old_repo = '';
 
             var select = root.append('div').html(old_repo).attr('class', 'ck-repo-widget-select_workflow-container').append('select').attr('id', id).attr('class', 'ck-repo-widget-select ck-repo-widget-select_workflow').on('change', changeHandler);
 
