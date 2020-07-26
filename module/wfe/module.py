@@ -286,6 +286,7 @@ def index(i):
     if view_entry and len(lst)==1:
        xcmuoa=lst[0]['module_uoa']
 
+    skip_div_box=''
     for q in top_menu:
         name=q['name']
         x=q.get('url','')
@@ -305,6 +306,7 @@ def index(i):
                  nmuoa=qnmuoa
               if nat=='' and q.get('native_action','')!='':
                  nat=q['native_action']
+              skip_div_box=q.get('skip_div_box','')
               native=True
 
         if x=='' and y=='':
@@ -405,7 +407,10 @@ def index(i):
 
     # Check if native action **************************************************************
     elif native:
-       hp='<div id="ck_box_with_shadow">\n'
+       hp=''
+
+       if skip_div_box!='yes':
+          hp+='<div id="ck_box_with_shadow">\n'
 
        import copy
        ii=copy.deepcopy(i)
@@ -421,7 +426,8 @@ def index(i):
           hp+=rx.get('html','')+'\n'
           hstyle+=rx.get('style','')+'\n'
 
-       hp+='</div>\n'
+       if skip_div_box!='yes':
+          hp+='</div>\n'
 
     else:
        # Prepare query div ***************************************************************
