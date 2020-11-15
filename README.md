@@ -2,6 +2,8 @@
 [![DOI](https://zenodo.org/badge/26590461.svg)](https://zenodo.org/badge/latestdoi/26590461)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
+**All CK components for AI and ML are now collected in [one repository](https://github.com/ctuning/ai)!**
+
 This repository contains Collective Knowledge extension modules
 to browse CK repositories, visualize interactive graphs and articles, 
 render CK-based websites, implement simple web services with JSON API 
